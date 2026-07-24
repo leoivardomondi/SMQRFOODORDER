@@ -31,6 +31,10 @@ storage/media-library/
 /public/file/service-account-file.json
 /storage/app/private/*.json
 /php8.3/
+/.agents/
+/tests/
+/phpunit.xml
+/docs/
 
 # Local deployment backups and runtime artifacts
 /*.zip
