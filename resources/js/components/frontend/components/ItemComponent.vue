@@ -5,9 +5,9 @@
             <img class="w-24 h-24 sm:w-28 sm:h-28 rounded-xl object-cover" :src="item.thumb" alt="thumbnail">
             <div class="flex-1 flex flex-col justify-start">
                 <div class="flex justify-between items-start mb-1">
-                    <h3 class="text-base sm:text-lg font-medium text-gray-800">{{ item.name }}</h3>
+                    <h3 class="text-base sm:text-lg font-semibold text-white">{{ item.name }}</h3>
                     <div class="text-right">
-                        <h4 class="text-base font-medium text-gray-800">
+                        <h4 class="text-base font-bold text-white">
                             {{ item.offer.length > 0 ? item.offer[0].currency_price : item.currency_price }}
                         </h4>
                         <del v-if="item.offer.length > 0" class="text-xs text-gray-400 block">
@@ -18,7 +18,7 @@
                         </div>
                     </div>
                 </div>
-                <p class="text-sm text-gray-500 leading-snug line-clamp-3 w-4/5">{{ item.description }}</p>
+                <p class="text-sm text-slate-300 leading-snug line-clamp-3 w-4/5">{{ item.description }}</p>
                 <div class="absolute bottom-0 right-0">
                     <button v-if="cartQuantity(item) === 0" @click.prevent="handleAddItem(item)" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition">
                         <i class="fa-solid fa-plus text-sm"></i>

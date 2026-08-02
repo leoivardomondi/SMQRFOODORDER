@@ -242,27 +242,27 @@
                         </div>
                         
                         <!-- Payment Methods Section -->
-                        <div class="p-4 border-b border-[#EFF0F6]">
-                            <h3 class="text-base font-semibold mb-4 text-gray-900">Your Details</h3>
+                        <div class="p-4 border-b border-[#EFF0F6]/20">
+                            <h3 class="text-base font-semibold mb-4 text-white">Your Details</h3>
                             <div class="flex flex-col gap-3">
-                                <input type="text" v-model="checkoutProps.form.customer_name" placeholder="Example: Jane Wanjiku" class="w-full h-12 px-4 rounded-lg border border-[#EFF0F6] bg-gray-50 focus:border-primary focus:bg-white transition" />
-                                <input type="tel" inputmode="tel" v-model="checkoutProps.form.customer_phone" placeholder="Example: 0712 345 678" class="w-full h-12 px-4 rounded-lg border border-[#EFF0F6] bg-gray-50 focus:border-primary focus:bg-white transition" />
-                                <input type="email" inputmode="email" autocomplete="email" v-model.trim="checkoutProps.form.customer_email" placeholder="Email, e.g. jane@example.com" class="w-full h-12 px-4 rounded-lg border border-[#EFF0F6] bg-gray-50 focus:border-primary focus:bg-white transition" />
+                                <input type="text" v-model="checkoutProps.form.customer_name" placeholder="Example: Jane Wanjiku" class="w-full h-12 px-4 rounded-lg border border-[#EFF0F6] bg-gray-50 focus:border-primary focus:bg-white text-gray-900 transition" />
+                                <input type="tel" inputmode="tel" v-model="checkoutProps.form.customer_phone" placeholder="Example: 0712 345 678" class="w-full h-12 px-4 rounded-lg border border-[#EFF0F6] bg-gray-50 focus:border-primary focus:bg-white text-gray-900 transition" />
+                                <input type="email" inputmode="email" autocomplete="email" v-model.trim="checkoutProps.form.customer_email" placeholder="Email, e.g. jane@example.com" class="w-full h-12 px-4 rounded-lg border border-[#EFF0F6] bg-gray-50 focus:border-primary focus:bg-white text-gray-900 transition" />
                             </div>
                         </div>
 
-                        <div class="p-4 border-b border-[#EFF0F6]">
-                            <h3 class="text-base font-semibold mb-4 text-gray-900">Select your payment method</h3>
+                        <div class="p-4 border-b border-[#EFF0F6]/20">
+                            <h3 class="text-base font-semibold mb-4 text-white">Select your payment method</h3>
                             <div class="flex flex-col gap-3">
                                 <!-- Online Payment -->
-                                <label class="flex w-full min-w-0 items-center justify-between gap-3 p-3 rounded-lg border cursor-pointer transition bg-gray-50 border-gray-100"
+                                <label class="flex w-full min-w-0 items-center justify-between gap-3 p-3 rounded-lg border cursor-pointer transition bg-gray-900/50 border-gray-700"
                                     :class="checkoutProps.form.payment_method === enums.paymentTypeEnum.E_WALLET ? 'border-primary ring-1 ring-primary' : ''"
                                     @click="checkoutProps.form.payment_method = enums.paymentTypeEnum.E_WALLET">
                                     <div class="flex min-w-0 flex-1 items-center gap-3">
                                         <div class="w-8 h-8 shrink-0 rounded-lg overflow-hidden flex items-center justify-center bg-[#00A859] shadow-xs">
                                             <img src="/images/payment-gateway/mpesa.png" alt="M-Pesa" class="w-full h-full object-cover" />
                                         </div>
-                                        <span class="min-w-0 font-medium leading-5 text-gray-900">Pay Online (M-Pesa, Card)</span>
+                                        <span class="min-w-0 font-medium leading-5 text-white">Pay Online (M-Pesa, Card)</span>
                                     </div>
                                     <div class="custom-radio sm shrink-0">
                                         <input type="radio" v-model="checkoutProps.form.payment_method" :value="enums.paymentTypeEnum.E_WALLET" class="custom-radio-field">
@@ -272,14 +272,14 @@
 
                                 <!-- Cash -->
                                 <label v-if="showCashOnDelivery"
-                                    class="flex w-full min-w-0 items-center justify-between gap-3 p-3 rounded-lg border cursor-pointer bg-gray-50 border-gray-100 transition"
+                                    class="flex w-full min-w-0 items-center justify-between gap-3 p-3 rounded-lg border cursor-pointer bg-gray-900/50 border-gray-700 transition"
                                     :class="checkoutProps.form.payment_method === enums.paymentTypeEnum.CASH_ON_DELIVERY ? 'border-primary ring-1 ring-primary' : ''"
                                     @click="checkoutProps.form.payment_method = enums.paymentTypeEnum.CASH_ON_DELIVERY">
                                     <div class="flex min-w-0 flex-1 items-center gap-3">
                                         <div class="w-8 h-8 shrink-0 rounded-full bg-green-100 flex items-center justify-center text-green-600">
                                             <i class="fa-solid fa-money-bill"></i>
                                         </div>
-                                        <span class="min-w-0 font-medium leading-5 text-gray-900">Pay on Delivery (Cash)</span>
+                                        <span class="min-w-0 font-medium leading-5 text-white">Pay on Delivery (Cash)</span>
                                     </div>
                                     <div class="custom-radio sm shrink-0">
                                         <input type="radio" v-model="checkoutProps.form.payment_method" :value="enums.paymentTypeEnum.CASH_ON_DELIVERY" class="custom-radio-field">
