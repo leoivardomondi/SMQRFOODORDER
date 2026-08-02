@@ -32,6 +32,7 @@ class OrderDetailsResource extends JsonResource
             "total_tax_currency_price"            => AppLibrary::currencyAmountFormat($this->total_tax),
             'order_type'                          => $this->order_type,
             'order_datetime'                      => AppLibrary::datetime($this->order_datetime),
+            'created_at'                          => $this->created_at ? $this->created_at->toIso8601String() : $this->order_datetime,
             'order_date'                          => AppLibrary::date($this->order_datetime),
             'order_time'                          => AppLibrary::time($this->order_datetime),
             'delivery_date'                       => $this->is_advance_order == Ask::YES ? AppLibrary::increaseDate($this->order_datetime, 1) : AppLibrary::date($this->order_datetime),

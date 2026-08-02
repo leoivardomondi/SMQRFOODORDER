@@ -17,7 +17,16 @@ export const frontendOrder = {
 
     getters: {
         activeOrder: function (state) {
-            return state.activeOrder;
+            if (!Array.isArray(state.activeOrder)) return [];
+            const sixHoursInMs = 6 * 60 * 60 * 1000;
+            const now = new Date().getTime();
+            return state.activeOrder.filter(order => {
+                const dateStr = order.created_at || order.order_datetime;
+                if (!dateStr) return true;
+                const orderTime = new Date(dateStr).getTime();
+                if (isNaN(orderTime)) return true;
+                return (now - orderTime) <= sixHoursInMs;
+            });
         },
         previousOrder: function (state) {
             return state.previousOrder;

@@ -30,7 +30,7 @@
 
 
     <div
-        v-if="parseInt(props.status) !== parseInt(enums.orderStatusEnum.CANCELED) && parseInt(props.status) !== parseInt(enums.orderStatusEnum.RETURNED) && parseInt(props.status) !== parseInt(enums.orderStatusEnum.REJECTED)">
+        v-if="!isExpiredActiveOrder && parseInt(props.status) !== parseInt(enums.orderStatusEnum.CANCELED) && parseInt(props.status) !== parseInt(enums.orderStatusEnum.RETURNED) && parseInt(props.status) !== parseInt(enums.orderStatusEnum.REJECTED)">
         <div
             v-if="parseInt(props.status) == parseInt(enums.orderStatusEnum.DELIVERED) && parseInt(props.order_type) == parseInt(enums.orderTypeEnum.DELIVERY)">
             <h4 class="text-xl font-medium text-center mb-4">{{ $t('label.your_order_has_been_delivered') }}</h4>
@@ -150,6 +150,19 @@ export default {
         profile: function () {
             return this.$store.getters.authInfo;
         },
+        isExpiredActiveOrder: function () {
+            if (!this.props || !this.props.status) return false;
+            const status = parseInt(this.props.status);
+            if ([orderStatusEnum.DELIVERED, orderStatusEnum.CANCELED, orderStatusEnum.REJECTED, orderStatusEnum.RETURNED].includes(status)) {
+                return false;
+            }
+            const dateStr = this.props.created_at || this.props.order_datetime;
+            if (!dateStr) return false;
+            const orderTime = new Date(dateStr).getTime();
+            if (isNaN(orderTime)) return false;
+            const sixHoursInMs = 6 * 60 * 60 * 1000;
+            return (new Date().getTime() - orderTime) > sixHoursInMs;
+        }
     },
 }
 </script>

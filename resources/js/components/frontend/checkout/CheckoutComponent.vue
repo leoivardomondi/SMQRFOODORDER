@@ -247,7 +247,7 @@
                             <div class="flex flex-col gap-3">
                                 <input type="text" v-model="checkoutProps.form.customer_name" placeholder="Example: Jane Wanjiku" class="w-full h-12 px-4 rounded-lg border border-[#EFF0F6] bg-gray-50 focus:border-primary focus:bg-white transition" />
                                 <input type="tel" inputmode="tel" v-model="checkoutProps.form.customer_phone" placeholder="Example: 0712 345 678" class="w-full h-12 px-4 rounded-lg border border-[#EFF0F6] bg-gray-50 focus:border-primary focus:bg-white transition" />
-                                <input type="email" inputmode="email" autocomplete="email" v-model.trim="checkoutProps.form.customer_email" placeholder="Email (optional), e.g. jane@example.com" class="w-full h-12 px-4 rounded-lg border border-[#EFF0F6] bg-gray-50 focus:border-primary focus:bg-white transition" />
+                                <input type="email" inputmode="email" autocomplete="email" v-model.trim="checkoutProps.form.customer_email" placeholder="Email, e.g. jane@example.com" class="w-full h-12 px-4 rounded-lg border border-[#EFF0F6] bg-gray-50 focus:border-primary focus:bg-white transition" />
                             </div>
                         </div>
 
