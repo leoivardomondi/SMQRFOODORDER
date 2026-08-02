@@ -6,8 +6,27 @@
                 <router-link :to="{ name: 'frontend.home' }">
                     <img class="w-16 sm:w-20 max-h-9 object-contain" :src="setting.theme_logo" alt="logo">
                 </router-link>
-
+                <!-- Mobile Top Right Search Icon (Black Font) -->
+                <div class="flex items-center gap-3 lg:hidden">
+                    <button type="button" @click="toggleMobileSearch" class="p-1.5 text-black hover:text-primary transition-colors focus:outline-none" title="Search">
+                        <i class="lab lab-search-normal text-xl font-bold text-black" style="color: #000000 !important;"></i>
+                    </button>
+                </div>
             </div>
+
+            <!-- Mobile Collapsible Search Bar -->
+            <form v-if="isMobileSearchOpen" @submit.prevent="search"
+                class="lg:hidden flex items-center justify-center border border-solid border-gray-300 gap-2 px-3 w-full h-9 rounded-3xl my-2 bg-gray-100 focus-within:bg-white focus-within:border-primary transition-all">
+                <button type="submit" class="text-black">
+                    <i class="lab lab-search-normal text-black" style="color: #000000 !important;"></i>
+                </button>
+                <input type="search" v-model="searchItem" ref="mobileSearchInput" :placeholder="$t('button.search')"
+                    class="w-full h-full text-xs appearance-none placeholder:font-normal placeholder:text-gray-500 text-black focus:outline-none" style="color: #000000 !important;">
+                <button type="button" @click.prevent="searchReset"
+                    class="transition">
+                    <i class="lab lab-close-circle-line lab-font-size-16 text-red-500"></i>
+                </button>
+            </form>
             <nav class="items-center justify-center gap-6 hidden lg:flex">
                 <router-link :to="{ name: 'frontend.home' }"
                     :class="checkIsPathAndRoutePathSame('/home') ? 'text-primary' : 'text-black'"
@@ -49,7 +68,7 @@
 
             <div class="flex flex-col items-center justify-end sm:gap-3 w-full mt-3 lg:mt-0 lg:flex-row lg:w-fit">
                 <form @submit.prevent="search"
-                    class="header-search-group group flex items-center justify-center border border-solid gap-2 px-2 w-full lg:w-52 h-8 rounded-3xl transition border-[#EFF0F6] bg-[#EFF0F6] focus-within:bg-white focus-within:border-primary">
+                    class="header-search-group group hidden lg:flex items-center justify-center border border-solid gap-2 px-2 w-52 h-8 rounded-3xl transition border-[#EFF0F6] bg-[#EFF0F6] focus-within:bg-white focus-within:border-primary">
                     <button type="submit" class="header-search-submit">
                         <i class="lab lab-search-normal"></i>
                     </button>
@@ -297,7 +316,7 @@ export default {
                 url: ""
             },
             searchItem: "",
-
+            isMobileSearchOpen: false,
         }
     },
     computed: {
@@ -467,6 +486,16 @@ export default {
         }
     },
     methods: {
+        toggleMobileSearch: function () {
+            this.isMobileSearchOpen = !this.isMobileSearchOpen;
+            if (this.isMobileSearchOpen) {
+                this.$nextTick(() => {
+                    if (this.$refs.mobileSearchInput) {
+                        this.$refs.mobileSearchInput.focus();
+                    }
+                });
+            }
+        },
         textShortener: function (text, number = 30) {
             return appService.textShortener(text, number);
         },
