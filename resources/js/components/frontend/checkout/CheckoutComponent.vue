@@ -260,7 +260,7 @@
                                     @click="checkoutProps.form.payment_method = enums.paymentTypeEnum.E_WALLET">
                                     <div class="flex min-w-0 flex-1 items-center gap-3">
                                         <div class="w-8 h-8 shrink-0 rounded-lg overflow-hidden flex items-center justify-center bg-[#00A859] shadow-xs">
-                                            <img src="/images/payment-gateway/mpesa.svg" alt="M-Pesa" class="w-full h-full object-cover" />
+                                            <img src="/images/payment-gateway/mpesa.png" alt="M-Pesa" class="w-full h-full object-cover" />
                                         </div>
                                         <span class="min-w-0 font-medium leading-5 text-gray-900">Pay Online (M-Pesa, Card)</span>
                                     </div>

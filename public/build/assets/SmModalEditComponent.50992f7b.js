@@ -1,0 +1,1 @@
+import{_ as s,o as e,g as a,e as o,C as l}from"./app.66b9efd9.js";const i={name:"SmModalEditComponent"},r={class:"db-btn-outline sm success modal-btn m-0.5"};function c(n,t,d,m,p,u){return e(),a("button",r,[t[0]||(t[0]=o("i",{class:"lab lab-edit-line"},null,-1)),o("span",null,l(n.$t("button.edit")),1)])}const b=s(i,[["render",c]]);export{b as S};
