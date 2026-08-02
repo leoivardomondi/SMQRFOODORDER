@@ -97,28 +97,35 @@
     <div id="item-variation-modal" ref="itemVariationModal" class="fixed inset-0 z-[100] hidden bg-black text-white flex flex-col h-full w-full overflow-hidden">
         <div class="w-full h-full flex flex-col relative overflow-hidden" v-if="item">
             
-            <!-- Fixed Top Header Bar -->
-            <div class="sticky top-0 left-0 right-0 z-30 bg-black/95 backdrop-blur-md border-b border-gray-800 px-4 py-3 flex items-center justify-between shadow-xs flex-shrink-0">
+            <!-- Sticky Top Header Bar (Appears ONLY when scrolling down) -->
+            <div v-show="isScrolled"
+                class="sticky top-0 left-0 right-0 z-40 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between shadow-md transition-all duration-300 flex-shrink-0">
                 <div class="flex items-center gap-3 min-w-0 pr-2">
                     <!-- Close Button -->
-                    <button class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 text-white hover:bg-gray-700 transition flex-shrink-0"
+                    <button class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-black hover:bg-gray-200 transition flex-shrink-0"
                         @click.prevent="variationModalHide" aria-label="Close product view">
-                        <i class="fa-solid fa-xmark text-base"></i>
+                        <i class="fa-solid fa-xmark text-sm !text-black"></i>
                     </button>
-                    <!-- Fixed Product Name -->
-                    <h2 class="text-base sm:text-lg font-bold text-white truncate capitalize">{{ item.name }}</h2>
+                    <!-- Fixed Product Name in SOLID BLACK FONT -->
+                    <h2 class="text-base font-bold !text-black truncate capitalize">{{ item.name }}</h2>
                 </div>
-                <!-- Price Display -->
-                <span class="text-sm sm:text-base font-bold text-primary flex-shrink-0">
+                <!-- Price Display in SOLID BLACK FONT -->
+                <span class="text-sm font-bold !text-black flex-shrink-0">
                     {{ item.offer.length > 0 ? item.offer[0].currency_price : item.currency_price }}
                 </span>
             </div>
 
             <!-- Scrollable Body Content Area -->
-            <div class="flex-1 overflow-y-auto bg-black text-white">
+            <div class="flex-1 overflow-y-auto bg-black text-white" @scroll="handleScroll">
                 <!-- Header Cover Image -->
                 <div class="relative w-full min-h-[220px] sm:min-h-[300px] max-h-[400px] bg-slate-950 flex items-center justify-center p-2">
                     <img class="max-w-full max-h-[380px] w-auto h-auto object-contain mx-auto rounded-lg shadow-md" :src="item.cover || item.thumb" alt="product image">
+                    <!-- Floating Close Button when at the top (before scrolling) -->
+                    <button v-show="!isScrolled"
+                        class="absolute top-4 left-4 w-10 h-10 flex items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 transition z-20 shadow-md"
+                        @click.prevent="variationModalHide" aria-label="Close product view">
+                        <i class="fa-solid fa-xmark text-lg text-white"></i>
+                    </button>
                 </div>
 
                 <!-- Product Details & Addons Area -->
@@ -249,6 +256,7 @@ export default {
     },
     data() {
         return {
+            isScrolled: false,
             item: null,
             itemInfo: null,
             addons: {},
@@ -454,7 +462,11 @@ export default {
                     this.prepareVariationModal(res.data.data);
                 }).catch(() => {});
         },
+        handleScroll: function (e) {
+            this.isScrolled = e.target.scrollTop > 60;
+        },
         prepareVariationModal: function (item) {
+                    this.isScrolled = false;
                     this.item = item;
 
                     if (this.item.itemAttributes.length > 0) {
@@ -488,6 +500,7 @@ export default {
                     document.body.classList.add("product-page-open");
         },
         variationModalHide: function () {
+            this.isScrolled = false;
             this.item = null;
 
             this.temp.name = "";
