@@ -4,7 +4,7 @@
         <div class="container flex flex-col lg:flex-row items-center justify-between">
             <div class="w-full flex items-center justify-between gap-5 xl:gap-8 lg:justify-start lg:w-fit">
                 <router-link :to="{ name: 'frontend.home' }">
-                    <img class="w-24 sm:w-32" :src="setting.theme_logo" alt="logo">
+                    <img class="w-16 sm:w-20 max-h-9 object-contain" :src="setting.theme_logo" alt="logo">
                 </router-link>
 
             </div>

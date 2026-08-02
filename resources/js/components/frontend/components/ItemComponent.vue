@@ -94,19 +94,15 @@
     <!--========INFO PART END===========-->
 
     <!--========VARIATION PART START=========-->
-    <div id="item-variation-modal" ref="itemVariationModal" class="fixed inset-0 z-50 hidden bg-white overflow-y-auto">
+    <div id="item-variation-modal" ref="itemVariationModal" class="fixed inset-0 z-[100] hidden bg-white overflow-y-auto">
         <div class="w-full h-full flex flex-col" v-if="item">
             <!-- Header Image -->
-            <div class="relative w-full aspect-square sm:aspect-[4/3] bg-gray-100">
-                <img class="w-full h-full object-cover" :src="item.thumb" alt="thumbnail">
+            <div class="relative w-full min-h-[280px] sm:min-h-[360px] max-h-[480px] bg-slate-950 flex items-center justify-center p-2">
+                <img class="max-w-full max-h-[460px] w-auto h-auto object-contain mx-auto rounded-lg shadow-md" :src="item.cover || item.thumb" alt="product image">
                 <!-- Close Button -->
-                <button class="absolute top-4 left-4 w-8 h-8 flex items-center justify-center rounded-full bg-black/40 text-white hover:bg-black/60 transition"
-                    @click.prevent="variationModalHide">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-                <!-- Zoom Button -->
-                <button class="absolute bottom-4 right-4 w-10 h-10 flex items-center justify-center rounded-full bg-white text-black shadow-md hover:bg-gray-100 transition">
-                    <i class="fa-solid fa-magnifying-glass"></i>
+                <button class="absolute top-4 left-4 w-10 h-10 flex items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 transition z-20 shadow-md"
+                    @click.prevent="variationModalHide" aria-label="Close product view">
+                    <i class="fa-solid fa-xmark text-lg"></i>
                 </button>
             </div>
 
@@ -377,6 +373,7 @@ export default {
                     const modalTarget = this.$refs.itemVariationModal;
                     modalTarget?.classList?.remove("hidden");
                     document.body.style.overflowY = "hidden";
+                    document.body.classList.add("product-page-open");
         },
         variationModalHide: function () {
             this.item = null;
@@ -405,6 +402,7 @@ export default {
             const modalDiv = this.$refs.itemVariationModal;
             modalDiv?.classList?.add("hidden");
             document.body.style.overflowY = "auto";
+            document.body.classList.remove("product-page-open");
         },
         changeVariation: function (attributeId, variationId, variationName, variationPrice) {
             this.temp.item_variations.variations[attributeId] = variationId;

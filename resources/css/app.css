@@ -622,6 +622,21 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
 }
 
+/* Hide top navbar, mobile navbar, and PWA prompts when product page modal is open */
+body.product-page-open .ff-header,
+body.product-page-open nav.fixed.bottom-0,
+body.product-page-open .pwa-install-banner,
+body.product-page-open .pwa-install-modal {
+    display: none !important;
+}
+
+/* Reduced logo size and compact navbar height */
+.ff-header .container {
+    height: 52px !important;
+    padding-top: 2px !important;
+    padding-bottom: 2px !important;
+}
+
 .frontend-theme .ff-header nav a:not(.text-primary) {
     color: #000000 !important;
 }
