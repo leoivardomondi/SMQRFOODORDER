@@ -195,19 +195,23 @@
                                             <p class="text-xs text-gray-400 font-semibold">{{ addon.offer.length > 0 ? addon.offer[0].currency_price : addon.addon_item_currency_price }}</p>
                                         </div>
                                     </div>
-                                    <div class="flex items-center">
+                                    <div class="flex items-center gap-2">
                                         <button v-if="!addons[addon.id]" @click.prevent="changeAddon(addon)" class="px-3 py-1.5 rounded-full text-xs font-bold text-primary border border-primary hover:bg-primary hover:text-white transition">
                                             + Add
                                         </button>
                                         <div v-else class="flex items-center gap-2 rounded-full bg-gray-800 px-2 py-1">
-                                            <button @click.prevent="addonQuantityDecrement(addon.id)" class="w-6 h-6 rounded-full flex items-center justify-center text-gray-400 hover:bg-gray-700">
-                                                <i class="fa-solid fa-minus text-xs"></i>
+                                            <button @click.prevent="addonQuantityDecrement(addon.id)" class="w-6 h-6 rounded-full flex items-center justify-center text-gray-300 hover:bg-gray-700 transition" :title="addonQuantity[addon.id] === 1 ? 'Remove Addon' : 'Decrease Quantity'">
+                                                <i v-if="addonQuantity[addon.id] > 1" class="fa-solid fa-minus text-xs"></i>
+                                                <i v-else class="fa-solid fa-trash-can text-xs text-red-400"></i>
                                             </button>
                                             <span class="text-xs font-bold text-white min-w-[1rem] text-center">{{ addonQuantity[addon.id] }}</span>
-                                            <button @click.prevent="addonQuantityIncrement(addon.id)" class="w-6 h-6 rounded-full flex items-center justify-center text-primary hover:bg-gray-700">
+                                            <button @click.prevent="addonQuantityIncrement(addon.id)" class="w-6 h-6 rounded-full flex items-center justify-center text-primary hover:bg-gray-700 transition" title="Increase Quantity">
                                                 <i class="fa-solid fa-plus text-xs"></i>
                                             </button>
                                         </div>
+                                        <button v-if="addons[addon.id]" @click.prevent="removeAddon(addon.id)" class="p-1.5 text-red-400 hover:text-red-300 transition" title="Remove Addon">
+                                            <i class="fa-solid fa-xmark text-sm font-bold"></i>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -694,16 +698,24 @@ export default {
                 this.totalPriceSetup();
             }
         },
+        removeAddon: function (id) {
+            if (typeof this.addons[id] !== "undefined") {
+                delete this.addons[id];
+                this.addonQuantity[id] = 1;
+                this.totalPriceSetup();
+            }
+        },
         addonQuantityDecrement: function (id) {
             if (typeof this.addonQuantity[id] !== "undefined") {
                 this.addonQuantity[id]--;
                 if (this.addonQuantity[id] <= 0) {
-                    this.addonQuantity[id] = 1;
+                    this.removeAddon(id);
+                } else {
+                    if (typeof this.addons[id] !== "undefined") {
+                        this.addons[id].quantity = this.addonQuantity[id];
+                    }
+                    this.totalPriceSetup();
                 }
-                if (typeof this.addons[id] !== "undefined") {
-                    this.addons[id].quantity = this.addonQuantity[id];
-                }
-                this.totalPriceSetup();
             }
         },
         changeAddon: function (addon) {
