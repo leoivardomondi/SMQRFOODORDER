@@ -44,7 +44,7 @@ class ItemResource extends JsonResource
             "variations"       => $this->variations->groupBy('item_attribute_id'),
             "itemAttributes"   => ItemAttributeResource::collection($this->itemAttributeList($this->variations)),
             "extras"           => ItemExtraResource::collection($this->extras),
-            "addons"           => ItemAddonResource::collection($this->addons->load('addonItem')),
+            "addons"           => ItemAddonResource::collection($this->resolveDefaultAddons()),
             "offer"            => SimpleOfferResource::collection(
                 $this->offer->filter(function ($offer) use ($price) {
                     if (Carbon::now()->between($offer->start_date, $offer->end_date) && $offer->status === Status::ACTIVE) {
@@ -57,6 +57,44 @@ class ItemResource extends JsonResource
                 })
             )
         ];
+    }
+
+    private function resolveDefaultAddons()
+    {
+        $addonsList = $this->addons->load('addonItem');
+        
+        $categoryName = strtoupper(optional($this->category)->name ?? '');
+        $isExcluded = str_contains($categoryName, 'OFFER') || 
+                     str_contains($categoryName, 'GROUP DEAL') || 
+                     str_contains($categoryName, 'JUICE') || 
+                     str_contains($categoryName, 'COLD-PRESSED');
+
+        if (!$isExcluded) {
+            $juiceCategory = \App\Models\ItemCategory::where('name', 'LIKE', '%COLD-PRESSED%')
+                ->orWhere('name', 'LIKE', '%JUICE%')
+                ->first();
+            if ($juiceCategory) {
+                $juiceItems = \App\Models\Item::where('item_category_id', $juiceCategory->id)
+                    ->where('status', Status::ACTIVE)
+                    ->get();
+
+                $existingAddonItemIds = $addonsList->pluck('addon_item_id')->filter()->toArray();
+
+                foreach ($juiceItems as $juiceItem) {
+                    if (!in_array($juiceItem->id, $existingAddonItemIds) && $juiceItem->id !== $this->id) {
+                        $syntheticAddon = new \App\Models\ItemAddon([
+                            'item_id' => $this->id,
+                            'addon_item_id' => $juiceItem->id,
+                            'addon_item_variation' => null,
+                        ]);
+                        $syntheticAddon->setRelation('addonItem', $juiceItem);
+                        $addonsList->push($syntheticAddon);
+                    }
+                }
+            }
+        }
+
+        return $addonsList;
     }
 
     private function itemAttributeList($variations)
