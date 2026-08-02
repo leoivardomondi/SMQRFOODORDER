@@ -44,35 +44,47 @@ class CartAbandonmentController extends Controller
                 ]);
             }
 
-            // 3. Resolve Branch, Super Admin, and Company Email Addresses
+            // 3. Resolve Super Admin, Branch, and Company Email Addresses
             $branch = Branch::find($branchId);
             $recipients = [];
 
-            // Add Branch Email
-            if (!empty($branch?->email)) {
-                $recipients[] = trim($branch->email);
-            }
+            // A. Super Admin Emails (users with branch_id = 0, ID = 1, username = 'admin', or Role::ADMIN with branch_id 0)
+            $superAdminEmails = User::where(function($query) {
+                $query->where('branch_id', 0)
+                      ->orWhere('id', 1)
+                      ->orWhere('username', 'admin');
+            })->whereNotNull('email')->pluck('email')->toArray();
 
-            // Add Super Admin Emails (Admins with role ADMIN)
             try {
-                $superAdminEmails = User::role(Role::ADMIN)->whereNotNull('email')->pluck('email')->toArray();
-                foreach ($superAdminEmails as $adminEmail) {
-                    if (!empty($adminEmail)) {
-                        $recipients[] = trim($adminEmail);
-                    }
-                }
+                $roleAdmins = User::role(Role::ADMIN)->where(['branch_id' => 0])->whereNotNull('email')->pluck('email')->toArray();
+                $superAdminEmails = array_merge($superAdminEmails, $roleAdmins);
             } catch (\Exception $e) {
-                Log::info('Error fetching Super Admin emails for cart abandonment: ' . $e->getMessage());
+                Log::info('Error fetching Spatie Role::ADMIN emails: ' . $e->getMessage());
             }
 
-            // Add Company Email
+            $superAdminEmails = array_values(array_unique(array_filter($superAdminEmails)));
+
+            // B. Branch Emails (Branch model email + Users assigned to branch)
+            $branchEmails = [];
+            if (!empty($branch?->email)) {
+                $branchEmails[] = trim($branch->email);
+            }
+            if ($branchId) {
+                $branchUserEmails = User::where('branch_id', $branchId)->whereNotNull('email')->pluck('email')->toArray();
+                $branchEmails = array_merge($branchEmails, $branchUserEmails);
+            }
+            $branchEmails = array_values(array_unique(array_filter($branchEmails)));
+
+            // C. Company Email
             $company = Company::first();
-            if (!empty($company?->email)) {
-                $recipients[] = trim($company->email);
-            }
+            $companyEmail = !empty($company?->email) ? [trim($company->email)] : [];
 
-            // Clean & Deduplicate recipient email array
-            $recipients = array_values(array_unique(array_filter($recipients)));
+            // Combine all into recipients list
+            $recipients = array_values(array_unique(array_filter(array_merge(
+                $branchEmails,
+                $superAdminEmails,
+                $companyEmail
+            ))));
 
             if (empty($recipients)) {
                 $fallback = config('mail.from.address');
@@ -103,13 +115,13 @@ class CartAbandonmentController extends Controller
 
                 return response()->json([
                     'status' => true,
-                    'message' => 'Cart abandonment alert sent to branch & super admin successfully.'
+                    'message' => 'Cart abandonment alert sent to Super Admin & branch successfully.'
                 ]);
             }
 
             return response()->json([
                 'status' => false,
-                'message' => 'No recipient email configured for branch, super admin, or company.'
+                'message' => 'No recipient email configured.'
             ], 400);
 
         } catch (\Exception $e) {
