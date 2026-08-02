@@ -6,27 +6,13 @@
                 <router-link :to="{ name: 'frontend.home' }">
                     <img class="w-16 sm:w-20 max-h-9 object-contain" :src="setting.theme_logo" alt="logo">
                 </router-link>
-                <!-- Mobile Top Right Search Icon (Black Font) -->
+                <!-- Mobile Top Right Search Icon (Direct link to empty Search page) -->
                 <div class="flex items-center gap-3 lg:hidden">
-                    <button type="button" @click="toggleMobileSearch" class="p-1.5 focus:outline-none" title="Search">
+                    <router-link :to="{ name: 'frontend.search' }" class="p-1.5 focus:outline-none" title="Search">
                         <i class="lab lab-search-normal text-2xl font-bold mobile-search-btn-icon" style="color: #000000 !important;"></i>
-                    </button>
+                    </router-link>
                 </div>
             </div>
-
-            <!-- Mobile Collapsible Search Bar -->
-            <form v-if="isMobileSearchOpen" @submit.prevent="search"
-                class="lg:hidden flex items-center justify-center border border-solid border-gray-300 gap-2 px-3 w-full h-9 rounded-3xl my-2 bg-gray-100 focus-within:bg-white focus-within:border-primary transition-all">
-                <button type="submit" class="text-black">
-                    <i class="lab lab-search-normal text-black" style="color: #000000 !important;"></i>
-                </button>
-                <input type="search" v-model="searchItem" ref="mobileSearchInput" :placeholder="$t('button.search')"
-                    class="w-full h-full text-xs appearance-none placeholder:font-normal placeholder:text-gray-500 text-black focus:outline-none" style="color: #000000 !important;">
-                <button type="button" @click.prevent="searchReset"
-                    class="transition">
-                    <i class="lab lab-close-circle-line lab-font-size-16 text-red-500"></i>
-                </button>
-            </form>
             <nav class="items-center justify-center gap-6 hidden lg:flex">
                 <router-link :to="{ name: 'frontend.home' }"
                     :class="checkIsPathAndRoutePathSame('/home') ? 'text-primary' : 'text-black'"

@@ -1,0 +1,1 @@
+import{_ as o,o as s,g as a,e as t,C as l}from"./app.412f504b.js";const r={name:"SmDeleteComponent"},m={class:"db-btn-outline sm danger modal-btn m-0.5"};function p(n,e,c,d,i,u){return s(),a("button",m,[e[0]||(e[0]=t("i",{class:"lab lab-delete"},null,-1)),t("span",null,l(n.$t("button.delete")),1)])}const b=o(r,[["render",p]]);export{b as S};

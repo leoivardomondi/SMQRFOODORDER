@@ -2,17 +2,30 @@
     <LoadingComponent :props="loading" />
     <section class="mb-24 sm:mb-16 mt-4 sm:mt-8">
         <div class="container">
-            <div class="flex gap-2 sm:gap-4 items-start justify-between mb-4 sm:mb-6">
-                <h2 class="capitalize text-lg sm:text-2xl font-semibold text-primary">
-                    {{ props.search.name }}
+            <!-- Dedicated Search Bar on Search Page -->
+            <div class="mb-6">
+                <div class="flex items-center gap-3 border border-gray-700 bg-gray-900/90 px-4 py-3 rounded-2xl shadow-lg focus-within:border-primary transition-all">
+                    <i class="lab lab-search-normal text-primary text-xl"></i>
+                    <input type="search" v-model="props.search.name" @input="onSearchInput"
+                        placeholder="Search food, drinks, loaded fries..."
+                        class="w-full bg-transparent text-white placeholder-gray-400 text-base focus:outline-none" style="color: #ffffff !important;" />
+                    <button v-if="props.search.name" @click.prevent="clearSearch" type="button" class="text-gray-400 hover:text-white">
+                        <i class="lab lab-close-circle-line text-xl text-red-400"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex gap-2 sm:gap-4 items-center justify-between mb-4 sm:mb-6">
+                <h2 class="capitalize text-lg sm:text-2xl font-semibold text-white">
+                    {{ props.search.name ? 'Search Results' : 'All Items' }}
                 </h2>
-                <div class="flex items-center gap-3" v-if="props.search.name">
+                <div class="flex items-center gap-3">
                     <button type="button" class="lab lab-row-vertical lab-font-size-20 text-xl"
                         v-on:click="itemProps.design = itemDesignEnum.LIST"
-                        :class="itemProps.design === itemDesignEnum.LIST ? 'text-heading' : 'text-[#A0A3BD]'"></button>
+                        :class="itemProps.design === itemDesignEnum.LIST ? 'text-primary' : 'text-gray-400'"></button>
                     <button type="button" class="lab lab-element-3 lab-font-size-20 text-xl"
                         v-on:click="itemProps.design = itemDesignEnum.GRID"
-                        :class="itemProps.design === itemDesignEnum.GRID ? 'text-heading' : 'text-[#A0A3BD]'"></button>
+                        :class="itemProps.design === itemDesignEnum.GRID ? 'text-primary' : 'text-gray-400'"></button>
                 </div>
             </div>
             <ItemComponent :items="items" :type="itemProps.type" :design="itemProps.design" />
@@ -24,8 +37,8 @@
 import ItemComponent from "../components/ItemComponent";
 import itemDesignEnum from "../../../enums/modules/itemDesignEnum";
 import statusEnum from "../../../enums/modules/statusEnum";
-import alertService from "../../../services/alertService";
 import LoadingComponent from "../components/LoadingComponent";
+import _ from "lodash";
 
 export default {
     name: "SearchItemComponent",
@@ -38,9 +51,9 @@ export default {
                 isActive: false,
             },
             itemDesignEnum: itemDesignEnum,
-            items: {},
+            items: [],
             itemProps: {
-                design: itemDesignEnum.LIST,
+                design: itemDesignEnum.GRID,
                 type: null,
             },
             props: {
@@ -55,8 +68,24 @@ export default {
         };
     },
     mounted() {
-        if (typeof this.$route.query.s !== "undefined" && this.$route.query.s !== "") {
-            this.props.search.name = this.$route.query.s;
+        this.props.search.name = this.$route.query.s || "";
+        this.searItems();
+    },
+    methods: {
+        itemTypeSet: function (e) {
+            this.itemProps.type = e;
+        },
+        itemTypeReset: function () {
+            this.itemProps.type = null;
+        },
+        clearSearch: function () {
+            this.props.search.name = "";
+            this.searItems();
+        },
+        onSearchInput: _.debounce(function () {
+            this.searItems();
+        }, 300),
+        searItems: function () {
             this.loading.isActive = true;
             this.$store.dispatch("frontendItem/lists", this.props.search).then((res) => {
                 this.items = res.data.data;
@@ -66,30 +95,9 @@ export default {
             });
         }
     },
-    methods: {
-        itemTypeSet: function (e) {
-            this.itemProps.type = e;
-        },
-        itemTypeReset: function () {
-            this.itemProps.type = null;
-        },
-        searItems: function () {
-            if (typeof this.$route.query.s !== "undefined" && this.$route.query.s !== "") {
-                this.props.search.name = this.$route.query.s;
-                this.loading.isActive = true;
-                this.$store.dispatch("frontendItem/lists", this.props.search).then((res) => {
-                    this.items = res.data.data;
-                    this.loading.isActive = false;
-                }).catch((err) => {
-                    this.loading.isActive = false;
-                    alertService.error(err.response.data.message);
-                });
-            }
-        }
-
-    },
     watch: {
         $route() {
+            this.props.search.name = this.$route.query.s || "";
             this.searItems();
         }
     }
