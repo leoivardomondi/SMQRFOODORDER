@@ -1,0 +1,1 @@
+import{_ as a,o as s,g as n,e as o,C as d}from"./app.efa20506.js";const i={name:"SmIconSidebarModalEditComponent"},r={"data-drawer":"#sidebar",class:"db-table-action edit"},c={class:"db-tooltip"};function l(e,t,p,b,_,m){return s(),n("button",r,[t[0]||(t[0]=o("i",{class:"lab lab-edit-line"},null,-1)),o("span",c,d(e.$t("button.edit")),1)])}const S=a(i,[["render",l]]);export{S};

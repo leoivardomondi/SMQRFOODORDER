@@ -158,30 +158,35 @@
                     </div>
                 </div>
 
-                <!-- Addons -->
-                <div v-if="item.addons && item.addons.length > 0" class="mb-6">
-                    <h3 class="text-sm font-semibold text-gray-900 mb-3 capitalize">Addons</h3>
-                    <div class="flex flex-col gap-3">
-                        <div v-for="addon in item.addons" :key="addon.id" class="flex items-center justify-between p-3 rounded-xl border border-gray-200 bg-gray-50/50">
-                            <div class="flex items-center gap-3">
-                                <img :src="addon.thumb" alt="addon image" class="w-12 h-12 rounded-lg object-cover bg-gray-200">
-                                <div>
-                                    <h4 class="text-sm font-medium text-gray-900">{{ addon.addon_item_name }}</h4>
-                                    <p class="text-xs text-gray-500 font-semibold">{{ addon.offer.length > 0 ? addon.offer[0].currency_price : addon.addon_item_currency_price }}</p>
+                <!-- Addons Grouped by Category -->
+                <div v-if="Object.keys(groupedAddons).length > 0" class="mb-6">
+                    <div v-for="(addonGroup, groupTitle) in groupedAddons" :key="groupTitle" class="mb-5">
+                        <h3 class="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wide flex items-center gap-2">
+                            <span>{{ groupTitle }}</span>
+                            <span class="text-xs font-normal text-gray-400 capitalize">(optional)</span>
+                        </h3>
+                        <div class="flex flex-col gap-3">
+                            <div v-for="addon in addonGroup" :key="addon.id" class="flex items-center justify-between p-3 rounded-xl border border-gray-200 bg-gray-50/50">
+                                <div class="flex items-center gap-3">
+                                    <img :src="addon.thumb" alt="addon image" class="w-12 h-12 rounded-lg object-cover bg-gray-200">
+                                    <div>
+                                        <h4 class="text-sm font-medium text-gray-900">{{ addon.addon_item_name }}</h4>
+                                        <p class="text-xs text-gray-500 font-semibold">{{ addon.offer.length > 0 ? addon.offer[0].currency_price : addon.addon_item_currency_price }}</p>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="flex items-center">
-                                <button v-if="!addons[addon.id]" @click.prevent="changeAddon(addon)" class="px-3 py-1.5 rounded-full text-xs font-bold text-primary border border-primary hover:bg-primary hover:text-white transition">
-                                    + Add
-                                </button>
-                                <div v-else class="flex items-center gap-2 rounded-full bg-gray-200 px-2 py-1">
-                                    <button @click.prevent="addonQuantityDecrement(addon.id)" class="w-6 h-6 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-300">
-                                        <i class="fa-solid fa-minus text-xs"></i>
+                                <div class="flex items-center">
+                                    <button v-if="!addons[addon.id]" @click.prevent="changeAddon(addon)" class="px-3 py-1.5 rounded-full text-xs font-bold text-primary border border-primary hover:bg-primary hover:text-white transition">
+                                        + Add
                                     </button>
-                                    <span class="text-xs font-bold text-gray-900 min-w-[1rem] text-center">{{ addonQuantity[addon.id] }}</span>
-                                    <button @click.prevent="addonQuantityIncrement(addon.id)" class="w-6 h-6 rounded-full flex items-center justify-center text-primary hover:bg-gray-300">
-                                        <i class="fa-solid fa-plus text-xs"></i>
-                                    </button>
+                                    <div v-else class="flex items-center gap-2 rounded-full bg-gray-200 px-2 py-1">
+                                        <button @click.prevent="addonQuantityDecrement(addon.id)" class="w-6 h-6 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-300">
+                                            <i class="fa-solid fa-minus text-xs"></i>
+                                        </button>
+                                        <span class="text-xs font-bold text-gray-900 min-w-[1rem] text-center">{{ addonQuantity[addon.id] }}</span>
+                                        <button @click.prevent="addonQuantityIncrement(addon.id)" class="w-6 h-6 rounded-full flex items-center justify-center text-primary hover:bg-gray-300">
+                                            <i class="fa-solid fa-plus text-xs"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -275,6 +280,42 @@ export default {
         carts: function () {
             return this.$store.getters['frontendCart/lists'];
         },
+        groupedAddons: function () {
+            if (!this.item || !this.item.addons || this.item.addons.length === 0) return {};
+
+            const groups = {};
+            _.forEach(this.item.addons, (addon) => {
+                let catName = addon.addon_item_category_name || (addon.addonItem && addon.addonItem.category ? addon.addonItem.category.name : '');
+                if (!catName) {
+                    const name = (addon.addon_item_name || '').toLowerCase();
+                    if (name.includes('drink') || name.includes('soda') || name.includes('juice') || name.includes('water') || name.includes('coke') || name.includes('sprite') || name.includes('fanta') || name.includes('pepsi') || name.includes('beverage')) {
+                        catName = 'Drinks';
+                    } else if (name.includes('fries') || name.includes('chips')) {
+                        catName = 'Fries';
+                    } else {
+                        catName = 'Addons';
+                    }
+                }
+
+                let sectionTitle = '';
+                const catLower = catName.trim().toLowerCase();
+                if (catLower.includes('drink') || catLower.includes('beverage') || catLower.includes('soda')) {
+                    sectionTitle = 'ADD A DRINK';
+                } else if (catLower.includes('fries') || catLower.includes('chips')) {
+                    sectionTitle = 'ADD FRIES';
+                } else if (catLower === 'addons' || catLower === 'addon') {
+                    sectionTitle = 'ADDONS';
+                } else {
+                    sectionTitle = 'ADD ' + catName.toUpperCase();
+                }
+
+                if (!groups[sectionTitle]) {
+                    groups[sectionTitle] = [];
+                }
+                groups[sectionTitle].push(addon);
+            });
+            return groups;
+        }
     },
     methods: {
         setup() {

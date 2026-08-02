@@ -49,6 +49,7 @@ class ItemAddonResource extends JsonResource
             'item_addon_id'                  => $this->addon_item_id,
             'item_name'                      => optional($this->item)->name,
             'addon_item_name'                => optional($this->addonItem)->name,
+            'addon_item_category_name'       => optional(optional($this->addonItem)->category)->name,
             'addon_item_price'               => optional($this->addonItem)->price,
             "addon_item_flat_price"          => AppLibrary::flatAmountFormat(optional($this->addonItem)->price),
             "addon_item_convert_price"       => AppLibrary::convertAmountFormat(optional($this->addonItem)->price),

@@ -205,7 +205,7 @@ class ItemService
     public function show(Item $item): Item
     {
         try {
-            return $item->load('media', 'category', 'tax', 'offer', 'addons', 'variations', 'extras');
+            return $item->load('media', 'category', 'tax', 'offer', 'addons.addonItem.category', 'variations', 'extras');
         } catch (Exception $exception) {
             Log::info($exception->getMessage());
             throw new Exception($exception->getMessage(), 422);
