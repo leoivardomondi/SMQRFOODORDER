@@ -1339,10 +1339,20 @@ ${this.$t('label.address')}  : ${order.order_address?.address}
             this.checkoutProps.form.order_type = e;
             this.$store.dispatch('frontendCart/updateOrderType', this.checkoutProps.form.order_type).then().catch();
             if (this.checkoutProps.form.order_type === orderTypeEnum.TAKEAWAY) {
-                this.mapShow = false;
-                this.checkoutProps.form.branch_id = null;
-                this.branchAddress = null;
                 this.checkoutProps.form.delivery_charge = 0;
+                if (!this.checkoutProps.form.branch_id) {
+                    this.checkoutProps.form.branch_id = this.$store.getters['globalState/lists'].branch_id || null;
+                }
+                if (this.checkoutProps.form.branch_id) {
+                    this.$store.dispatch("frontendBranch/show", this.checkoutProps.form.branch_id).then(branchRes => {
+                        this.location = {
+                            lat: branchRes.data.data.latitude,
+                            lng: branchRes.data.data.longitude
+                        };
+                        this.branchAddress = branchRes.data.data.address;
+                        this.mapShow = true;
+                    }).catch();
+                }
             } else {
                 this.deliveryChargeCalculation();
             }
