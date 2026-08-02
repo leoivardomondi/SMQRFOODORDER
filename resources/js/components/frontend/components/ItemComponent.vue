@@ -43,13 +43,13 @@
             <img class="product-card-grid-image" :src="item.cover" alt="product">
             <div class="product-card-grid-content-group">
                 <div class="product-card-grid-header-group">
-                    <h3 class="product-card-grid-title">{{ textShortener(item.name, 26) }}</h3>
+                    <h3 class="product-card-grid-title !text-white font-semibold">{{ textShortener(item.name, 26) }}</h3>
                     <button type="button" class="product-card-grid-info-btn info-btn leading-none"
                         data-modal="#item-info-modal" @click.prevent="infoModalShow(item.name, item.caution)">
                         <i class="lab lab-information font-fill-paragraph transition lab-font-size-16"></i>
                     </button>
                 </div>
-                <p class="product-card-grid-describe char-limit">{{ textShortener(item.description, 50) }}</p>
+                <p class="product-card-grid-describe char-limit !text-slate-300">{{ textShortener(item.description, 50) }}</p>
                 <div class="product-card-grid-footer-group">
                     <div class="product-card-grid-price-group">
                         <del v-if="item.offer.length > 0" class="product-card-grid-price-previous">

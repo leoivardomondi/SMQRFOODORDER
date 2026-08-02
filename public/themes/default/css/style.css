@@ -1351,6 +1351,7 @@ body {
   line-height: 1.25rem;
   font-weight: 600;
   text-transform: capitalize;
+  color: #ffffff !important;
 }
 
 .product-card-grid-info-btn {
