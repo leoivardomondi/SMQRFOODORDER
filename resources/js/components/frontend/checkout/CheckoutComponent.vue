@@ -733,12 +733,11 @@ export default {
             if ((res.data.data.order_setup_delivery === activityEnum.DISABLE && res.data.data.order_setup_takeaway === activityEnum.DISABLE) || this.$store.getters['frontendCart/lists'].length === 0) {
                 this.$router.push({ name: 'frontend.home' });
             }
-            if (!this.checkoutDraftRestored) {
-                if (this.checkoutProps.form.order_type === orderTypeEnum.TAKEAWAY) {
-                    if (!this.checkoutProps.form.branch_id) {
-                        this.checkoutProps.form.branch_id = null;
-                    }
-                } else if (!this.checkoutProps.form.branch_id) {
+            if (!this.checkoutProps.form.branch_id) {
+                const savedBranchId = localStorage.getItem('selected_branch_id');
+                if (savedBranchId) {
+                    this.checkoutProps.form.branch_id = parseInt(savedBranchId);
+                } else if (this.checkoutProps.form.order_type !== orderTypeEnum.TAKEAWAY) {
                     this.checkoutProps.form.branch_id = this.$store.getters['globalState/lists'].branch_id;
                 }
             }
@@ -978,6 +977,10 @@ export default {
             this.location.lng = branch.longitude;
             this.branchAddress = branch.address;
             this.checkoutProps.form.branch_id = branch.id;
+            this.$store.dispatch('globalState/set', { branch_id: branch.id });
+            localStorage.setItem('selected_branch_id', branch.id);
+            this.saveCheckoutDraft();
+            this.saveSuccessfulOrderPreferences();
             this.$store.dispatch('frontendWeather/show', branch.id);
             window.setTimeout(() => {
                 this.mapShow = true;
@@ -1423,6 +1426,16 @@ ${this.$t('label.address')}  : ${order.order_address?.address}
                     this.checkoutProps.form.delivery_charge = 0;
                 } else {
                     this.deliveryChargeCalculation();
+                }
+            }
+        },
+        'checkoutProps.form.branch_id': {
+            immediate: true,
+            handler(newBranchId) {
+                if (newBranchId && newBranchId > 0) {
+                    localStorage.setItem('selected_branch_id', newBranchId);
+                    this.$store.dispatch('globalState/set', { branch_id: newBranchId });
+                    this.saveCheckoutDraft();
                 }
             }
         }
