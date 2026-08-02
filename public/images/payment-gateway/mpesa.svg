@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <rect width="120" height="120" rx="24" fill="#00A859"/>
+  <!-- M -->
+  <path d="M20 90V30H31L42 62L53 30H64V90H52V49L44 72H39L31 49V90H20Z" fill="#FFFFFF"/>
+  <!-- Red Divider / Accent -->
+  <path d="M68 30H78L70 90H60L68 30Z" fill="#E31B23"/>
+  <!-- P-ESA -->
+  <path d="M78 30H100C107 30 111 34 111 41C111 48 107 52 100 52H90V90H78V30ZM90 42H99C101 42 102 41 102 40.5C102 40 101 39 99 39H90V42Z" fill="#FFFFFF"/>
+</svg>
