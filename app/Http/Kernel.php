@@ -74,5 +74,6 @@ class Kernel extends HttpKernel
         'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
         'localization'       => \App\Http\Middleware\localization::class,
         'installed'          => \App\Http\Middleware\Installed::class,
+        'superAdmin'         => \App\Http\Middleware\EnsureSuperAdmin::class,
     ];
 }

@@ -35,12 +35,12 @@
             <i class="fa-solid fa-circle-user text-base leading-none"></i>
             <span class="text-xs capitalize">{{ $t('label.profile') }}</span>
         </button>
-        <div v-if="!isPwaViewed" ref="pwaStickyFooter"
-            class="lg:hidden border-none bg-white p-4 fixed bottom-0 left-0 w-full z-50 rounded-tl-3xl rounded-tr-3xl shadow-paper">
+        <div v-if="showPwaPrompt && !isPwaViewed" ref="pwaStickyFooter"
+            class="pwa-install-banner lg:hidden border-none bg-white p-4 fixed bottom-0 left-0 w-full z-50 rounded-tl-3xl rounded-tr-3xl shadow-paper">
             <div class="flex items-start gap-3 mb-3">
                 <img :src="setting.theme_favicon_logo" alt="theme-favicon-logo"
                     class="w-8 h-8 rounded-lg flex-shrink-0 shadow-xl">
-                <h3 class="text-sm flex-auto text-[#008BBA]">
+                <h3 class="pwa-install-title text-sm flex-auto text-[#008BBA]">
                     {{ $t('message.add') }}
                     {{ setting.company_name }}
                     {{ $t('message.app_to_your_home_screen') }} ?
@@ -48,10 +48,10 @@
             </div>
             <div class="flex items-center justify-end gap-2">
                 <button @click.prevent="closePwaModal"
-                    class="py-2 px-3 rounded-md capitalize text-sm border border-gray-200 text-primary">{{
+                    class="pwa-install-cancel py-2 px-3 rounded-md capitalize text-sm border border-gray-200 text-primary">{{
                         $t('button.cancel') }}</button>
                 <button @click.prevent="closePwaModal" id="installPWAsm"
-                    class="py-2 px-3 rounded-md capitalize text-sm bg-primary text-white">{{ $t('button.install')
+                    class="pwa-install-action py-2 px-3 rounded-md capitalize text-sm bg-primary text-white">{{ $t('button.install')
                     }}</button>
             </div>
         </div>
@@ -65,6 +65,8 @@ export default {
     name: "FrontendMobileNavBarComponent",
     data() {
         return {
+            showPwaPrompt: false,
+            pwaPromptTimer: null,
             loading: {
                 isActive: false,
             },
@@ -116,10 +118,21 @@ export default {
         },
     },
     mounted() {
+        if (!this.isPwaViewed) {
+            this.pwaPromptTimer = window.setTimeout(() => {
+                this.showPwaPrompt = true;
+            }, 60000);
+        }
+
         this.currentRoute = this.$route.path;
         this.loading.isActive = true;
         this.$store.dispatch('frontendItemCategory/lists', this.categoryProps.search).then().catch();
         this.loading.isActive = false;
+    },
+    beforeUnmount() {
+        if (this.pwaPromptTimer) {
+            window.clearTimeout(this.pwaPromptTimer);
+        }
     },
     methods: {
         openCanvas: function (id) {
@@ -131,6 +144,7 @@ export default {
             }
         },
         closePwaModal: function () {
+            this.showPwaPrompt = false;
             const modalTarget = this.$refs.pwaStickyFooter;
             modalTarget?.classList?.add("hidden");
             localStorage.setItem('pwa_viewed', true);

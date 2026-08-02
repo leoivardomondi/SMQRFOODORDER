@@ -1,1 +1,0 @@
-import{_ as s,o as n,g as a,e as t,C as l}from"./app.ce44ff3d.js";const c={name:"SmIconDeleteComponent"},r={class:"db-table-action delete"},p={class:"db-tooltip"};function d(o,e,i,_,m,b){return n(),a("button",r,[e[0]||(e[0]=t("i",{class:"lab lab-delete"},null,-1)),t("span",p,l(o.$t("button.delete")),1)])}const f=s(c,[["render",d]]);export{f as S};

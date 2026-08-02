@@ -33,7 +33,7 @@ class UserTableSeeder extends Seeder
             'country_code'      => '+880',
             'is_guest'          => Ask::NO
         ]);
-        $admin->assignRole(EnumRole::ADMIN);
+        $admin->assignRole(EnumRole::SUPER_ADMIN);
 
         if ($envService->getValue('DEMO')) {
             Address::create([

@@ -4,6 +4,7 @@ namespace App\Enums;
 
 interface Role
 {
+    const SUPER_ADMIN    = 'Super Admin';
     const ADMIN          = 1;
     const CUSTOMER       = 2;
     const DELIVERY_BOY   = 3;

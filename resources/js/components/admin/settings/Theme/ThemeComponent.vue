@@ -52,6 +52,48 @@
                     </div>
 
                     <div class="form-col-12">
+                        <div class="theme-color-heading">
+                            <div>
+                                <h4>Storefront colors</h4>
+                                <p>Customize backgrounds, text, borders, and buttons across the customer UI.</p>
+                            </div>
+                            <button type="button" class="theme-reset-btn" @click="resetColors">Reset defaults</button>
+                        </div>
+                    </div>
+                    <div class="form-col-12 lg:form-col-7">
+                        <div class="theme-color-grid">
+                            <label v-for="field in colorFields" :key="field.key" class="theme-color-field">
+                                <span>{{ field.label }}</span>
+                                <div class="theme-color-control">
+                                    <input type="color" v-model="colors[field.key]" :aria-label="field.label" />
+                                    <input type="text" v-model="colors[field.key]" maxlength="7"
+                                        pattern="^#[0-9A-Fa-f]{6}$" class="db-field-control"
+                                        :class="errors[field.key] ? 'invalid' : ''" />
+                                </div>
+                                <small class="db-field-alert" v-if="errors[field.key]">{{ errors[field.key][0] }}</small>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-col-12 lg:form-col-5">
+                        <div class="theme-preview" :style="previewStyle">
+                            <div class="theme-preview-header">
+                                <img :src="theme_logo_reader" alt="Store logo preview" />
+                                <span>Home</span><span>Menu</span><span>Offers</span>
+                            </div>
+                            <div class="theme-preview-body">
+                                <p class="theme-preview-kicker">Live preview</p>
+                                <h4>Your storefront</h4>
+                                <p>See how the palette works across content, cards, and actions.</p>
+                                <div class="theme-preview-card">
+                                    <div><strong>Signature item</strong><small>Freshly prepared</small></div>
+                                    <button type="button">Add to cart</button>
+                                </div>
+                            </div>
+                            <div class="theme-preview-footer">Footer background</div>
+                        </div>
+                    </div>
+
+                    <div class="form-col-12">
                         <button type="submit" class="db-btn text-white bg-primary">
                             <i class="lab lab-save"></i>
                             <span>{{ $t("button.save") }}</span>
@@ -81,8 +123,41 @@ export default {
             theme_favicon_logo_reader: "",
             theme_footer_logo: "",
             theme_footer_logo_reader: "",
+            colors: {},
             errors: {},
         };
+    },
+    computed: {
+        colorDefaults() {
+            return {
+                theme_primary_color: "#c6a15b", theme_primary_hover_color: "#e2c986",
+                theme_button_text_color: "#080808", theme_page_background: "#080808",
+                theme_surface_color: "#111111", theme_header_background: "#0b0b0b",
+                theme_footer_background: "#050505", theme_heading_color: "#ffffff",
+                theme_body_text_color: "#a8a8ad", theme_border_color: "#332b1e",
+            };
+        },
+        colorFields() {
+            return [
+                ["theme_primary_color", "Primary buttons"], ["theme_primary_hover_color", "Links & hover"],
+                ["theme_button_text_color", "Button text"], ["theme_page_background", "Page background"],
+                ["theme_surface_color", "Cards & panels"], ["theme_header_background", "Header & mobile nav"],
+                ["theme_footer_background", "Footer"], ["theme_heading_color", "Headings"],
+                ["theme_body_text_color", "Body text"], ["theme_border_color", "Borders"],
+            ].map(([key, label]) => ({ key, label }));
+        },
+        previewStyle() {
+            return {
+                "--preview-primary": this.colors.theme_primary_color, "--preview-hover": this.colors.theme_primary_hover_color,
+                "--preview-button-text": this.colors.theme_button_text_color, "--preview-page": this.colors.theme_page_background,
+                "--preview-surface": this.colors.theme_surface_color, "--preview-header": this.colors.theme_header_background,
+                "--preview-footer": this.colors.theme_footer_background, "--preview-heading": this.colors.theme_heading_color,
+                "--preview-body": this.colors.theme_body_text_color, "--preview-border": this.colors.theme_border_color,
+            };
+        },
+    },
+    created() {
+        this.colors = { ...this.colorDefaults };
     },
     mounted() {
         this.list();
@@ -105,6 +180,9 @@ export default {
                     this.theme_logo_reader = res.data.data.theme_logo;
                     this.theme_favicon_logo_reader = res.data.data.theme_favicon_logo;
                     this.theme_footer_logo_reader = res.data.data.theme_footer_logo;
+                    Object.keys(this.colorDefaults).forEach((key) => {
+                        this.colors[key] = res.data.data[key] || this.colorDefaults[key];
+                    });
                     this.loading.isActive = false;
                 })
                 .catch((err) => {
@@ -123,6 +201,7 @@ export default {
                 if (this.theme_footer_logo) {
                     fd.append("theme_footer_logo", this.theme_footer_logo);
                 }
+                Object.keys(this.colorDefaults).forEach((key) => fd.append(key, this.colors[key]));
                 this.loading.isActive = true;
                 this.$store
                     .dispatch("theme/save", {
@@ -139,6 +218,7 @@ export default {
                         this.$refs.themeLogoProperty.value = null;
                         this.$refs.themeFaviconLogoProperty.value = null;
                         this.$refs.themeFooterLogoProperty.value = null;
+                        this.$store.dispatch("frontendSetting/lists").catch(() => {});
                     })
                     .catch((err) => {
                         this.loading.isActive = false;
@@ -149,6 +229,13 @@ export default {
                 alertService.error(err);
             }
         },
+        resetColors: function () {
+            this.colors = { ...this.colorDefaults };
+        },
     },
 };
 </script>
+
+<style scoped>
+.theme-color-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-top:12px;padding-top:24px;border-top:1px solid #e5e7eb}.theme-color-heading h4{font-size:18px;font-weight:700;color:#1f1f39}.theme-color-heading p{margin-top:4px;font-size:13px;color:#6e7191}.theme-reset-btn{flex-shrink:0;padding:8px 12px;border:1px solid #d9dbe9;border-radius:8px;color:#6e7191;font-size:13px;font-weight:600}.theme-color-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.theme-color-field>span{display:block;margin-bottom:7px;color:#1f1f39;font-size:13px;font-weight:600}.theme-color-control{display:flex;align-items:center;gap:8px}.theme-color-control input[type=color]{width:42px;height:42px;flex:none;padding:3px;border:1px solid #d9dbe9;border-radius:9px;background:#fff;cursor:pointer}.theme-color-control .db-field-control{height:42px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase}.theme-preview{position:sticky;top:20px;overflow:hidden;min-height:360px;border:1px solid var(--preview-border);border-radius:14px;color:var(--preview-body);background:var(--preview-page);box-shadow:0 14px 38px rgb(31 31 57 / 12%)}.theme-preview-header{display:flex;align-items:center;gap:14px;min-height:62px;padding:12px 16px;color:var(--preview-heading);background:var(--preview-header);border-bottom:1px solid var(--preview-border);font-size:11px}.theme-preview-header img{width:72px;max-height:30px;object-fit:contain;margin-right:auto}.theme-preview-body{padding:26px 20px}.theme-preview-kicker{color:var(--preview-hover);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em}.theme-preview-body h4{margin-top:7px;color:var(--preview-heading);font:600 24px/1.2 Georgia,serif}.theme-preview-body>p:not(.theme-preview-kicker){margin-top:8px;font-size:12px;line-height:1.6}.theme-preview-card{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:22px;padding:15px;border:1px solid var(--preview-border);border-radius:10px;background:var(--preview-surface)}.theme-preview-card strong,.theme-preview-card small{display:block}.theme-preview-card strong{color:var(--preview-heading);font-size:13px}.theme-preview-card small{margin-top:3px;color:var(--preview-body);font-size:10px}.theme-preview-card button{padding:9px 12px;border-radius:7px;color:var(--preview-button-text);background:var(--preview-primary);font-size:10px;font-weight:700}.theme-preview-card button:hover{background:var(--preview-hover)}.theme-preview-footer{padding:13px 20px;color:var(--preview-body);background:var(--preview-footer);border-top:1px solid var(--preview-border);font-size:10px}@media(max-width:640px){.theme-color-grid{grid-template-columns:1fr}.theme-color-heading{flex-direction:column}}
+</style>

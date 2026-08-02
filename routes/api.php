@@ -168,7 +168,7 @@ Route::prefix('admin')->name('admin.')->middleware(['installed', 'apiKey', 'auth
         Route::post('/', [DefaultAccessController::class, 'storeOrUpdate']);
     });
 
-    Route::prefix('setting')->name('setting.')->group(function () {
+    Route::prefix('setting')->name('setting.')->middleware('superAdmin')->group(function () {
         Route::prefix('company')->name('company.')->group(function () {
             Route::get('/', [CompanyController::class, 'index']);
             Route::match(['put', 'patch'], '/', [CompanyController::class, 'update']);

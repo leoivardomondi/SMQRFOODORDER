@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Role as EnumRole;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 
@@ -64,6 +65,11 @@ class RoleTableSeeder extends Seeder
                 'created_at' => now(),
                 'updated_at' => now(),
             ],
+        ]);
+
+        Role::firstOrCreate([
+            'name'       => EnumRole::SUPER_ADMIN,
+            'guard_name' => 'sanctum',
         ]);
     }
 }

@@ -1,6 +1,6 @@
 <template>
   <div :dir="direction">
-    <div v-if="theme === 'frontend'" class="frontend-theme min-h-screen">
+    <div v-if="theme === 'frontend'" class="frontend-theme min-h-screen" :style="frontendThemeStyle">
       <FrontendNavbarComponent v-if="!focusedLayout" />
       <FrontendCartComponent />
       <router-view></router-view>
@@ -58,6 +58,21 @@ export default {
     };
   },
   computed: {
+    frontendThemeStyle: function () {
+      const settings = this.$store.getters['frontendSetting/lists'] || {};
+      return {
+        '--store-primary': settings.theme_primary_color || '#c6a15b',
+        '--store-primary-hover': settings.theme_primary_hover_color || '#e2c986',
+        '--store-button-text': settings.theme_button_text_color || '#080808',
+        '--store-page-bg': settings.theme_page_background || '#080808',
+        '--store-surface': settings.theme_surface_color || '#111111',
+        '--store-header-bg': settings.theme_header_background || '#0b0b0b',
+        '--store-footer-bg': settings.theme_footer_background || '#050505',
+        '--store-heading': settings.theme_heading_color || '#ffffff',
+        '--store-body-text': settings.theme_body_text_color || '#a8a8ad',
+        '--store-border': settings.theme_border_color || '#332b1e',
+      };
+    },
     focusedLayout: function () {
       return this.$route.meta.focusedLayout === true;
     },

@@ -24,21 +24,21 @@
                     class="capitalize text-sm font-medium text-heading">
                     {{ $t('label.offers') }}
                 </router-link>
-                <div ref="pwaModal" v-if="!isPwaViewed" class="modal active ff-modal">
-                    <div class="modal-dialog max-w-[360px] p-6 text-center relative">
-                        <button class="modal-close absolute top-4 right-4" @click.prevent="closePwaModal">
+                <div ref="pwaModal" v-if="showPwaPrompt && !isPwaViewed" class="modal active ff-modal pwa-install-modal">
+                    <div class="modal-dialog pwa-install-card max-w-[360px] p-6 text-center relative">
+                        <button class="modal-close pwa-install-close absolute top-4 right-4" @click.prevent="closePwaModal">
                             <i class="fa-regular fa-circle-xmark"></i>
                         </button>
                         <h3 class="text-[18px] font-semibold leading-8 mb-6">
                             {{ $t("label.install_app") }} ?
                         </h3>
                         <div class="flex gap-3 justify-center text-center">
-                            <button type="button" class=" modal-close modal-btn-outline "
+                            <button type="button" class="modal-close modal-btn-outline pwa-install-cancel"
                                 @click.prevent="closePwaModal">
                                 <i class="lab lab-close"></i>
                                 <span>{{ $t("button.close") }}</span>
                             </button>
-                            <button id="installPWA" class="db-btn py-2 text-white bg-primary"
+                            <button id="installPWA" class="db-btn py-2 text-white bg-primary pwa-install-action"
                                 @click.prevent="closePwaModal">
                                 <i class="lab lab-save"></i><span> {{
                                     $t('button.install') }}</span></button>
@@ -256,6 +256,8 @@ export default {
     components: { LoadingComponent },
     data() {
         return {
+            showPwaPrompt: false,
+            pwaPromptTimer: null,
             loading: {
                 isActive: false,
             },
@@ -340,6 +342,12 @@ export default {
         }
     },
     mounted() {
+        if (!this.isPwaViewed) {
+            this.pwaPromptTimer = window.setTimeout(() => {
+                this.showPwaPrompt = true;
+            }, 60000);
+        }
+
         this.$store.dispatch('frontendWeather/show');
 
         window.addEventListener('scroll', () => {
@@ -453,6 +461,11 @@ export default {
             this.loading.isActive = false;
         });
     },
+    beforeUnmount() {
+        if (this.pwaPromptTimer) {
+            window.clearTimeout(this.pwaPromptTimer);
+        }
+    },
     methods: {
         textShortener: function (text, number = 30) {
             return appService.textShortener(text, number);
@@ -545,6 +558,7 @@ export default {
             this.orderNotificationStatus = false;
         },
         closePwaModal: function () {
+            this.showPwaPrompt = false;
             const modalTarget = this.$refs.pwaModal;
             modalTarget?.classList?.remove("active");
             document.body.style.overflowY = "auto";

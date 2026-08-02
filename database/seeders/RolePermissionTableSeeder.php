@@ -18,7 +18,10 @@ class RolePermissionTableSeeder extends Seeder
     public function run()
     {
         $adminRole = Role::find(EnumRole::ADMIN);
-        $adminRole?->givePermissionTo(Permission::all());
+        $adminRole?->syncPermissions(Permission::where('name', '!=', 'settings')->get());
+
+        $superAdminRole = Role::findByName(EnumRole::SUPER_ADMIN, 'sanctum');
+        $superAdminRole->syncPermissions(Permission::all());
 
         $branchManager = Role::find(EnumRole::BRANCH_MANAGER);
         if ($branchManager) {

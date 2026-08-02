@@ -735,8 +735,10 @@ export default {
             }
             if (!this.checkoutDraftRestored) {
                 if (this.checkoutProps.form.order_type === orderTypeEnum.TAKEAWAY) {
-                    this.checkoutProps.form.branch_id = null;
-                } else {
+                    if (!this.checkoutProps.form.branch_id) {
+                        this.checkoutProps.form.branch_id = null;
+                    }
+                } else if (!this.checkoutProps.form.branch_id) {
                     this.checkoutProps.form.branch_id = this.$store.getters['globalState/lists'].branch_id;
                 }
             }
@@ -1047,21 +1049,18 @@ export default {
                         this.branchWhatsappSetup();
                     }).catch((err) => {
                         this.loading.isActive = false;
-                        this.checkoutProps.form.branch_id = null;
-                        this.localAddress = {};
-                        this.checkoutProps.form.address_id = null;
                         this.checkoutProps.form.delivery_charge = 0;
-                        alertService.info(err.response.data.message);
+                        if (err && err.response && err.response.data && err.response.data.message) {
+                            alertService.info(err.response.data.message);
+                        }
                         this.branchWhatsappSetup();
                     });
                 }
             } else {
                 this.distanceExceeded = false;
-                this.localAddress = {};
-                this.checkoutProps.form.address_id = null;
-                if (this.checkoutProps.form.order_type === orderTypeEnum.DELIVERY) {
-                    this.checkoutProps.form.branch_id = null;
-                };
+                if (!this.checkoutProps.form.address_id) {
+                    this.localAddress = {};
+                }
                 this.checkoutProps.form.delivery_charge = 0;
                 this.branchWhatsappSetup();
             }
@@ -1390,7 +1389,7 @@ ${this.$t('label.address')}  : ${order.order_address?.address}
         globalState: {
             deep: true,
             handler(global) {
-                if (global.branch_id !== "undefined") {
+                if (!this.checkoutProps.form.branch_id && global.branch_id && global.branch_id !== "undefined") {
                     this.loading.isActive = true;
                     this.checkoutProps.form.branch_id = global.branch_id;
                     this.$store.dispatch("frontendBranch/show", this.checkoutProps.form.branch_id).then(res => {
