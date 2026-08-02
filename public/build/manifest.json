@@ -2012,6 +2012,50 @@
       "_paymentTypeEnum.9d030a0b.js"
     ]
   },
+  "ItemComponent.css": {
+    "file": "assets/ItemComponent.33cfb423.css",
+    "src": "ItemComponent.css"
+  },
+  "resources/js/components/admin/salesReport/SalesReportListComponent.css": {
+    "file": "assets/SalesReportListComponent.73bc70ee.css",
+    "src": "resources/js/components/admin/salesReport/SalesReportListComponent.css"
+  },
+  "resources/js/components/admin/pushNotification/PushNotificationListComponent.css": {
+    "file": "assets/PushNotificationListComponent.276dc81f.css",
+    "src": "resources/js/components/admin/pushNotification/PushNotificationListComponent.css"
+  },
+  "resources/js/components/admin/onlineOrders/OnlineOrderListComponent.css": {
+    "file": "assets/OnlineOrderListComponent.f77ebd40.css",
+    "src": "resources/js/components/admin/onlineOrders/OnlineOrderListComponent.css"
+  },
+  "resources/js/components/admin/employees/EmployeeListComponent.css": {
+    "file": "assets/EmployeeListComponent.cea648f1.css",
+    "src": "resources/js/components/admin/employees/EmployeeListComponent.css"
+  },
+  "resources/js/components/admin/messages/MessageListComponent.css": {
+    "file": "assets/MessageListComponent.302ac6ea.css",
+    "src": "resources/js/components/admin/messages/MessageListComponent.css"
+  },
+  "resources/js/components/admin/pos/PosComponent.css": {
+    "file": "assets/PosComponent.cd1e7a38.css",
+    "src": "resources/js/components/admin/pos/PosComponent.css"
+  },
+  "resources/js/components/admin/deliveryBoys/DeliveryBoyListComponent.css": {
+    "file": "assets/DeliveryBoyListComponent.c82b1a4e.css",
+    "src": "resources/js/components/admin/deliveryBoys/DeliveryBoyListComponent.css"
+  },
+  "resources/js/components/admin/itemsReport/ItemsReportListComponent.css": {
+    "file": "assets/ItemsReportListComponent.60e72380.css",
+    "src": "resources/js/components/admin/itemsReport/ItemsReportListComponent.css"
+  },
+  "resources/js/components/admin/administrators/AdministratorListComponent.css": {
+    "file": "assets/AdministratorListComponent.5313e44d.css",
+    "src": "resources/js/components/admin/administrators/AdministratorListComponent.css"
+  },
+  "resources/js/components/admin/waiters/WaiterListComponent.css": {
+    "file": "assets/WaiterListComponent.0066f0f6.css",
+    "src": "resources/js/components/admin/waiters/WaiterListComponent.css"
+  },
   "resources/js/components/admin/chefs/ChefListComponent.css": {
     "file": "assets/ChefListComponent.88ba12d3.css",
     "src": "resources/js/components/admin/chefs/ChefListComponent.css"
@@ -2019,18 +2063,6 @@
   "categoryDesignEnum.css": {
     "file": "assets/categoryDesignEnum.455c0b22.css",
     "src": "categoryDesignEnum.css"
-  },
-  "resources/js/components/admin/offers/OfferListComponent.css": {
-    "file": "assets/OfferListComponent.135fe060.css",
-    "src": "resources/js/components/admin/offers/OfferListComponent.css"
-  },
-  "resources/js/components/admin/customers/CustomerListComponent.css": {
-    "file": "assets/CustomerListComponent.c82fda67.css",
-    "src": "resources/js/components/admin/customers/CustomerListComponent.css"
-  },
-  "resources/js/components/admin/salesReport/SalesReportListComponent.css": {
-    "file": "assets/SalesReportListComponent.73bc70ee.css",
-    "src": "resources/js/components/admin/salesReport/SalesReportListComponent.css"
   },
   "resources/js/components/admin/creditBalanceReport/CreditBalanceReportComponent.css": {
     "file": "assets/CreditBalanceReportComponent.8fdd1f72.css",
@@ -2044,81 +2076,49 @@
     "file": "assets/CouponListComponent.c00a1397.css",
     "src": "resources/js/components/admin/coupons/CouponListComponent.css"
   },
-  "resources/js/components/admin/settings/Theme/ThemeComponent.css": {
-    "file": "assets/ThemeComponent.2b066f5f.css",
-    "src": "resources/js/components/admin/settings/Theme/ThemeComponent.css"
-  },
-  "resources/js/components/admin/pushNotification/PushNotificationListComponent.css": {
-    "file": "assets/PushNotificationListComponent.276dc81f.css",
-    "src": "resources/js/components/admin/pushNotification/PushNotificationListComponent.css"
-  },
-  "resources/js/components/admin/deliveryBoys/DeliveryBoyListComponent.css": {
-    "file": "assets/DeliveryBoyListComponent.c82b1a4e.css",
-    "src": "resources/js/components/admin/deliveryBoys/DeliveryBoyListComponent.css"
-  },
-  "resources/js/components/admin/employees/EmployeeListComponent.css": {
-    "file": "assets/EmployeeListComponent.cea648f1.css",
-    "src": "resources/js/components/admin/employees/EmployeeListComponent.css"
-  },
-  "resources/js/components/admin/subscribers/SubscriberListComponent.css": {
-    "file": "assets/SubscriberListComponent.c27294bd.css",
-    "src": "resources/js/components/admin/subscribers/SubscriberListComponent.css"
-  },
-  "resources/js/components/admin/onlineOrders/OnlineOrderListComponent.css": {
-    "file": "assets/OnlineOrderListComponent.f77ebd40.css",
-    "src": "resources/js/components/admin/onlineOrders/OnlineOrderListComponent.css"
-  },
-  "resources/js/components/admin/pos/PosComponent.css": {
-    "file": "assets/PosComponent.cd1e7a38.css",
-    "src": "resources/js/components/admin/pos/PosComponent.css"
+  "resources/js/components/admin/transactions/TransactionListComponent.css": {
+    "file": "assets/TransactionListComponent.e71fdc1d.css",
+    "src": "resources/js/components/admin/transactions/TransactionListComponent.css"
   },
   "resources/js/components/admin/posOrders/PosOrderListComponent.css": {
     "file": "assets/PosOrderListComponent.dc6e2ddb.css",
     "src": "resources/js/components/admin/posOrders/PosOrderListComponent.css"
   },
-  "resources/js/components/admin/itemsReport/ItemsReportListComponent.css": {
-    "file": "assets/ItemsReportListComponent.60e72380.css",
-    "src": "resources/js/components/admin/itemsReport/ItemsReportListComponent.css"
+  "resources/js/components/admin/offers/OfferListComponent.css": {
+    "file": "assets/OfferListComponent.135fe060.css",
+    "src": "resources/js/components/admin/offers/OfferListComponent.css"
   },
-  "resources/js/components/admin/messages/MessageListComponent.css": {
-    "file": "assets/MessageListComponent.302ac6ea.css",
-    "src": "resources/js/components/admin/messages/MessageListComponent.css"
+  "resources/js/components/admin/customers/CustomerListComponent.css": {
+    "file": "assets/CustomerListComponent.c82fda67.css",
+    "src": "resources/js/components/admin/customers/CustomerListComponent.css"
   },
-  "ItemComponent.css": {
-    "file": "assets/ItemComponent.33cfb423.css",
-    "src": "ItemComponent.css"
+  "resources/js/components/admin/settings/Theme/ThemeComponent.css": {
+    "file": "assets/ThemeComponent.2b066f5f.css",
+    "src": "resources/js/components/admin/settings/Theme/ThemeComponent.css"
+  },
+  "resources/js/components/admin/subscribers/SubscriberListComponent.css": {
+    "file": "assets/SubscriberListComponent.c27294bd.css",
+    "src": "resources/js/components/admin/subscribers/SubscriberListComponent.css"
+  },
+  "main.css": {
+    "file": "assets/main.768eba40.css",
+    "src": "main.css"
   },
   "swiper.css": {
     "file": "assets/swiper.0dce9c3c.css",
     "src": "swiper.css"
   },
-  "resources/js/components/admin/transactions/TransactionListComponent.css": {
-    "file": "assets/TransactionListComponent.e71fdc1d.css",
-    "src": "resources/js/components/admin/transactions/TransactionListComponent.css"
-  },
-  "resources/js/components/admin/administrators/AdministratorListComponent.css": {
-    "file": "assets/AdministratorListComponent.5313e44d.css",
-    "src": "resources/js/components/admin/administrators/AdministratorListComponent.css"
-  },
-  "resources/js/components/admin/waiters/WaiterListComponent.css": {
-    "file": "assets/WaiterListComponent.0066f0f6.css",
-    "src": "resources/js/components/admin/waiters/WaiterListComponent.css"
-  },
-  "main.css": {
-    "file": "assets/main.768eba40.css",
-    "src": "main.css"
+  "resources/js/app.css": {
+    "file": "assets/app.d0f550b1.css",
+    "src": "resources/js/app.css"
   },
   "resources/js/components/admin/settings/Page/PageListComponent.css": {
     "file": "assets/PageListComponent.16c8fc1c.css",
     "src": "resources/js/components/admin/settings/Page/PageListComponent.css"
   },
   "resources/css/app.css": {
-    "file": "assets/app.03df7eee.css",
+    "file": "assets/app.444fe8d2.css",
     "src": "resources/css/app.css",
     "isEntry": true
-  },
-  "resources/js/app.css": {
-    "file": "assets/app.d0f550b1.css",
-    "src": "resources/js/app.css"
   }
 }
