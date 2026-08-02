@@ -94,19 +94,19 @@
     <!--========INFO PART END===========-->
 
     <!--========VARIATION PART START=========-->
-    <div id="item-variation-modal" ref="itemVariationModal" class="fixed inset-0 z-[100] hidden bg-white flex flex-col h-full w-full overflow-hidden">
+    <div id="item-variation-modal" ref="itemVariationModal" class="fixed inset-0 z-[100] hidden bg-black text-white flex flex-col h-full w-full overflow-hidden">
         <div class="w-full h-full flex flex-col relative overflow-hidden" v-if="item">
             
             <!-- Fixed Top Header Bar -->
-            <div class="sticky top-0 left-0 right-0 z-30 bg-white/95 backdrop-blur-md border-b border-gray-100 px-4 py-3 flex items-center justify-between shadow-xs flex-shrink-0">
+            <div class="sticky top-0 left-0 right-0 z-30 bg-black/95 backdrop-blur-md border-b border-gray-800 px-4 py-3 flex items-center justify-between shadow-xs flex-shrink-0">
                 <div class="flex items-center gap-3 min-w-0 pr-2">
                     <!-- Close Button -->
-                    <button class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-100 text-gray-800 hover:bg-gray-200 transition flex-shrink-0"
+                    <button class="w-9 h-9 flex items-center justify-center rounded-full bg-gray-800 text-white hover:bg-gray-700 transition flex-shrink-0"
                         @click.prevent="variationModalHide" aria-label="Close product view">
                         <i class="fa-solid fa-xmark text-base"></i>
                     </button>
                     <!-- Fixed Product Name -->
-                    <h2 class="text-base sm:text-lg font-bold text-gray-900 truncate capitalize">{{ item.name }}</h2>
+                    <h2 class="text-base sm:text-lg font-bold text-white truncate capitalize">{{ item.name }}</h2>
                 </div>
                 <!-- Price Display -->
                 <span class="text-sm sm:text-base font-bold text-primary flex-shrink-0">
@@ -115,7 +115,7 @@
             </div>
 
             <!-- Scrollable Body Content Area -->
-            <div class="flex-1 overflow-y-auto">
+            <div class="flex-1 overflow-y-auto bg-black text-white">
                 <!-- Header Cover Image -->
                 <div class="relative w-full min-h-[220px] sm:min-h-[300px] max-h-[400px] bg-slate-950 flex items-center justify-center p-2">
                     <img class="max-w-full max-h-[380px] w-auto h-auto object-contain mx-auto rounded-lg shadow-md" :src="item.cover || item.thumb" alt="product image">
@@ -123,20 +123,20 @@
 
                 <!-- Product Details & Addons Area -->
                 <div class="px-4 py-5 mb-28">
-                    <h2 class="text-2xl font-bold text-gray-900 mb-1 capitalize">{{ item.name }}</h2>
-                    <h3 class="text-xl font-bold text-gray-900 mb-4">
+                    <h2 class="text-2xl font-bold text-white mb-1 capitalize">{{ item.name }}</h2>
+                    <h3 class="text-xl font-bold text-white mb-4">
                         {{ item.offer.length > 0 ? item.offer[0].currency_price : item.currency_price }}
                     </h3>
-                    <p v-if="item.description" class="text-base text-gray-500 mb-6">{{ item.description }}</p>
+                    <p v-if="item.description" class="text-base text-gray-400 mb-6">{{ item.description }}</p>
 
                     <!-- Quantity Selector -->
                     <div class="flex justify-center mb-6">
-                        <div class="flex items-center gap-6 px-6 py-3 rounded-full bg-gray-100">
-                            <button @click.prevent="quantityDecrement" class="text-gray-500 hover:text-black" aria-label="Decrease quantity">
+                        <div class="flex items-center gap-6 px-6 py-3 rounded-full bg-gray-800 text-white">
+                            <button @click.prevent="quantityDecrement" class="text-gray-400 hover:text-white" aria-label="Decrease quantity">
                                 <i class="fa-solid fa-minus text-lg"></i>
                             </button>
-                            <span class="text-lg font-bold text-gray-900 w-6 text-center">{{ temp.quantity }}</span>
-                            <button @click.prevent="quantityIncrement" class="text-gray-500 hover:text-black" aria-label="Increase quantity">
+                            <span class="text-lg font-bold text-white w-6 text-center">{{ temp.quantity }}</span>
+                            <button @click.prevent="quantityIncrement" class="text-gray-400 hover:text-white" aria-label="Increase quantity">
                                 <i class="fa-solid fa-plus text-lg"></i>
                             </button>
                         </div>
@@ -145,14 +145,14 @@
                     <!-- Variations -->
                     <div v-if="item.itemAttributes && item.itemAttributes.length > 0" class="mb-6">
                         <div v-for="attribute in item.itemAttributes" :key="attribute.id" class="mb-4">
-                            <h3 class="text-sm font-semibold text-gray-900 mb-2 capitalize">{{ attribute.name }}</h3>
+                            <h3 class="text-sm font-semibold text-white mb-2 capitalize">{{ attribute.name }}</h3>
                             <div class="flex flex-wrap gap-2">
                                 <button type="button"
                                     v-for="variation in item.variations[attribute.id]"
                                     :key="variation.id"
                                     @click.prevent="changeVariationAdjust(attribute.id, variation.id)"
                                     class="px-4 py-2 text-sm rounded-lg border transition font-medium"
-                                    :class="temp.item_variations.variations[attribute.id] === variation.id ? 'border-primary bg-primary/10 text-primary font-bold' : 'border-gray-200 text-gray-700 bg-white'">
+                                    :class="temp.item_variations.variations[attribute.id] === variation.id ? 'border-primary bg-primary/20 text-primary font-bold' : 'border-gray-800 text-gray-300 bg-gray-900'">
                                     {{ variation.name }} <span v-if="variation.convert_price > 0" class="text-xs opacity-75">(+{{ variation.currency_price }})</span>
                                 </button>
                             </div>
@@ -161,14 +161,14 @@
 
                     <!-- Extras -->
                     <div v-if="item.extras && item.extras.length > 0" class="mb-6">
-                        <h3 class="text-sm font-semibold text-gray-900 mb-2 capitalize">Extras</h3>
+                        <h3 class="text-sm font-semibold text-white mb-2 capitalize">Extras</h3>
                         <div class="flex flex-col gap-2">
-                            <label v-for="extra in item.extras" :key="extra.id" class="flex items-center justify-between p-3 rounded-xl border border-gray-200 bg-gray-50/50 cursor-pointer hover:border-primary transition">
+                            <label v-for="extra in item.extras" :key="extra.id" class="flex items-center justify-between p-3 rounded-xl border border-gray-800 bg-gray-900 cursor-pointer hover:border-primary transition">
                                 <div class="flex items-center gap-3">
-                                    <input type="checkbox" :value="extra.id" @change="changeExtra($event, extra.id, extra.name)" class="w-4 h-4 rounded text-primary focus:ring-primary">
-                                    <span class="text-sm font-medium text-gray-800">{{ extra.name }}</span>
+                                    <input type="checkbox" :value="extra.id" @change="changeExtra($event, extra.id, extra.name)" class="w-4 h-4 rounded text-primary focus:ring-primary bg-gray-800 border-gray-700">
+                                    <span class="text-sm font-medium text-gray-200">{{ extra.name }}</span>
                                 </div>
-                                <span class="text-xs font-semibold text-gray-600">+{{ extra.currency_price }}</span>
+                                <span class="text-xs font-semibold text-gray-400">+{{ extra.currency_price }}</span>
                             </label>
                         </div>
                     </div>
@@ -176,28 +176,28 @@
                     <!-- Addons Grouped by Category -->
                     <div v-if="Object.keys(groupedAddons).length > 0" class="mb-6">
                         <div v-for="(addonGroup, groupTitle) in groupedAddons" :key="groupTitle" class="mb-5">
-                            <h3 class="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wide">
+                            <h3 class="text-sm font-bold text-white mb-3 uppercase tracking-wide">
                                 <span>{{ groupTitle }}</span>
                             </h3>
                             <div class="flex flex-col gap-3">
-                                <div v-for="addon in addonGroup" :key="addon.id" class="flex items-center justify-between p-3 rounded-xl border border-gray-200 bg-gray-50/50">
+                                <div v-for="addon in addonGroup" :key="addon.id" class="flex items-center justify-between p-3 rounded-xl border border-gray-800 bg-gray-900">
                                     <div class="flex items-center gap-3">
-                                        <img :src="addon.thumb" alt="addon image" class="w-12 h-12 rounded-lg object-cover bg-gray-200">
+                                        <img :src="addon.thumb" alt="addon image" class="w-12 h-12 rounded-lg object-cover bg-gray-800">
                                         <div>
-                                            <h4 class="text-sm font-medium text-gray-900">{{ addon.addon_item_name }}</h4>
-                                            <p class="text-xs text-gray-500 font-semibold">{{ addon.offer.length > 0 ? addon.offer[0].currency_price : addon.addon_item_currency_price }}</p>
+                                            <h4 class="text-sm font-medium text-white">{{ addon.addon_item_name }}</h4>
+                                            <p class="text-xs text-gray-400 font-semibold">{{ addon.offer.length > 0 ? addon.offer[0].currency_price : addon.addon_item_currency_price }}</p>
                                         </div>
                                     </div>
                                     <div class="flex items-center">
                                         <button v-if="!addons[addon.id]" @click.prevent="changeAddon(addon)" class="px-3 py-1.5 rounded-full text-xs font-bold text-primary border border-primary hover:bg-primary hover:text-white transition">
                                             + Add
                                         </button>
-                                        <div v-else class="flex items-center gap-2 rounded-full bg-gray-200 px-2 py-1">
-                                            <button @click.prevent="addonQuantityDecrement(addon.id)" class="w-6 h-6 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-300">
+                                        <div v-else class="flex items-center gap-2 rounded-full bg-gray-800 px-2 py-1">
+                                            <button @click.prevent="addonQuantityDecrement(addon.id)" class="w-6 h-6 rounded-full flex items-center justify-center text-gray-400 hover:bg-gray-700">
                                                 <i class="fa-solid fa-minus text-xs"></i>
                                             </button>
-                                            <span class="text-xs font-bold text-gray-900 min-w-[1rem] text-center">{{ addonQuantity[addon.id] }}</span>
-                                            <button @click.prevent="addonQuantityIncrement(addon.id)" class="w-6 h-6 rounded-full flex items-center justify-center text-primary hover:bg-gray-300">
+                                            <span class="text-xs font-bold text-white min-w-[1rem] text-center">{{ addonQuantity[addon.id] }}</span>
+                                            <button @click.prevent="addonQuantityIncrement(addon.id)" class="w-6 h-6 rounded-full flex items-center justify-center text-primary hover:bg-gray-700">
                                                 <i class="fa-solid fa-plus text-xs"></i>
                                             </button>
                                         </div>
@@ -208,14 +208,14 @@
                     </div>
                     
                     <div class="mb-12">
-                        <h3 class="text-sm font-semibold mb-2">Special Instructions</h3>
-                        <textarea v-model="temp.instruction" placeholder="Add note" class="w-full border rounded-lg p-2 text-sm bg-gray-50"></textarea>
+                        <h3 class="text-sm font-semibold text-white mb-2">Special Instructions</h3>
+                        <textarea v-model="temp.instruction" placeholder="Add note" class="w-full border border-gray-800 rounded-lg p-2 text-sm bg-gray-900 text-white placeholder-gray-500"></textarea>
                     </div>
                 </div>
             </div>
 
             <!-- Fixed Bottom Action -->
-            <div class="fixed bottom-0 left-0 w-full p-4 bg-white/95 backdrop-blur-md border-t border-gray-100 z-30">
+            <div class="fixed bottom-0 left-0 w-full p-4 bg-black/95 backdrop-blur-md border-t border-gray-800 z-30">
                 <button type="button" :disabled="temp.total_price <= 0" @click.prevent="addToCart"
                     class="w-full bg-primary text-white font-bold text-lg py-4 rounded-full shadow-lg hover:bg-primary-dark transition flex justify-center items-center">
                     Add {{ temp.quantity }} for {{
