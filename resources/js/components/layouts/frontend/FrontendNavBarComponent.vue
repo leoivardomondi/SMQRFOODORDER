@@ -8,8 +8,8 @@
                 </router-link>
                 <!-- Mobile Top Right Search Icon (Black Font) -->
                 <div class="flex items-center gap-3 lg:hidden">
-                    <button type="button" @click="toggleMobileSearch" class="p-1.5 text-black hover:text-primary transition-colors focus:outline-none" title="Search">
-                        <i class="lab lab-search-normal text-xl font-bold text-black" style="color: #000000 !important;"></i>
+                    <button type="button" @click="toggleMobileSearch" class="p-1.5 focus:outline-none" title="Search">
+                        <i class="lab lab-search-normal text-2xl font-bold mobile-search-btn-icon" style="color: #000000 !important;"></i>
                     </button>
                 </div>
             </div>
