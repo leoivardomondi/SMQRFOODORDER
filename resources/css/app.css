@@ -622,6 +622,15 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
 }
 
+.frontend-theme .ff-header nav a:not(.text-primary) {
+    color: #000000 !important;
+}
+
+.frontend-theme .product-card-grid-title,
+.frontend-theme .product-card-list-title {
+    color: #000000 !important;
+}
+
 .frontend-theme .header-search-group {
     color: var(--store-heading);
     background: var(--store-surface) !important;

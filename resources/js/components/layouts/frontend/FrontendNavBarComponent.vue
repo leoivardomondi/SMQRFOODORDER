@@ -10,18 +10,18 @@
             </div>
             <nav class="items-center justify-center gap-6 hidden lg:flex">
                 <router-link :to="{ name: 'frontend.home' }"
-                    :class="checkIsPathAndRoutePathSame('/home') ? 'text-primary' : ''"
-                    class="capitalize text-sm font-medium text-heading">
+                    :class="checkIsPathAndRoutePathSame('/home') ? 'text-primary' : 'text-black'"
+                    class="capitalize text-sm font-semibold text-black">
                     {{ $t('menu.home') }}
                 </router-link>
                 <router-link :to="{ name: 'frontend.menu', query: { s: categoryProps.slug } }"
-                    :class="checkIsPathAndRoutePathSame('/menu') ? 'text-primary' : ''"
-                    class="capitalize text-sm font-medium text-heading">
+                    :class="checkIsPathAndRoutePathSame('/menu') ? 'text-primary' : 'text-black'"
+                    class="capitalize text-sm font-semibold text-black">
                     {{ $t('label.menu') }}
                 </router-link>
                 <router-link :to="{ name: 'frontend.offers' }"
-                    :class="checkIsPathAndRoutePathSame('/offers') ? 'text-primary' : ''"
-                    class="capitalize text-sm font-medium text-heading">
+                    :class="checkIsPathAndRoutePathSame('/offers') ? 'text-primary' : 'text-black'"
+                    class="capitalize text-sm font-semibold text-black">
                     {{ $t('label.offers') }}
                 </router-link>
                 <div ref="pwaModal" v-if="showPwaPrompt && !isPwaViewed" class="modal active ff-modal pwa-install-modal">

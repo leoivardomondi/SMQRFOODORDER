@@ -1,0 +1,1 @@
+import{_ as e,f as t,o as n,l as r}from"./app.06515d72.js";const s={name:"WhatsappComponent"};function a(p,c,_,m,f,i){const o=t("router-view");return n(),r(o)}const l=e(s,[["render",a]]);export{l as default};
