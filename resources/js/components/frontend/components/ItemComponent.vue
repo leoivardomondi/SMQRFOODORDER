@@ -107,32 +107,88 @@
             </div>
 
             <!-- Content Area -->
-            <div class="px-4 py-6 flex-1">
+            <div class="px-4 py-6 flex-1 mb-20">
                 <h2 class="text-2xl font-bold text-gray-900 mb-1 capitalize">{{ item.name }}</h2>
                 <h3 class="text-xl font-bold text-gray-900 mb-4">
                     {{ item.offer.length > 0 ? item.offer[0].currency_price : item.currency_price }}
                 </h3>
-                <p class="text-base text-gray-500 mb-8">{{ item.description }}</p>
+                <p v-if="item.description" class="text-base text-gray-500 mb-6">{{ item.description }}</p>
 
                 <!-- Quantity Selector -->
-                <div class="flex justify-center mb-8">
+                <div class="flex justify-center mb-6">
                     <div class="flex items-center gap-6 px-6 py-3 rounded-full bg-gray-100">
-                        <button @click.prevent="quantityDecrement" class="text-gray-500 hover:text-black">
+                        <button @click.prevent="quantityDecrement" class="text-gray-500 hover:text-black" aria-label="Decrease quantity">
                             <i class="fa-solid fa-minus text-lg"></i>
                         </button>
                         <span class="text-lg font-bold text-gray-900 w-6 text-center">{{ temp.quantity }}</span>
-                        <button @click.prevent="quantityIncrement" class="text-gray-500 hover:text-black">
+                        <button @click.prevent="quantityIncrement" class="text-gray-500 hover:text-black" aria-label="Increase quantity">
                             <i class="fa-solid fa-plus text-lg"></i>
                         </button>
                     </div>
                 </div>
 
-                <!-- Variations & Extras (Hidden or simplified if they exist) -->
-                <div v-if="item.itemAttributes.length > 0" class="mb-4 text-center text-sm text-gray-400">
-                    <p>Options available</p>
+                <!-- Variations -->
+                <div v-if="item.itemAttributes && item.itemAttributes.length > 0" class="mb-6">
+                    <div v-for="attribute in item.itemAttributes" :key="attribute.id" class="mb-4">
+                        <h3 class="text-sm font-semibold text-gray-900 mb-2 capitalize">{{ attribute.name }}</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <button type="button"
+                                v-for="variation in item.variations[attribute.id]"
+                                :key="variation.id"
+                                @click.prevent="changeVariationAdjust(attribute.id, variation.id)"
+                                class="px-4 py-2 text-sm rounded-lg border transition font-medium"
+                                :class="temp.item_variations.variations[attribute.id] === variation.id ? 'border-primary bg-primary/10 text-primary font-bold' : 'border-gray-200 text-gray-700 bg-white'">
+                                {{ variation.name }} <span v-if="variation.convert_price > 0" class="text-xs opacity-75">(+{{ variation.currency_price }})</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Extras -->
+                <div v-if="item.extras && item.extras.length > 0" class="mb-6">
+                    <h3 class="text-sm font-semibold text-gray-900 mb-2 capitalize">Extras</h3>
+                    <div class="flex flex-col gap-2">
+                        <label v-for="extra in item.extras" :key="extra.id" class="flex items-center justify-between p-3 rounded-xl border border-gray-200 bg-gray-50/50 cursor-pointer hover:border-primary transition">
+                            <div class="flex items-center gap-3">
+                                <input type="checkbox" :value="extra.id" @change="changeExtra($event, extra.id, extra.name)" class="w-4 h-4 rounded text-primary focus:ring-primary">
+                                <span class="text-sm font-medium text-gray-800">{{ extra.name }}</span>
+                            </div>
+                            <span class="text-xs font-semibold text-gray-600">+{{ extra.currency_price }}</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Addons -->
+                <div v-if="item.addons && item.addons.length > 0" class="mb-6">
+                    <h3 class="text-sm font-semibold text-gray-900 mb-3 capitalize">Addons</h3>
+                    <div class="flex flex-col gap-3">
+                        <div v-for="addon in item.addons" :key="addon.id" class="flex items-center justify-between p-3 rounded-xl border border-gray-200 bg-gray-50/50">
+                            <div class="flex items-center gap-3">
+                                <img :src="addon.thumb" alt="addon image" class="w-12 h-12 rounded-lg object-cover bg-gray-200">
+                                <div>
+                                    <h4 class="text-sm font-medium text-gray-900">{{ addon.addon_item_name }}</h4>
+                                    <p class="text-xs text-gray-500 font-semibold">{{ addon.offer.length > 0 ? addon.offer[0].currency_price : addon.addon_item_currency_price }}</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center">
+                                <button v-if="!addons[addon.id]" @click.prevent="changeAddon(addon)" class="px-3 py-1.5 rounded-full text-xs font-bold text-primary border border-primary hover:bg-primary hover:text-white transition">
+                                    + Add
+                                </button>
+                                <div v-else class="flex items-center gap-2 rounded-full bg-gray-200 px-2 py-1">
+                                    <button @click.prevent="addonQuantityDecrement(addon.id)" class="w-6 h-6 rounded-full flex items-center justify-center text-gray-600 hover:bg-gray-300">
+                                        <i class="fa-solid fa-minus text-xs"></i>
+                                    </button>
+                                    <span class="text-xs font-bold text-gray-900 min-w-[1rem] text-center">{{ addonQuantity[addon.id] }}</span>
+                                    <button @click.prevent="addonQuantityIncrement(addon.id)" class="w-6 h-6 rounded-full flex items-center justify-center text-primary hover:bg-gray-300">
+                                        <i class="fa-solid fa-plus text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 
-                <div class="mb-24">
+                <div class="mb-12">
                     <h3 class="text-sm font-semibold mb-2">Special Instructions</h3>
                     <textarea v-model="temp.instruction" placeholder="Add note" class="w-full border rounded-lg p-2 text-sm bg-gray-50"></textarea>
                 </div>

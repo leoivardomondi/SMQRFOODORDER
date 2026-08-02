@@ -1,1 +1,0 @@
-import{_ as e,f as n,o as t,l as r}from"./app.ef959dc4.js";const c={name:"BranchComponent"};function s(a,p,_,m,f,i){const o=n("router-view");return t(),r(o)}const l=e(c,[["render",s]]);export{l as default};
