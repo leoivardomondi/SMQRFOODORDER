@@ -37,6 +37,7 @@ import FrontendCookiesComponent from "./layouts/frontend/FrontendCookiesComponen
 import WhatsappSupportComponent from "./layouts/frontend/WhatsappSupportComponent";
 import displayModeEnum from "../enums/modules/displayModeEnum";
 import env from "../config/env";
+import { initCartAbandonmentTracker } from "../services/cartAbandonmentService";
 
 
 export default {
@@ -101,6 +102,9 @@ export default {
         };
       }).catch();
     }
+  },
+  mounted() {
+    initCartAbandonmentTracker(this.$store);
   },
   watch: {
     $route(e) {

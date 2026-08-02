@@ -440,6 +440,7 @@ import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/css';
 import statusEnum from "../../../enums/modules/statusEnum";
 import env from "../../../config/env";
+import { setOrderPlaced } from "../../../services/cartAbandonmentService";
 
 
 export default {
@@ -1241,6 +1242,7 @@ export default {
             };
             this.$store.dispatch('frontendOrder/save', orderPayload).then(orderResponse => {
                 this.orderPlacedSuccessfully = true;
+                setOrderPlaced(true);
                 if (this.abandonmentTimer) {
                     clearTimeout(this.abandonmentTimer);
                 }
