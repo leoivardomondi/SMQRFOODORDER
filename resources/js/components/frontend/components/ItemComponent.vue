@@ -161,9 +161,8 @@
                 <!-- Addons Grouped by Category -->
                 <div v-if="Object.keys(groupedAddons).length > 0" class="mb-6">
                     <div v-for="(addonGroup, groupTitle) in groupedAddons" :key="groupTitle" class="mb-5">
-                        <h3 class="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wide flex items-center gap-2">
+                        <h3 class="text-sm font-bold text-gray-900 mb-3 uppercase tracking-wide">
                             <span>{{ groupTitle }}</span>
-                            <span class="text-xs font-normal text-gray-400 capitalize">(optional)</span>
                         </h3>
                         <div class="flex flex-col gap-3">
                             <div v-for="addon in addonGroup" :key="addon.id" class="flex items-center justify-between p-3 rounded-xl border border-gray-200 bg-gray-50/50">
@@ -300,13 +299,13 @@ export default {
                 let sectionTitle = '';
                 const catLower = catName.trim().toLowerCase();
                 if (catLower.includes('drink') || catLower.includes('beverage') || catLower.includes('soda')) {
-                    sectionTitle = 'ADD A DRINK';
+                    sectionTitle = 'ADD A DRINK ?';
                 } else if (catLower.includes('fries') || catLower.includes('chips')) {
-                    sectionTitle = 'ADD FRIES';
+                    sectionTitle = 'ADD FRIES ?';
                 } else if (catLower === 'addons' || catLower === 'addon') {
-                    sectionTitle = 'ADDONS';
+                    sectionTitle = 'ADDONS ?';
                 } else {
-                    sectionTitle = 'ADD ' + catName.toUpperCase();
+                    sectionTitle = 'ADD ' + catName.toUpperCase() + ' ?';
                 }
 
                 if (!groups[sectionTitle]) {
