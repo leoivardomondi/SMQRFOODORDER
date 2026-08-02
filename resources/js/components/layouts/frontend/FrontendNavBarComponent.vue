@@ -1,6 +1,6 @@
 <template>
     <!-- Removed preloader per user request -->
-    <header class="shadow-xs bg-white ff-header" ref="ffHeader">
+    <header class="shadow-xs bg-white ff-header" ref="ffHeader" style="background-color: #ffffff !important;">
         <div class="container flex flex-col lg:flex-row items-center justify-between">
             <div class="w-full flex items-center justify-between gap-5 xl:gap-8 lg:justify-start lg:w-fit">
                 <router-link :to="{ name: 'frontend.home' }">
