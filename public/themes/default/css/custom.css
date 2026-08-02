@@ -455,3 +455,23 @@
     color: #ffffff !important;
     font-weight: 700 !important;
 }
+
+/* Universal High Contrast Dark Theme Overrides */
+.frontend-theme {
+    --store-body-text: #e2e8f0 !important;
+    --store-heading: #ffffff !important;
+}
+
+.product-card-grid-title,
+.product-card-grid h3,
+.product-card-grid-header-group h3,
+.frontend-theme h1, 
+.frontend-theme h2, 
+.frontend-theme h3, 
+.frontend-theme h4 {
+    color: #ffffff !important;
+}
+
+.product-card-grid-describe {
+    color: #cbd5e1 !important;
+}
