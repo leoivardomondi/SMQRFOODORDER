@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers\Frontend;
 
+use App\Enums\Role;
 use App\Http\Controllers\Controller;
 use App\Mail\CartAbandonmentAlertMail;
 use App\Models\Branch;
 use App\Models\Company;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
@@ -42,37 +44,72 @@ class CartAbandonmentController extends Controller
                 ]);
             }
 
-            // 3. Resolve Branch and Target Email Address
+            // 3. Resolve Branch, Super Admin, and Company Email Addresses
             $branch = Branch::find($branchId);
-            $targetEmail = $branch?->email;
+            $recipients = [];
 
-            if (empty($targetEmail)) {
-                $company = Company::first();
-                $targetEmail = $company?->email ?? config('mail.from.address');
+            // Add Branch Email
+            if (!empty($branch?->email)) {
+                $recipients[] = trim($branch->email);
             }
 
-            if (!empty($targetEmail)) {
-                Mail::to($targetEmail)->send(new CartAbandonmentAlertMail(
+            // Add Super Admin Emails (Admins with role ADMIN)
+            try {
+                $superAdminEmails = User::role(Role::ADMIN)->whereNotNull('email')->pluck('email')->toArray();
+                foreach ($superAdminEmails as $adminEmail) {
+                    if (!empty($adminEmail)) {
+                        $recipients[] = trim($adminEmail);
+                    }
+                }
+            } catch (\Exception $e) {
+                Log::info('Error fetching Super Admin emails for cart abandonment: ' . $e->getMessage());
+            }
+
+            // Add Company Email
+            $company = Company::first();
+            if (!empty($company?->email)) {
+                $recipients[] = trim($company->email);
+            }
+
+            // Clean & Deduplicate recipient email array
+            $recipients = array_values(array_unique(array_filter($recipients)));
+
+            if (empty($recipients)) {
+                $fallback = config('mail.from.address');
+                if ($fallback) {
+                    $recipients = [$fallback];
+                }
+            }
+
+            if (!empty($recipients)) {
+                $primaryRecipient = array_shift($recipients);
+                $mailable = new CartAbandonmentAlertMail(
                     $customerName,
                     $customerPhone,
                     $customerEmail,
                     $branch,
                     $cartItems,
                     $total
-                ));
+                );
 
-                // Lock for 30 minutes to avoid spamming the branch
+                if (count($recipients) > 0) {
+                    Mail::to($primaryRecipient)->cc($recipients)->send($mailable);
+                } else {
+                    Mail::to($primaryRecipient)->send($mailable);
+                }
+
+                // Lock for 30 minutes to avoid spamming
                 Cache::put($cacheKey, true, now()->addMinutes(30));
 
                 return response()->json([
                     'status' => true,
-                    'message' => 'Cart abandonment alert sent to branch successfully.'
+                    'message' => 'Cart abandonment alert sent to branch & super admin successfully.'
                 ]);
             }
 
             return response()->json([
                 'status' => false,
-                'message' => 'No recipient email configured for branch or company.'
+                'message' => 'No recipient email configured for branch, super admin, or company.'
             ], 400);
 
         } catch (\Exception $e) {
