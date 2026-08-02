@@ -636,7 +636,9 @@ export default {
             },
             checkoutDraftRestored: false,
             submittingOrder: false,
-            distanceExceeded: false
+            distanceExceeded: false,
+            orderPlacedSuccessfully: false,
+            abandonmentTimer: null
         }
     },
     computed: {
@@ -706,7 +708,19 @@ export default {
             return this.setting.payment_gateway_cash_on_delivery === this.activityEnum.ENABLE && this.canPayOnDelivery;
         },
     },
+    beforeUnmount() {
+        if (this.abandonmentTimer) {
+            clearTimeout(this.abandonmentTimer);
+        }
+        window.removeEventListener('beforeunload', this.triggerCartAbandonmentAlert);
+        if (!this.orderPlacedSuccessfully) {
+            this.triggerCartAbandonmentAlert();
+        }
+    },
     mounted() {
+        window.addEventListener('beforeunload', this.triggerCartAbandonmentAlert);
+        this.scheduleAbandonmentCheck();
+
         if (!this.canPayOnDelivery && this.checkoutProps.form.payment_method === this.enums.paymentTypeEnum.CASH_ON_DELIVERY) {
             this.checkoutProps.form.payment_method = this.enums.paymentTypeEnum.E_WALLET;
         }
@@ -894,6 +908,45 @@ export default {
             this.branchAddress = null;
             this.localAddress = {};
             this.$store.dispatch('frontendCart/resetCart');
+        },
+        scheduleAbandonmentCheck: function () {
+            if (this.abandonmentTimer) {
+                clearTimeout(this.abandonmentTimer);
+            }
+            this.abandonmentTimer = setTimeout(() => {
+                if (!this.orderPlacedSuccessfully) {
+                    this.triggerCartAbandonmentAlert();
+                }
+            }, 35000);
+        },
+        triggerCartAbandonmentAlert: function () {
+            if (this.orderPlacedSuccessfully) return;
+
+            const name = (this.checkoutProps.form.customer_name || '').trim();
+            const phone = (this.checkoutProps.form.customer_phone || '').trim();
+            const email = (this.checkoutProps.form.customer_email || '').trim();
+            const branchId = this.checkoutProps.form.branch_id || (this.$store.getters['globalState/lists'] ? this.$store.getters['globalState/lists'].branch_id : 0);
+            const cartItems = this.carts || [];
+
+            if (!name || !phone || cartItems.length === 0) return;
+
+            const payload = {
+                customer_name: name,
+                customer_phone: phone,
+                customer_email: email,
+                branch_id: branchId,
+                cart_items: cartItems,
+                total: this.checkoutProps.form.total || this.subtotal
+            };
+
+            if (navigator.sendBeacon) {
+                const blob = new Blob([JSON.stringify(payload)], { type: 'application/json' });
+                navigator.sendBeacon('/api/frontend/cart-abandonment-alert', blob);
+            } else {
+                axios.post('/api/frontend/cart-abandonment-alert', payload, {
+                    headers: { 'x-api-key': this.setting.apiKey || '' }
+                }).catch(() => {});
+            }
         },
         resetTimeSlotModal: function () {
             appService.modalHide('#time-schedule-modal');
@@ -1187,6 +1240,10 @@ export default {
                 items: JSON.stringify(orderItems)
             };
             this.$store.dispatch('frontendOrder/save', orderPayload).then(orderResponse => {
+                this.orderPlacedSuccessfully = true;
+                if (this.abandonmentTimer) {
+                    clearTimeout(this.abandonmentTimer);
+                }
                 this.saveSuccessfulOrderPreferences();
 
                 if (is_whats_app) {

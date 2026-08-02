@@ -799,4 +799,8 @@ Route::prefix('frontend')->name('frontend.')->middleware(['installed', 'apiKey',
     Route::prefix('weather')->name('weather.')->group(function () {
         Route::get('/{branchId?}', [\App\Http\Controllers\Frontend\WeatherController::class, 'show']);
     });
+
+    Route::prefix('cart-abandonment-alert')->name('cart-abandonment-alert.')->group(function () {
+        Route::post('/', [\App\Http\Controllers\Frontend\CartAbandonmentController::class, 'sendAlert']);
+    });
 });
