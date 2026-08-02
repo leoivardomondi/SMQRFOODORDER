@@ -296,6 +296,9 @@ export default {
             },
         }
     },
+    mounted() {
+        this.restoreLastOpenModal();
+    },
     computed: {
         setting: function () {
             return this.$store.getters['frontendSetting/lists'];
@@ -465,6 +468,56 @@ export default {
         handleScroll: function (e) {
             this.isScrolled = e.target.scrollTop > 60;
         },
+        saveDraftState: function () {
+            if (this.item && this.item.id) {
+                try {
+                    sessionStorage.setItem('active_product_draft_' + this.item.id, JSON.stringify({
+                        item_id: this.item.id,
+                        addons: this.addons,
+                        addonQuantity: this.addonQuantity,
+                        temp: this.temp
+                    }));
+                    sessionStorage.setItem('last_open_product_id', this.item.id);
+                } catch (e) {}
+            }
+        },
+        restoreDraftState: function (itemId) {
+            try {
+                const draftStr = sessionStorage.getItem('active_product_draft_' + itemId);
+                if (draftStr) {
+                    const draft = JSON.parse(draftStr);
+                    if (draft && draft.item_id === itemId) {
+                        if (draft.addons) this.addons = draft.addons;
+                        if (draft.addonQuantity) this.addonQuantity = draft.addonQuantity;
+                        if (draft.temp) {
+                            if (typeof draft.temp.quantity !== "undefined") this.temp.quantity = draft.temp.quantity;
+                            if (typeof draft.temp.instruction !== "undefined") this.temp.instruction = draft.temp.instruction;
+                            if (draft.temp.item_variations) this.temp.item_variations = draft.temp.item_variations;
+                            if (draft.temp.item_extras) this.temp.item_extras = draft.temp.item_extras;
+                        }
+                    }
+                }
+            } catch (e) {}
+        },
+        clearDraftState: function () {
+            if (this.item && this.item.id) {
+                sessionStorage.removeItem('active_product_draft_' + this.item.id);
+            }
+            sessionStorage.removeItem('last_open_product_id');
+        },
+        restoreLastOpenModal: function () {
+            try {
+                const lastProductId = sessionStorage.getItem('last_open_product_id');
+                if (lastProductId) {
+                    this.$store.dispatch('frontendItem/details', lastProductId)
+                        .then((res) => {
+                            if (res.data && res.data.data) {
+                                this.prepareVariationModal(res.data.data);
+                            }
+                        }).catch(() => {});
+                }
+            } catch (e) {}
+        },
         prepareVariationModal: function (item) {
                     this.isScrolled = false;
                     this.item = item;
@@ -494,12 +547,17 @@ export default {
                     this.temp.currency_price = item.offer.length > 0 ? item.offer[0].currency_price : item.currency_price;
                     this.temp.total_price = (item.offer.length > 0 ? item.offer[0].convert_price : item.convert_price) + this.temp.item_variation_total;
 
+                    // Restore draft state if page was refreshed
+                    this.restoreDraftState(item.id);
+                    this.totalPriceSetup();
+
                     const modalTarget = this.$refs.itemVariationModal;
                     modalTarget?.classList?.remove("hidden");
                     document.body.style.overflowY = "hidden";
                     document.body.classList.add("product-page-open");
         },
         variationModalHide: function () {
+            this.clearDraftState();
             this.isScrolled = false;
             this.item = null;
 
@@ -590,6 +648,7 @@ export default {
             this.temp.item_variation_total = item_variation_total;
             this.temp.item_extra_total = item_extra_total;
             this.temp.total_price = parseFloat((((this.item.offer.length > 0 ? this.item.offer[0].convert_price : this.item.convert_price) + this.temp.item_variation_total + this.temp.item_extra_total) * this.temp.quantity) + item_addon_total);
+            this.saveDraftState();
         },
         quantityUp: function () {
             if (this.temp.quantity === 0) {

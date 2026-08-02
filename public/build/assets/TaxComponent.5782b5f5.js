@@ -1,1 +1,0 @@
-import{_ as e,f as n,o as t,l as r}from"./app.2f52de5a.js";const s={name:"TaxComponent"};function a(c,p,_,m,f,i){const o=n("router-view");return t(),r(o)}const l=e(s,[["render",a]]);export{l as default};
