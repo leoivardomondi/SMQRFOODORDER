@@ -7,14 +7,17 @@ document.addEventListener('click', function (e) {
         e.stopPropagation();
 
         const dropdownGroup = dropdownButton.parentElement;
+        if (!dropdownGroup) return;
         const dropdownList = dropdownGroup.querySelector('.dropdown-list');
 
-        if (!dropdownList.classList.contains('active')) {
-            const allDropdownLists = document.querySelectorAll('.dropdown-list');
-            allDropdownLists.forEach(list => list.classList.remove('active'));
-        }
+        if (dropdownList) {
+            if (!dropdownList.classList.contains('active')) {
+                const allDropdownLists = document.querySelectorAll('.dropdown-list');
+                allDropdownLists.forEach(list => list.classList.remove('active'));
+            }
 
-        dropdownList.classList.toggle('active');
+            dropdownList.classList.toggle('active');
+        }
     } else {
         document.querySelectorAll('.dropdown-list').forEach(function (list) {
             list.classList.remove('active');

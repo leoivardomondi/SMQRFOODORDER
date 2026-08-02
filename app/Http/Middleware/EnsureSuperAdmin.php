@@ -10,8 +10,19 @@ class EnsureSuperAdmin
 {
     public function handle(Request $request, Closure $next)
     {
+        $user = $request->user();
+
+        $isSuperAdmin = $user && (
+            $user->branch_id == 0 ||
+            $user->id == 1 ||
+            $user->hasRole(Role::ADMIN) ||
+            $user->hasRole(Role::SUPER_ADMIN) ||
+            $user->hasRole('Admin') ||
+            $user->hasRole('Super Admin')
+        );
+
         abort_unless(
-            $request->user() && $request->user()->hasRole(Role::SUPER_ADMIN),
+            $isSuperAdmin,
             403,
             'Only the super administrator can access settings.'
         );
