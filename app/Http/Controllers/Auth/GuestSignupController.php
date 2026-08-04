@@ -87,6 +87,9 @@ class GuestSignupController extends Controller
          }
 
         $user = User::where(['phone' => $array['phone']])->first();
+        if ($user && (int) $user->is_guest !== Ask::YES) {
+            throw new Exception('This phone number belongs to a registered account. Please use the normal login page.', 422);
+        }
         if (!$user) {
             $name = !empty($array['name']) ? $array['name'] : "Guest User";
             $user = User::create([

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\Status;
+use Spatie\Image\Enums\CropPosition;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -42,7 +43,7 @@ class ItemCategory extends Model implements HasMedia
 
     public function registerMediaConversions(Media $media = null): void
     {
-        $this->addMediaConversion('thumb')->crop('crop-center', 112, 72)->keepOriginalImageFormat()->sharpen(10);
+        $this->addMediaConversion('thumb')->crop(112, 72, CropPosition::Center)->keepOriginalImageFormat()->sharpen(10);
         $this->addMediaConversion('cover')->width(400)->keepOriginalImageFormat()->sharpen(10);
     }
 

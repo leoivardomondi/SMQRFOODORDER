@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Spatie\Image\Enums\CropPosition;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\HasMedia;
@@ -45,6 +46,6 @@ class Offer extends Model implements HasMedia
 
     public function registerMediaConversions(Media $media = null): void
     {
-        $this->addMediaConversion('cover')->crop('crop-center', 548, 140)->keepOriginalImageFormat()->sharpen(10);
+        $this->addMediaConversion('cover')->crop(548, 140, CropPosition::Center)->keepOriginalImageFormat()->sharpen(10);
     }
 }

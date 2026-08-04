@@ -2,7 +2,7 @@
     <!--========ITEM PART START=========-->
     <div v-if="design === itemDesignEnum.LIST" class="flex flex-col gap-6">
         <div v-for="item in items" :key="item.id" v-show="type === null || type === item.item_type" class="flex gap-4 relative">
-            <img class="w-24 h-24 sm:w-28 sm:h-28 rounded-xl object-cover" :src="item.thumb" alt="thumbnail">
+            <img class="w-24 h-24 sm:w-28 sm:h-28 rounded-xl object-contain bg-slate-950" :src="item.thumb" alt="thumbnail">
             <div class="flex-1 flex flex-col justify-start">
                 <div class="flex justify-between items-start mb-1">
                     <h3 class="text-base sm:text-lg font-semibold text-white">{{ item.name }}</h3>
@@ -119,7 +119,7 @@
             <div class="flex-1 overflow-y-auto bg-black text-white" @scroll="handleScroll">
                 <!-- Header Cover Image -->
                 <div class="relative w-full min-h-[220px] sm:min-h-[300px] max-h-[400px] bg-slate-950 flex items-center justify-center p-2">
-                    <img class="max-w-full max-h-[380px] w-auto h-auto object-contain mx-auto rounded-lg shadow-md" :src="item.cover || item.thumb" alt="product image">
+                    <img class="max-w-full max-h-[380px] w-auto h-auto object-contain mx-auto rounded-lg shadow-md" :src="item.preview || item.cover || item.thumb" alt="product image">
                     <!-- Floating Close Button when at the top (before scrolling) -->
                     <button v-show="!isScrolled"
                         class="absolute top-4 left-4 w-10 h-10 flex items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 transition z-20 shadow-md"

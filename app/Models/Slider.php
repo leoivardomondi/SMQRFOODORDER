@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Spatie\Image\Enums\CropPosition;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 use Spatie\MediaLibrary\HasMedia;
@@ -31,6 +32,6 @@ class Slider extends Model implements HasMedia
 
     public function registerMediaConversions(Media $media = null): void
     {
-        $this->addMediaConversion('cover')->crop('crop-center', 1120, 400)->keepOriginalImageFormat()->sharpen(10);
+        $this->addMediaConversion('cover')->crop(1120, 400, CropPosition::Center)->keepOriginalImageFormat()->sharpen(10);
     }
 }

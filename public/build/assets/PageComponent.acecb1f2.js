@@ -1,0 +1,1 @@
+import{_ as o,f as n,o as t,l as r}from"./app.e855979d.js";const s={name:"PageComponent"};function a(c,p,_,m,f,i){const e=n("router-view");return t(),r(e)}const l=o(s,[["render",a]]);export{l as default};

@@ -9,6 +9,37 @@
             </router-link>
             <div class="row">
                 <div class="col-12 md:col-7">
+                    <div class="p-4 mb-4 rounded-2xl shadow-xs bg-white">
+                        <h3 class="text-base font-semibold mb-1 text-heading">Your Details</h3>
+                        <p class="text-xs text-gray-500 mb-4">
+                            Enter your details to continue. We will remember them and show your saved delivery addresses on this browser.
+                        </p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="sm:col-span-2">
+                                <label for="checkout-customer-name" class="block text-xs font-medium mb-1 text-heading">Full name</label>
+                                <input id="checkout-customer-name" type="text" autocomplete="name"
+                                    v-model.trim="checkoutProps.form.customer_name" @blur="ensureGuestSession"
+                                    placeholder="Example: Jane Wanjiku"
+                                    class="w-full h-12 px-4 rounded-lg border border-[#EFF0F6] bg-gray-50 focus:border-primary focus:bg-white text-gray-900 transition" />
+                            </div>
+                            <div>
+                                <label for="checkout-customer-phone" class="block text-xs font-medium mb-1 text-heading">Phone number</label>
+                                <input id="checkout-customer-phone" type="tel" inputmode="tel" autocomplete="tel"
+                                    v-model.trim="checkoutProps.form.customer_phone" @blur="ensureGuestSession"
+                                    placeholder="Example: 0712 345 678"
+                                    class="w-full h-12 px-4 rounded-lg border border-[#EFF0F6] bg-gray-50 focus:border-primary focus:bg-white text-gray-900 transition" />
+                            </div>
+                            <div>
+                                <label for="checkout-customer-email" class="block text-xs font-medium mb-1 text-heading">Email (optional)</label>
+                                <input id="checkout-customer-email" type="email" inputmode="email" autocomplete="email"
+                                    v-model.trim="checkoutProps.form.customer_email" @blur="ensureGuestSession"
+                                    placeholder="jane@example.com"
+                                    class="w-full h-12 px-4 rounded-lg border border-[#EFF0F6] bg-gray-50 focus:border-primary focus:bg-white text-gray-900 transition" />
+                            </div>
+                        </div>
+                        <p v-if="guestLoginInProgress" class="mt-3 text-xs text-primary">Loading your saved checkout details...</p>
+                        <p v-else-if="authStatus" class="mt-3 text-xs text-green-600">Your details are saved on this browser.</p>
+                    </div>
                     <div class="p-4 mb-6 rounded-2xl shadow-xs bg-white">
                         <!-- Live Branch Weather Widget & Rain Advisory -->
                         <div v-if="weather && weather.temp_c" 
@@ -80,16 +111,19 @@
                             <div class="flex flex-wrap justify-between gap-5 mb-2.5">
                                 <h4 class="capitalize font-medium"> {{ $t('label.delivery_address') }} </h4>
                                 <div class="flex gap-3">
-                                    <button v-if="Object.keys(localAddress).length !== 0" @click="editAddress"
+                                    <button v-if="authStatus && Object.keys(localAddress).length !== 0" @click="editAddress"
                                         type="button"
                                         class="group text-xs capitalize font-medium flex items-center rounded-3xl py-1.5 px-3 gap-1 text-[#00749B] bg-[#D6F5FF] transition hover:text-white hover:bg-[#00749B]">
                                         <i class="lab lab-edit-2 lab-font-size-13"></i>
                                         <span>{{ $t('button.edit') }}</span>
                                     </button>
-                                    <AddressComponent :getLocation="updateAddress" :props="addressProps" />
+                                    <AddressComponent v-if="authStatus" :getLocation="updateAddress" :props="addressProps" />
                                 </div>
                             </div>
-                            <div v-if="addresses.length > 0" class="grid grid-cols-2 sm:grid-cols-3 gap-3 active-group">
+                            <div v-if="!authStatus" class="p-3 rounded-xl border border-amber-200 bg-amber-50 text-amber-800 text-xs">
+                                Enter your name and phone number above to load or add a delivery address.
+                            </div>
+                            <div v-if="authStatus && addresses.length > 0" class="grid grid-cols-2 sm:grid-cols-3 gap-3 active-group">
                                 <label @click="changeAddress($event, address)"
                                     :class="checkoutProps.form.address_id === address.id ? 'active' : ''"
                                     v-for="address in addresses" :key="address" :for="address.label"
@@ -241,16 +275,6 @@
                             </div>
                         </div>
                         
-                        <!-- Payment Methods Section -->
-                        <div class="p-4 border-b border-[#EFF0F6]/20">
-                            <h3 class="text-base font-semibold mb-4 text-white">Your Details</h3>
-                            <div class="flex flex-col gap-3">
-                                <input type="text" v-model="checkoutProps.form.customer_name" placeholder="Example: Jane Wanjiku" class="w-full h-12 px-4 rounded-lg border border-[#EFF0F6] bg-gray-50 focus:border-primary focus:bg-white text-gray-900 transition" />
-                                <input type="tel" inputmode="tel" v-model="checkoutProps.form.customer_phone" placeholder="Example: 0712 345 678" class="w-full h-12 px-4 rounded-lg border border-[#EFF0F6] bg-gray-50 focus:border-primary focus:bg-white text-gray-900 transition" />
-                                <input type="email" inputmode="email" autocomplete="email" v-model.trim="checkoutProps.form.customer_email" placeholder="Email, e.g. jane@example.com" class="w-full h-12 px-4 rounded-lg border border-[#EFF0F6] bg-gray-50 focus:border-primary focus:bg-white text-gray-900 transition" />
-                            </div>
-                        </div>
-
                         <div class="p-4 border-b border-[#EFF0F6]/20">
                             <h3 class="text-base font-semibold mb-4 text-white">Select your payment method</h3>
                             <div class="flex flex-col gap-3">
@@ -637,6 +661,8 @@ export default {
             },
             checkoutDraftRestored: false,
             submittingOrder: false,
+            guestLoginInProgress: false,
+            guestLoginAttemptedPhone: null,
             distanceExceeded: false,
             orderPlacedSuccessfully: false,
             abandonmentTimer: null
@@ -792,12 +818,9 @@ export default {
             this.loading.isActive = false;
         });
 
-        this.loading.isActive = true;
-        this.$store.dispatch("frontendAddress/lists", this.addressProps).then(res => {
-            this.loading.isActive = false;
-        }).catch((err) => {
-            this.loading.isActive = false;
-        });
+        if (this.authStatus) {
+            this.loadCustomerAddresses();
+        }
 
         this.checkoutProps.form.order_type = this.orderType;
 
@@ -811,8 +834,66 @@ export default {
 
         this.restoreCheckoutDraft();
         this.restoreSavedPreferences();
+        this.saveCustomerPreferences();
     },
     methods: {
+        saveCustomerPreferences: function () {
+            let current = {};
+            try {
+                current = JSON.parse(localStorage.getItem('savedOrderPreferences') || '{}');
+            } catch (error) {
+                current = {};
+            }
+            localStorage.setItem('savedOrderPreferences', JSON.stringify({
+                ...current,
+                customer_name: this.checkoutProps.form.customer_name || '',
+                customer_phone: this.checkoutProps.form.customer_phone || '',
+                customer_email: this.checkoutProps.form.customer_email || ''
+            }));
+        },
+        loadCustomerAddresses: function () {
+            this.loading.isActive = true;
+            return this.$store.dispatch("frontendAddress/lists", this.addressProps).then((res) => {
+                let saved = {};
+                try {
+                    saved = JSON.parse(localStorage.getItem('savedOrderPreferences') || '{}');
+                } catch (error) {
+                    saved = {};
+                }
+                const available = res.data.data || [];
+                const selected = available.find(address => address.id === saved.address_id) || available[0];
+                if (selected) {
+                    this.updateAddress(selected);
+                }
+                return res;
+            }).finally(() => {
+                this.loading.isActive = false;
+            });
+        },
+        ensureGuestSession: function () {
+            this.saveCustomerPreferences();
+            if (this.authStatus || this.guestLoginInProgress) return Promise.resolve();
+
+            const name = (this.checkoutProps.form.customer_name || '').trim();
+            const phone = (this.checkoutProps.form.customer_phone || '').trim();
+            if (!name || phone.replace(/\D/g, '').length < 9 || this.guestLoginAttemptedPhone === phone) {
+                return Promise.resolve();
+            }
+
+            this.guestLoginInProgress = true;
+            this.guestLoginAttemptedPhone = phone;
+            return this.$store.dispatch('GuestLoginVerify', {
+                name,
+                phone,
+                email: this.checkoutProps.form.customer_email || null,
+                code: this.countryCode.calling_code,
+                token: 'guest'
+            }).then(() => this.loadCustomerAddresses()).catch(() => {
+                this.guestLoginAttemptedPhone = null;
+            }).finally(() => {
+                this.guestLoginInProgress = false;
+            });
+        },
         saveSuccessfulOrderPreferences: function () {
             const preferences = {
                 branch_id: this.checkoutProps.form.branch_id,
@@ -1457,6 +1538,15 @@ ${this.$t('label.address')}  : ${order.order_address?.address}
                     this.checkoutProps.form.customer_email = newVal.email || '';
                 }
             }
+        },
+        'checkoutProps.form.customer_name': function () {
+            this.saveCustomerPreferences();
+        },
+        'checkoutProps.form.customer_phone': function () {
+            this.saveCustomerPreferences();
+        },
+        'checkoutProps.form.customer_email': function () {
+            this.saveCustomerPreferences();
         },
         globalState: {
             deep: true,

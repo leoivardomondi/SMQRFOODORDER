@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Carbon\Carbon;
 use App\Enums\Status;
+use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Database\Eloquent\Model;
 use Spatie\MediaLibrary\InteractsWithMedia;
@@ -75,8 +76,8 @@ class Item extends Model implements HasMedia
     public function registerMediaConversions(Media $media = null): void
     {
         
-        $this->addMediaConversion('thumb')->crop('crop-center', 168, 180)->keepOriginalImageFormat()->sharpen(10);
-        $this->addMediaConversion('cover')->crop('crop-center', 390, 270)->keepOriginalImageFormat()->sharpen(10);
+        $this->addMediaConversion('thumb')->fit(Fit::Max, 336, 360)->keepOriginalImageFormat()->sharpen(10);
+        $this->addMediaConversion('cover')->fit(Fit::Max, 1200, 900)->keepOriginalImageFormat()->sharpen(10);
         $this->addMediaConversion('preview')->width(600)->keepOriginalImageFormat()->sharpen(10);
     }
 

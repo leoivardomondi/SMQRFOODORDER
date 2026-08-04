@@ -120,7 +120,7 @@ export default [
         name: "frontend.checkout",
         meta: {
             isFrontend: true,
-            auth: true,
+            auth: false,
             focusedLayout: true,
         },
     },
