@@ -30,7 +30,7 @@ class ItemRequest extends FormRequest
                 'required',
                 'string',
                 'max:190',
-                Rule::unique("items", "name")->whereNull('deleted_at')->ignore($this->route('item.id'))
+                Rule::unique("items", "name")->whereNull('deleted_at')->ignore($this->route('item'))
             ],
             'item_category_id' => ['required', 'numeric', 'not_in:0'],
             'tax_id'           => ['nullable', 'numeric', 'not_in:0'],
@@ -42,7 +42,7 @@ class ItemRequest extends FormRequest
             'status'           => ['required', 'numeric', 'max:24'],
             'order'            => ['required', 'numeric'],
             'variations'       => ['nullable', 'json'],
-            'image'            => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'image'            => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif,heic,heif', 'max:51200'],
         ];
     }
 

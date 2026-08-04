@@ -30,13 +30,13 @@ class OfferRequest extends FormRequest
                 'required',
                 'string',
                 'max:190',
-                Rule::unique("offers", "name")->ignore($this->route('offer.id'))
+                Rule::unique("offers", "name")->ignore($this->route('offer'))
             ],
             'amount'     => ['required', 'numeric', 'max:100', new IniAmount()],
             'status'     => ['required', 'numeric', 'max:24'],
             'start_date' => ['required', 'string', 'max:190'],
             'end_date'   => ['required', 'string', 'max:190'],
-            'image'      => $this->route('offer.id') ? ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048'] : ['required', 'image', 'mimes:jpg,jpeg,png', 'max:2048'],
+            'image'      => $this->route('offer.id') ? ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif,heic,heif', 'max:51200'] : ['required', 'image', 'mimes:jpg,jpeg,png,webp,gif,heic,heif', 'max:51200'],
         ];
     }
 

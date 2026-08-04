@@ -24,7 +24,7 @@ class ChangeImageRequest extends FormRequest
     public function rules()
     {
         return [
-            'image' => ['required', 'image', 'mimes:jpg,jpeg,png', 'max:2048']
+            'image' => ['required', 'image', 'mimes:jpg,jpeg,png,webp,gif,heic,heif', 'max:51200']
         ];
     }
 }

@@ -29,11 +29,11 @@ class ItemCategoryRequest extends FormRequest
                 'required',
                 'string',
                 'max:190',
-                Rule::unique("item_categories", "name")->ignore($this->route('itemCategory.id'))
+                Rule::unique("item_categories", "name")->ignore($this->route('itemCategory'))
             ],
             'description' => ['nullable', 'string', 'max:900'],
             'status'      => ['required', 'numeric', 'max:24'],
-            'image'       => ['nullable', 'image', 'mimes:jpg,jpeg,png', 'max:2048']
+            'image'       => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif,heic,heif', 'max:51200']
         ];
     }
 }

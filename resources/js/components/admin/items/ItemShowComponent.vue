@@ -119,7 +119,7 @@
                                 $t("button.upload_new_image")
                             }}</span>
                             <input v-if="uploadButton" @change="changePreviewImage" ref="imageProperty"
-                                accept="image/png, image/jpeg, image/jpg" type="file" id="photo"
+                                accept="image/*, image/png, image/jpeg, image/jpg, image/webp, image/gif" type="file" id="photo"
                                 class="absolute top-0 left-0 w-full h-full -z-10 opacity-0" />
                         </label>
                         <button v-if="saveButton" type="submit"
@@ -193,6 +193,7 @@ export default {
             tax_name: "",
             defaultImage: null,
             previewImage: null,
+            imageFile: null,
             uploadButton: true,
             resetButton: false,
             saveButton: false,
@@ -221,24 +222,29 @@ export default {
             return appService.handleTab(event, targetID, targetButton, targetDiv, activeClass);
         },
         changePreviewImage: function (e) {
-            if (e.target.files[0]) {
+            if (e.target.files && e.target.files[0]) {
+                this.imageFile = e.target.files[0];
                 this.previewImage = URL.createObjectURL(e.target.files[0]);
                 this.saveButton = true;
                 this.resetButton = true;
             }
         },
         resetPreviewImage: function () {
-            this.$refs.imageProperty.value = null;
+            if (this.$refs.imageProperty) {
+                this.$refs.imageProperty.value = null;
+            }
+            this.imageFile = null;
             this.previewImage = this.defaultImage;
             this.saveButton = false;
             this.resetButton = false;
         },
         saveImage: function () {
-            if (this.$refs.imageProperty.files[0]) {
+            const file = this.imageFile || (this.$refs.imageProperty && this.$refs.imageProperty.files && this.$refs.imageProperty.files[0]);
+            if (file) {
                 try {
                     this.loading.isActive = true;
                     const formData = new FormData();
-                    formData.append("image", this.$refs.imageProperty.files[0]);
+                    formData.append("image", file);
                     this.$store
                         .dispatch("item/changeImage", {
                             id: this.$route.params.id,
@@ -248,19 +254,31 @@ export default {
                             alertService.success(this.$t("message.image_update"));
                             this.defaultImage = res.data.data.preview;
                             this.previewImage = res.data.data.preview;
-                            this.$refs.imageProperty.value = null;
+                            this.imageFile = null;
+                            if (this.$refs.imageProperty) {
+                                this.$refs.imageProperty.value = null;
+                            }
                             this.saveButton = false;
                             this.resetButton = false;
                             this.loading.isActive = false;
                         })
                         .catch((err) => {
                             this.loading.isActive = false;
-                            this.imageErrors = err.response.data.errors;
+                            if (err && err.response && err.response.data && err.response.data.errors) {
+                                const msg = Object.values(err.response.data.errors).flat().join('\n');
+                                alertService.error(msg);
+                            } else if (err && err.response && err.response.data && err.response.data.message) {
+                                alertService.error(err.response.data.message);
+                            } else {
+                                alertService.error(err ? (err.message || 'Error saving image') : 'Error saving image');
+                            }
                         });
                 } catch (err) {
                     this.loading.isActive = false;
-                    alertService.error(err.response.data.message);
+                    alertService.error(err ? (err.message || 'Error saving image') : 'Error saving image');
                 }
+            } else {
+                alertService.error("Please select an image file first");
             }
         },
     },

@@ -50,7 +50,7 @@
                     <div class="form-col-12 sm:form-col-6">
                         <label class="db-field-title">{{ $t("label.image") }}</label>
                         <input @change="changeImage" v-bind:class="errors.image ? 'invalid' : ''" id="image" type="file"
-                            class="db-field-control" ref="imageProperty" accept="image/png, image/jpeg, image/jpg">
+                            class="db-field-control" ref="imageProperty" accept="image/*, image/png, image/jpeg, image/jpg, image/webp, image/gif">
                         <small class="db-field-alert" v-if="errors.image">{{ errors.image[0] }}</small>
                     </div>
 
@@ -281,6 +281,9 @@ export default {
                     fd.append('image', this.image);
                 }
                 const tempId = this.$store.getters['item/temp'].temp_id;
+                if (tempId !== null) {
+                    fd.append('_method', 'PUT');
+                }
                 this.loading.isActive = true;
                 this.$store.dispatch('item/save', {
                     form: fd,
@@ -302,14 +305,18 @@ export default {
                     };
                     this.image = "";
                     this.errors = {};
-                    this.$refs.imageProperty.value = null;
+                    if (this.$refs.imageProperty) {
+                        this.$refs.imageProperty.value = null;
+                    }
                 }).catch((err) => {
                     this.loading.isActive = false;
                     this.errors = {};
-                    if (err.response && err.response.data && err.response.data.errors) {
+                    if (err && err.response && err.response.data && err.response.data.errors) {
                         this.errors = err.response.data.errors;
-                    } else {
+                    } else if (err && err.response && err.response.data && err.response.data.message) {
                         alertService.error(err.response.data.message);
+                    } else {
+                        alertService.error(err ? (err.message || 'Error saving item') : 'Error saving item');
                     }
                 })
             } catch (err) {

@@ -25,7 +25,7 @@ class ThemeTableSeeder extends Seeder
             'theme_page_background'      => '#080808',
             'theme_surface_color'         => '#111111',
             'theme_header_background'    => '#0b0b0b',
-            'theme_footer_background'    => '#050505',
+            'theme_footer_background'    => '#1c1712',
             'theme_heading_color'        => '#ffffff',
             'theme_body_text_color'      => '#a8a8ad',
             'theme_border_color'         => '#332b1e',

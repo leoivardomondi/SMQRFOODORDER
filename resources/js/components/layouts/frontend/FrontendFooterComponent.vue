@@ -60,7 +60,7 @@
                 </div>
             </div>
         </div>
-        <div class="py-8 mt-8 border-t border-[#0dc3b5]">
+        <div class="py-8 mt-8 border-t border-[#332b1e]">
             <p class="text-sm text-center text-white">{{ setting.site_copyright }}</p>
         </div>
     </footer>
