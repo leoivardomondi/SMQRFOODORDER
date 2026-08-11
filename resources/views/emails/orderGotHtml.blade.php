@@ -8,6 +8,8 @@
         )
         : url('/admin/online-orders/show/' . $order->id);
     $orderType = (int) $order->order_type === \App\Enums\OrderType::TAKEAWAY ? 'Pickup' : 'Delivery';
+    $paymentStatus = $isPaid ? 'Paid' : 'Pending / Pay on delivery';
+    $address = $order->address;
 @endphp
 <!DOCTYPE html>
 <html lang="en">
@@ -81,13 +83,21 @@
                             </tr>
                             <tr>
                                 <td class="summary-label" style="padding:13px 18px; border-bottom:1px solid #ece7da; color:#777777; font-size:14px;">Customer</td>
-                                <td class="summary-value" align="right" style="padding:13px 18px; border-bottom:1px solid #ece7da; color:#171717; font-size:14px; font-weight:600;">{{ $order->user?->name ?? 'Guest' }}</td>
+                                <td class="summary-value" align="right" style="padding:13px 18px; border-bottom:1px solid #ece7da; color:#171717; font-size:14px; font-weight:600;">{{ $order->user?->name ?? 'Guest' }}{{ $order->user?->phone ? ' · ' . $order->user->phone : '' }}</td>
                             </tr>
                             <tr>
                                 <td class="summary-label" style="padding:13px 18px; border-bottom:1px solid #ece7da; color:#777777; font-size:14px;">Order type</td>
                                 <td class="summary-value" align="right" style="padding:13px 18px; border-bottom:1px solid #ece7da; color:#171717; font-size:14px; font-weight:600;">{{ $orderType }}</td>
                             </tr>
-                            @if($isPaid && $order->transaction)
+                            <tr>
+                                <td class="summary-label" style="padding:13px 18px; border-bottom:1px solid #ece7da; color:#777777; font-size:14px;">Payment status</td>
+                                <td class="summary-value" align="right" style="padding:13px 18px; border-bottom:1px solid #ece7da; color:#171717; font-size:14px; font-weight:600;">{{ $paymentStatus }}</td>
+                            </tr>
+                            <tr>
+                                <td class="summary-label" style="padding:13px 18px; border-bottom:1px solid #ece7da; color:#777777; font-size:14px;">Payment method</td>
+                                <td class="summary-value" align="right" style="padding:13px 18px; border-bottom:1px solid #ece7da; color:#171717; font-size:14px; font-weight:600;">{{ $order->transaction?->payment_method ?? ((int) $order->payment_method === 1 ? 'Cash on delivery' : 'Online payment') }}</td>
+                            </tr>
+                            @if($order->transaction)
                                 <tr>
                                     <td class="summary-label" style="padding:13px 18px; border-bottom:1px solid #ece7da; color:#777777; font-size:14px;">Payment gateway</td>
                                     <td class="summary-value" align="right" style="padding:13px 18px; border-bottom:1px solid #ece7da; color:#171717; font-size:14px; font-weight:600;">
@@ -107,10 +117,32 @@
                                     <td class="summary-value" align="right" style="padding:13px 18px; border-bottom:1px solid #ece7da; color:#171717; font-size:14px; font-weight:600;">{{ \App\Libraries\AppLibrary::datetime($order->transaction->created_at, 'd M Y, h:i A') }}</td>
                                 </tr>
                             @endif
+                            @if($orderType === 'Delivery')
+                                <tr style="background:#fffdf7;">
+                                    <td class="summary-label" style="padding:13px 18px; border-bottom:1px solid #ece7da; color:#777777; font-size:14px; vertical-align:top;">Delivery address</td>
+                                    <td class="summary-value" align="right" style="padding:13px 18px; border-bottom:1px solid #ece7da; color:#171717; font-size:14px; font-weight:600;">
+                                        {{ $address?->label ? $address->label . ': ' : '' }}{{ $address?->address ?? 'Not provided' }}{{ $address?->apartment ? ', ' . $address->apartment : '' }}
+                                        @if($address?->latitude && $address?->longitude)<br><span style="font-size:12px; color:#777777; font-weight:400;">GPS: {{ $address->latitude }}, {{ $address->longitude }}</span>@endif
+                                    </td>
+                                </tr>
+                            @endif
                             <tr style="background:#faf7ee;">
                                 <td class="summary-label" style="padding:16px 18px; color:#171717; font-size:16px; font-weight:700;">Total{{ $isPaid ? ' paid' : '' }}</td>
                                 <td class="summary-value" align="right" style="padding:16px 18px; color:#171717; font-size:20px; font-weight:800;">KSh {{ number_format((float) $order->total, 2) }}</td>
                             </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="email-padding" style="padding:18px 38px 8px;">
+                        <div style="font-size:17px; line-height:24px; font-weight:700; color:#171717; padding-bottom:10px;">Order items</div>
+                        <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="border:1px solid #e7e1d1; border-radius:10px; border-collapse:separate; overflow:hidden;">
+                            @foreach($order->orderItems as $orderItem)
+                                <tr>
+                                    <td style="padding:11px 14px; border-bottom:1px solid #ece7da; color:#171717; font-size:14px;">{{ $orderItem->quantity }} × {{ $orderItem->orderItem?->name ?? 'Item' }}@if($orderItem->instruction)<br><span style="color:#777777; font-size:12px;">Note: {{ $orderItem->instruction }}</span>@endif</td>
+                                    <td align="right" style="padding:11px 14px; border-bottom:1px solid #ece7da; color:#171717; font-size:14px; font-weight:600;">KSh {{ number_format((float) $orderItem->total_price, 2) }}</td>
+                                </tr>
+                            @endforeach
                         </table>
                     </td>
                 </tr>

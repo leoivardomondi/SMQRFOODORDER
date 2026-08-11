@@ -27,12 +27,20 @@ class OrderGotMailNotificationBuilder
     public function send()
     {
         if (!blank($this->order)) {
+            $emailSuperAdmins = User::role(Role::SUPER_ADMIN)->whereNotNull('email')->get();
             $emailAllAdmins = User::role(Role::ADMIN)->where(['branch_id' => 0])->whereNotNull('email')->get();
             $emailBranchAdmins = User::role(Role::ADMIN)->where(['branch_id' => $this->order->branch_id])->whereNotNull('email')->get();
             $emailBranchManagers = User::role(Role::BRANCH_MANAGER)->where(['branch_id' => $this->order->branch_id])->whereNotNull('email')->get();
 
             $i = 0;
             $emailArray = [];
+            if (!blank($emailSuperAdmins)) {
+                foreach ($emailSuperAdmins as $emailSuperAdmin) {
+                    $emailArray[$i] = $emailSuperAdmin->email;
+                    $i++;
+                }
+            }
+
             if (!blank($emailAllAdmins)) {
                 foreach ($emailAllAdmins as $emailAllAdmin) {
                     $emailArray[$i] = $emailAllAdmin->email;
