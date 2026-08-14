@@ -60,7 +60,7 @@ class RoleTableSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'name'       => 'Stuff',
+                'name'       => 'Staff',
                 'guard_name' => 'sanctum',
                 'created_at' => now(),
                 'updated_at' => now(),

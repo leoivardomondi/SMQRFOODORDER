@@ -26,6 +26,7 @@ class Item extends Model implements HasMedia
         'price',
         'is_featured',
         'description',
+        'visible_days',
         'caution',
         'status',
         'order',
@@ -41,6 +42,7 @@ class Item extends Model implements HasMedia
         'price'            => 'decimal:6',
         'is_featured'      => 'integer',
         'description'      => 'string',
+        'visible_days'     => 'array',
         'caution'          => 'string',
         'status'           => 'integer',
         'order'            => 'integer',
@@ -59,9 +61,17 @@ class Item extends Model implements HasMedia
     {
         if (!empty($this->getFirstMediaUrl('item'))) {
             $item = $this->getMedia('item')->last();
+            if (str_contains(strtoupper(optional($this->category)->name ?? ''), 'DAILY OFFER')) {
+                return $item->getUrl();
+            }
             return $item->getUrl('cover');
         }
         return asset('images/item/cover.png');
+    }
+
+    public function getIsDailyOfferAttribute(): bool
+    {
+        return str_contains(strtoupper(optional($this->category)->name ?? ''), 'DAILY OFFER');
     }
 
     public function getPreviewAttribute(): string

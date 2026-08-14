@@ -269,6 +269,7 @@ export default {
                     item_category_id: null,
                     tax_id: null,
                     status: statusEnum.ACTIVE,
+                    visible_days: [],
                 },
                 search: {
                     paginate: 1,
@@ -379,6 +380,7 @@ export default {
                 tax_id: item.tax_id,
                 item_category_id: item.item_category_id,
                 status: item.status,
+                visible_days: item.visible_days || [],
             };
         },
         destroy: function (id) {

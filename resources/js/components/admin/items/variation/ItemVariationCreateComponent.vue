@@ -30,8 +30,17 @@
                         </div>
 
                         <div class="form-col-12 sm:form-col-6">
-                            <label for="item_attribute" class="db-field-title">{{ $t("label.attribute") }}</label>
-                            <vue-select class="db-field-control f-b-custom-select" id="item_attribute"
+                            <div class="mb-1 flex items-center justify-between">
+                                <label for="item_attribute" class="db-field-title mb-0">{{ $t("label.attribute") }}</label>
+                                <button type="button" class="text-xs font-medium text-primary" @click="showCreateAttribute = !showCreateAttribute">
+                                    {{ showCreateAttribute ? 'Choose existing' : '+ New attribute' }}
+                                </button>
+                            </div>
+                            <div v-if="showCreateAttribute" class="flex gap-2">
+                                <input v-model="newAttributeName" type="text" class="db-field-control" placeholder="e.g. Size">
+                                <button type="button" class="db-btn shrink-0 py-2 text-white bg-primary" @click="createAttribute">Create</button>
+                            </div>
+                            <vue-select v-else class="db-field-control f-b-custom-select" id="item_attribute"
                                 v-bind:class="errors.item_attribute_id ? 'invalid' : ''"
                                 v-model="props.form.item_attribute_id" :options="itemAttributes" label-by="name"
                                 value-by="id" :closeOnSelect="true" :searchable="true" :clearOnClose="true" placeholder="--"
@@ -39,6 +48,17 @@
                             <small class="db-field-alert" v-if="errors.item_attribute_id">{{
                                 errors.item_attribute_id[0]
                             }}</small>
+                            <small class="db-field-alert" v-if="attributeErrors">{{ attributeErrors }}</small>
+                        </div>
+
+                        <div class="form-col-12 sm:form-col-6">
+                            <label for="linked_item" class="db-field-title">Existing product (optional)</label>
+                            <vue-select class="db-field-control f-b-custom-select" id="linked_item"
+                                v-model="props.form.linked_item_id" :options="items" label-by="name" value-by="id"
+                                :closeOnSelect="true" :searchable="true" :clearOnClose="true" placeholder="Select a product"
+                                search-placeholder="Search products" />
+                            <small class="text-paragraph">Link this variation to an existing product in the catalog.</small>
+                            <small class="db-field-alert" v-if="errors.linked_item_id">{{ errors.linked_item_id[0] }}</small>
                         </div>
 
                         <div class="form-col-12 sm:form-col-6">
@@ -113,6 +133,9 @@ export default {
                 },
             },
             errors: {},
+            showCreateAttribute: false,
+            newAttributeName: "",
+            attributeErrors: "",
         };
     },
     computed: {
@@ -121,6 +144,17 @@ export default {
         },
         itemAttributes: function () {
             return this.$store.getters['itemAttribute/lists'];
+        },
+        items: function () {
+            return this.$store.getters['item/lists'];
+        }
+    },
+    watch: {
+        'props.form.linked_item_id': function () {
+            this.prefillLinkedItemName();
+        },
+        items: function () {
+            this.prefillLinkedItemName();
         }
     },
     mounted() {
@@ -130,8 +164,27 @@ export default {
             order_type: 'desc',
             status: statusEnum.ACTIVE
         });
+        this.$store.dispatch("item/lists", {
+            paginate: 0,
+            order_column: 'name',
+            order_type: 'asc',
+            status: statusEnum.ACTIVE,
+        });
     },
     methods: {
+        prefillLinkedItemName: function () {
+            if (!this.props.form.linked_item_id || !Array.isArray(this.items)) {
+                return;
+            }
+
+            const linkedItem = this.items.find((item) =>
+                Number(item.id) === Number(this.props.form.linked_item_id)
+            );
+
+            if (linkedItem) {
+                this.props.form.name = linkedItem.name;
+            }
+        },
         numberOnly: function (e) {
             return appService.floatNumber(e);
         },
@@ -139,13 +192,49 @@ export default {
             appService.modalHide();
             this.$store.dispatch("itemVariation/reset").then().catch();
             this.errors = {};
+            this.showCreateAttribute = false;
+            this.newAttributeName = "";
+            this.attributeErrors = "";
             this.$props.props.form = {
                 name: "",
                 price: null,
                 item_attribute_id: null,
+                linked_item_id: null,
                 caution: "",
                 status: statusEnum.ACTIVE,
             };
+        },
+        createAttribute: function () {
+            if (!this.newAttributeName.trim()) {
+                this.attributeErrors = "Enter an attribute name.";
+                return;
+            }
+
+            this.attributeErrors = "";
+            this.loading.isActive = true;
+            this.$store.dispatch("itemAttribute/reset");
+            this.$store.dispatch("itemAttribute/save", {
+                form: {
+                    name: this.newAttributeName.trim(),
+                    status: statusEnum.ACTIVE,
+                },
+                search: {
+                    paginate: 0,
+                    order_column: "id",
+                    order_type: "desc",
+                    status: statusEnum.ACTIVE,
+                },
+            }).then((res) => {
+                const createdAttribute = res.data.data;
+                this.props.form.item_attribute_id = createdAttribute.id;
+                this.showCreateAttribute = false;
+                this.newAttributeName = "";
+                alertService.success("Attribute created and selected.");
+            }).catch((err) => {
+                this.attributeErrors = err.response?.data?.errors?.name?.[0] || err.response?.data?.message || "Unable to create attribute.";
+            }).finally(() => {
+                this.loading.isActive = false;
+            });
         },
         save: function () {
             try {
@@ -162,6 +251,7 @@ export default {
                         name: "",
                         price: null,
                         item_attribute_id: null,
+                        linked_item_id: null,
                         caution: "",
                         status: statusEnum.ACTIVE,
                     };

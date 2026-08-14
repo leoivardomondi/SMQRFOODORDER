@@ -12,5 +12,5 @@ interface Role
     const CHEF           = 5;
     const BRANCH_MANAGER = 6;
     const POS_OPERATOR   = 7;
-    const STUFF          = 8;
+    const STUFF          = 'Staff';
 }

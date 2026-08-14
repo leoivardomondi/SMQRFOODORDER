@@ -9,7 +9,7 @@ use Spatie\Permission\PermissionRegistrar;
 
 return new class extends Migration
 {
-    private const SUPER_ADMIN_EMAIL = 'leoivardomondi@seamlessqrcode.co';
+    private const SUPER_ADMIN_EMAIL = 'leoivardomondi@seamlessqrcode.com';
 
     public function up(): void
     {

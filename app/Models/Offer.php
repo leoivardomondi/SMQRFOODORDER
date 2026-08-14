@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\DiscountType;
 use Spatie\Image\Enums\CropPosition;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,15 +15,18 @@ class Offer extends Model implements HasMedia
     use HasFactory, InteractsWithMedia;
 
     protected $table = "offers";
-    protected $fillable = ['name', 'slug', 'amount', 'status', 'start_date', 'end_date'];
+    protected $fillable = ['name', 'description', 'slug', 'amount', 'discount_type', 'status', 'start_date', 'end_date', 'visible_days'];
     protected $casts = [
         'id'         => 'integer',
         'name'       => 'string',
+        'description' => 'string',
         'slug'       => 'string',
         'amount'     => 'decimal:6',
+        'discount_type' => 'integer',
         'status'     => 'integer',
         'start_date' => 'datetime',
         'end_date'   => 'datetime',
+        'visible_days' => 'array',
     ];
 
     public function items(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
@@ -38,10 +42,20 @@ class Offer extends Model implements HasMedia
     public function getCoverAttribute(): string
     {
         if (!empty($this->getFirstMediaUrl('offer'))) {
-            $offer = $this->getMedia('offer')->last();
-            return $offer->getUrl('cover');
+            // Offers are promotional posters; preserve the full artwork instead
+            // of cropping it into the old banner ratio.
+            return $this->getFirstMediaUrl('offer');
         }
         return asset('images/default/offer.png');
+    }
+
+    public function discountedPrice(float $price): float
+    {
+        $discount = $this->discount_type === DiscountType::FIXED
+            ? (float) $this->amount
+            : ($price / 100 * (float) $this->amount);
+
+        return max(0, $price - $discount);
     }
 
     public function registerMediaConversions(Media $media = null): void

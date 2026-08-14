@@ -1,7 +1,7 @@
 <template>
     <ItemVariationCreateComponent :props="variationProps" />
     <br><br>
-    <div class="db-card mb-5" v-if="variations.length > 0" v-for="variation in variations" :key="variation">
+    <div class="db-card mb-5" v-if="variations.length > 0" v-for="variation in variations" :key="variation.item_attribute_id">
         <div class="db-card-header border-none">
             <h3 class="db-card-title">{{ variation.name }}</h3>
         </div>
@@ -16,7 +16,7 @@
                     </tr>
                 </thead>
                 <tbody class="db-table-body" v-if="variation.children">
-                    <tr class="db-table-body-tr" v-for="child in variation.children" :key="child">
+                    <tr class="db-table-body-tr" v-for="child in variation.children" :key="child.id">
                         <td class="db-table-body-td">
                             {{ child.name }}
                         </td>
@@ -74,6 +74,7 @@ export default {
                     name: "",
                     price: null,
                     item_attribute_id: null,
+                    linked_item_id: null,
                     caution: "",
                     status: statusEnum.ACTIVE
                 },
@@ -93,7 +94,26 @@ export default {
     },
     computed: {
         variations: function () {
-            return this.$store.getters['itemVariation/listGroupByAttributes'];
+            const groupedVariations = this.$store.getters['itemVariation/listGroupByAttributes'];
+            if (Array.isArray(groupedVariations) && groupedVariations.length > 0) {
+                return groupedVariations;
+            }
+
+            // The item detail response already includes its saved variations.
+            // Use it as a fallback when the grouped endpoint is unavailable or
+            // returns an object keyed by attribute ID.
+            const item = this.$store.getters['item/show'];
+            const rawVariations = item && item.variations ? item.variations : {};
+            const attributes = item && Array.isArray(item.itemAttributes) ? item.itemAttributes : [];
+
+            return Object.keys(rawVariations).map((attributeId) => {
+                const attribute = attributes.find((entry) => Number(entry.id) === Number(attributeId));
+                return {
+                    item_attribute_id: Number(attributeId),
+                    name: attribute ? attribute.name : 'Variation',
+                    children: Array.isArray(rawVariations[attributeId]) ? rawVariations[attributeId] : []
+                };
+            });
         }
     },
     methods: {
@@ -117,6 +137,7 @@ export default {
                 name: itemVariation.name,
                 price: itemVariation.flat_price,
                 item_attribute_id: itemVariation.item_attribute_id,
+                linked_item_id: itemVariation.linked_item_id || null,
                 caution: itemVariation.caution,
                 status: itemVariation.status
             };

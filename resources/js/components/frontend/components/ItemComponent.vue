@@ -40,7 +40,7 @@
         class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 lg:gap-6">
         <div v-for="item in items" :key="item" v-show="type === null || type === item.item_type"
             class="product-card-grid">
-            <img class="product-card-grid-image" :src="item.cover" alt="product">
+            <img class="product-card-grid-image" :class="item.is_daily_offer ? 'object-contain bg-slate-950' : ''" :src="item.cover" alt="product">
             <div class="product-card-grid-content-group">
                 <div class="product-card-grid-header-group">
                     <h3 class="product-card-grid-title !text-white font-semibold">{{ textShortener(item.name, 26) }}</h3>

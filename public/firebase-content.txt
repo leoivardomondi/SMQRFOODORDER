@@ -2,9 +2,25 @@ firebase.initializeApp(config);
 const messaging = firebase.messaging();
 messaging.onBackgroundMessage((payload) => {
     const notificationTitle = payload.notification.title;
+    const isNewOrder = ['new-order-found', 'new-table-order-found'].includes(payload.data?.topicName);
     const notificationOptions = {
         body: payload.notification.body,
-        icon: '/images/default/firebase-logo.png'
+        icon: '/images/default/firebase-logo.png',
+        data: {
+            url: payload.data?.url || (isNewOrder && payload.data?.orderId
+                ? `/admin/online-orders/show/${payload.data.orderId}`
+                : '/admin/online-orders')
+        }
     };
     self.registration.showNotification(notificationTitle, notificationOptions);
+});
+
+self.addEventListener('notificationclick', (event) => {
+    event.notification.close();
+    const targetUrl = new URL(event.notification.data?.url || '/admin/online-orders', self.location.origin).href;
+    event.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
+        const existing = clients.find(client => client.url.startsWith(self.location.origin));
+        if (existing) return existing.focus().then(() => existing.navigate(targetUrl));
+        return self.clients.openWindow(targetUrl);
+    }));
 });

@@ -5,6 +5,7 @@
             <div class="db-card-header border-none">
                 <h3 class="db-card-title">{{ $t("menu.delivery_boys") }}</h3>
                 <div class="db-card-filter">
+                    <AccountSetupEmailsComponent :users="deliveryBoys" v-if="permissionChecker('delivery-boys_edit')" />
                     <TableLimitComponent :method="list" :search="props.search" :page="paginationPage" />
                     <FilterComponent @click.prevent="handleSlide('delivery-boy-filter')" />
                     <div class="dropdown-group">
@@ -127,6 +128,7 @@
 <script>
 import LoadingComponent from "../components/LoadingComponent";
 import DeliveryBoyCreateComponent from "./DeliveryBoyCreateComponent";
+import AccountSetupEmailsComponent from "../components/AccountSetupEmailsComponent";
 import alertService from "../../../services/alertService";
 import PaginationTextComponent from "../components/pagination/PaginationTextComponent";
 import PaginationBox from "../components/pagination/PaginationBox";
@@ -154,6 +156,7 @@ export default {
         PaginationBox,
         PaginationTextComponent,
         DeliveryBoyCreateComponent,
+        AccountSetupEmailsComponent,
         LoadingComponent,
         SmIconDeleteComponent,
         SmIconViewComponent,

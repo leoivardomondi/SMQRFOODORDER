@@ -138,6 +138,17 @@
                             }}</small>
                     </div>
 
+                    <div v-if="isDailyOfferCategory" class="form-col-12">
+                        <label class="db-field-title">Daily Offer visible days</label>
+                        <div class="flex flex-wrap gap-3">
+                            <label v-for="day in weekdays" :key="day.value" class="db-field-label flex items-center gap-2">
+                                <input v-model="props.form.visible_days" type="checkbox" :value="day.value">
+                                <span>{{ day.label }}</span>
+                            </label>
+                        </div>
+                        <small class="text-paragraph">Leave all days unchecked to show this product every day.</small>
+                    </div>
+
                     <div class="col-12">
                         <div class="flex flex-wrap gap-3 mt-4">
                             <button type="submit" class="db-btn py-2 text-white bg-primary">
@@ -192,6 +203,12 @@ export default {
             },
             image: "",
             errors: {},
+            weekdays: [
+                { value: "monday", label: "Monday" }, { value: "tuesday", label: "Tuesday" },
+                { value: "wednesday", label: "Wednesday" }, { value: "thursday", label: "Thursday" },
+                { value: "friday", label: "Friday" }, { value: "saturday", label: "Saturday" },
+                { value: "sunday", label: "Sunday" },
+            ],
         }
     },
     computed: {
@@ -203,6 +220,10 @@ export default {
         },
         taxes: function () {
             return this.$store.getters['tax/lists'];
+        },
+        isDailyOfferCategory: function () {
+            const category = this.itemCategories.find((item) => item.id === this.props.form.item_category_id);
+            return !!category && category.name.toUpperCase().includes('DAILY OFFER');
         }
     },
     mounted() {
@@ -239,6 +260,7 @@ export default {
                 item_category_id: null,
                 tax_id: null,
                 status: statusEnum.ACTIVE,
+                visible_days: [],
             };
             if (this.image) {
                 this.image = "";
@@ -258,6 +280,7 @@ export default {
                 item_category_id: null,
                 tax_id: null,
                 status: statusEnum.ACTIVE,
+                visible_days: [],
             };
             if (this.image) {
                 this.image = "";
@@ -274,6 +297,7 @@ export default {
                 fd.append('item_type', this.props.form.item_type);
                 fd.append('is_featured', this.props.form.is_featured);
                 fd.append('description', this.props.form.description);
+                (this.props.form.visible_days || []).forEach((day) => fd.append('visible_days[]', day));
                 fd.append('caution', this.props.form.caution);
                 fd.append('order', 1);
                 fd.append('status', this.props.form.status);
@@ -302,6 +326,7 @@ export default {
                         item_category_id: null,
                         tax_id: null,
                         status: statusEnum.ACTIVE,
+                        visible_days: [],
                     };
                     this.image = "";
                     this.errors = {};

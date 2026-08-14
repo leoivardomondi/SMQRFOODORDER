@@ -18,9 +18,36 @@
                             errors.name[0]
                         }}</small>
                     </div>
+
+                    <div class="form-col-12">
+                        <label for="description" class="db-field-title">Offer description</label>
+                        <textarea v-model="props.form.description" id="description" rows="3"
+                            class="db-field-control" placeholder="Tell customers why they should order this offer today..."></textarea>
+                        <small class="db-field-alert" v-if="errors.description">{{ errors.description[0] }}</small>
+                    </div>
+
+                    <div class="form-col-12">
+                        <label class="db-field-title">Show this offer on</label>
+                        <div class="flex flex-wrap gap-2 mt-2">
+                            <label v-for="day in weekdays" :key="day.value"
+                                class="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-[#D9DBE9] cursor-pointer">
+                                <input type="checkbox" :value="day.value" v-model="props.form.visible_days">
+                                <span class="text-sm">{{ day.label }}</span>
+                            </label>
+                        </div>
+                        <p class="text-xs text-[#6E7191] mt-2">Leave all days unchecked to show the offer throughout its date range.</p>
+                        <small class="db-field-alert" v-if="errors.visible_days">{{ errors.visible_days[0] }}</small>
+                    </div>
+                    <div class="form-col-12 sm:form-col-6">
+                        <label for="discount_type" class="db-field-title required">Discount type</label>
+                        <select v-model="props.form.discount_type" id="discount_type" class="db-field-control">
+                            <option :value="discountTypeEnum.PERCENTAGE">Percentage (%)</option>
+                            <option :value="discountTypeEnum.FIXED">Fixed amount</option>
+                        </select>
+                    </div>
                     <div class="form-col-12 sm:form-col-6">
                         <label for="amount" class="db-field-title required">
-                            {{ $t("label.discount_percentage") }}
+                            {{ props.form.discount_type === discountTypeEnum.FIXED ? 'Discount amount' : $t("label.discount_percentage") }}
                         </label>
                         <input v-model="props.form.amount" v-on:keypress="floatNumber($event)"
                             v-bind:class="errors.amount ? 'invalid' : ''" type="text" id="amount"
@@ -54,7 +81,7 @@
                     </div>
 
                     <div class="form-col-12 sm:form-col-6">
-                        <label class="db-field-title required">{{ $t("label.image") }} (548px,140px)</label>
+                        <label class="db-field-title required">{{ $t("label.image") }} (full poster artwork)</label>
                         <input @change="changeImage" v-bind:class="errors.image ? 'invalid' : ''" id="image" type="file"
                             class="db-field-control" ref="imageProperty" accept="image/png, image/jpeg, image/jpg" />
                         <small class="db-field-alert" v-if="errors.image">{{ errors.image[0] }}</small>
@@ -111,6 +138,7 @@ import LoadingComponent from "../components/LoadingComponent";
 import statusEnum from "../../../enums/modules/statusEnum";
 import alertService from "../../../services/alertService";
 import appService from "../../../services/appService";
+import discountTypeEnum from "../../../enums/modules/discountTypeEnum";
 
 export default {
     name: "OfferCreateComponent",
@@ -128,6 +156,16 @@ export default {
                     [statusEnum.INACTIVE]: this.$t("label.inactive"),
                 },
             },
+            discountTypeEnum: discountTypeEnum,
+            weekdays: [
+                { value: 'monday', label: 'Monday' },
+                { value: 'tuesday', label: 'Tuesday' },
+                { value: 'wednesday', label: 'Wednesday' },
+                { value: 'thursday', label: 'Thursday' },
+                { value: 'friday', label: 'Friday' },
+                { value: 'saturday', label: 'Saturday' },
+                { value: 'sunday', label: 'Sunday' },
+            ],
             image: "",
             errors: {},
         };
@@ -150,9 +188,12 @@ export default {
             this.errors = {};
             this.$props.props.form = {
                 name: "",
+                description: "",
                 amount: "",
+                discount_type: discountTypeEnum.PERCENTAGE,
                 start_date: "",
                 end_date: "",
+                visible_days: [],
                 status: statusEnum.ACTIVE,
             };
             if (this.image) {
@@ -165,9 +206,12 @@ export default {
             this.errors = {};
             this.$props.props.form = {
                 name: "",
+                description: "",
                 amount: "",
+                discount_type: discountTypeEnum.PERCENTAGE,
                 start_date: "",
                 end_date: "",
+                visible_days: [],
                 status: statusEnum.ACTIVE,
             };
             if (this.image) {
@@ -180,10 +224,13 @@ export default {
             try {
                 const fd = new FormData();
                 fd.append("name", this.props.form.name);
+                fd.append("description", this.props.form.description || "");
                 fd.append("amount", this.props.form.amount);
+                fd.append("discount_type", this.props.form.discount_type);
                 fd.append("start_date", this.props.form.start_date);
                 fd.append("end_date", this.props.form.end_date);
                 fd.append("status", this.props.form.status);
+                (this.props.form.visible_days || []).forEach((day) => fd.append("visible_days[]", day));
                 if (this.image) {
                     fd.append("image", this.image);
                 }
@@ -203,9 +250,12 @@ export default {
                         );
                         this.props.form = {
                             name: "",
+                            description: "",
                             amount: "",
+                            discount_type: discountTypeEnum.PERCENTAGE,
                             start_date: "",
                             end_date: "",
+                            visible_days: [],
                             status: statusEnum.ACTIVE,
                         };
                         this.image = "";

@@ -27,7 +27,11 @@ messaging.onBackgroundMessage(async (payload) => {
         requireInteraction: isNewOrder,
         vibrate: isNewOrder ? [500, 180, 500, 180, 800] : [250],
         data: {
-            url: payload.data?.url || '/admin/online-orders',
+            url: payload.data?.url || (
+                isNewOrder && payload.data?.orderId
+                    ? `/admin/online-orders/show/${payload.data.orderId}`
+                    : '/admin/online-orders'
+            ),
             topicName: payload.data?.topicName,
             orderId: payload.data?.orderId
         }

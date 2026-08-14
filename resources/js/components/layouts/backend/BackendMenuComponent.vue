@@ -30,12 +30,35 @@
                         <span class="text-base flex-auto">{{ $t('menu.' + children.language) }}</span>
                     </router-link>
                 </li>
+
+                <template v-if="menu.language === 'users' && canManageEmployees">
+                    <li class="db-sidebar-nav-item" @click.prevent="sidebarActive($event)">
+                        <router-link to="/admin/branch-managers" class="db-sidebar-nav-menu">
+                            <i class="text-sm lab lab-employee-2"></i>
+                            <span class="text-base flex-auto">{{ $t('menu.branch_managers') }}</span>
+                        </router-link>
+                    </li>
+                    <li class="db-sidebar-nav-item" @click.prevent="sidebarActive($event)">
+                        <router-link to="/admin/pos-operators" class="db-sidebar-nav-menu">
+                            <i class="text-sm lab lab-employee-2"></i>
+                            <span class="text-base flex-auto">{{ $t('menu.pos_operators') }}</span>
+                        </router-link>
+                    </li>
+                    <li class="db-sidebar-nav-item" @click.prevent="sidebarActive($event)">
+                        <router-link to="/admin/stuff" class="db-sidebar-nav-menu">
+                            <i class="text-sm lab lab-employee-2"></i>
+                            <span class="text-base flex-auto">{{ $t('menu.stuff') }}</span>
+                        </router-link>
+                    </li>
+                </template>
             </ul>
         </nav>
     </aside>
 </template>
 
 <script>
+import appService from "../../../services/appService";
+
 export default {
     name: "BackendMenuComponent",
     data: function () {
@@ -54,6 +77,9 @@ export default {
         },
         sidebar() {
             return this.$store.getters['globalState/lists'].topSidebar;
+        },
+        canManageEmployees() {
+            return appService.permissionChecker('employees') === true;
         },
     },
     mounted() {

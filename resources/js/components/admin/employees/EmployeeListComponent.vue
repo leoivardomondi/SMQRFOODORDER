@@ -3,8 +3,9 @@
     <div class="col-12">
         <div class="db-card">
             <div class="db-card-header border-none">
-                <h3 class="db-card-title">{{ $t("menu.employees") }}</h3>
+            <h3 class="db-card-title">{{ employeeTitle }}</h3>
                 <div class="db-card-filter">
+                    <AccountSetupEmailsComponent :users="employees" v-if="permissionChecker('employees_edit')" />
                     <TableLimitComponent :method="list" :search="props.search" :page="paginationPage" />
                     <FilterComponent @click.prevent="handleSlide('employee-filter')" />
                     <div class="dropdown-group">
@@ -146,6 +147,7 @@
 <script>
 import LoadingComponent from "../components/LoadingComponent";
 import EmployeeCreateComponent from "./EmployeeCreateComponent";
+import AccountSetupEmailsComponent from "../components/AccountSetupEmailsComponent";
 import alertService from "../../../services/alertService";
 import PaginationTextComponent from "../components/pagination/PaginationTextComponent";
 import PaginationBox from "../components/pagination/PaginationBox";
@@ -173,6 +175,7 @@ export default {
         PaginationBox,
         PaginationTextComponent,
         EmployeeCreateComponent,
+        AccountSetupEmailsComponent,
         LoadingComponent,
         SmIconDeleteComponent,
         SmIconViewComponent,
@@ -249,10 +252,22 @@ export default {
         },
         countryCode: function () {
             return this.$store.getters['countryCode/show'];
+        },
+        employeeTitle: function () {
+            if (this.$route.path === '/admin/branch-managers') return this.$t('menu.branch_managers');
+            if (this.$route.path === '/admin/pos-operators') return this.$t('menu.pos_operators');
+            if (this.$route.path === '/admin/stuff') return this.$t('menu.stuff');
+            return this.$t('menu.employees');
         }
     },
 
     mounted() {
+        const roleByPath = {
+            '/admin/branch-managers': 6,
+            '/admin/pos-operators': 7,
+            '/admin/stuff': 8,
+        };
+        this.props.search.role_id = roleByPath[this.$route.path] || null;
         this.list();
         this.$store.dispatch("defaultAccess/show");
         this.$store.dispatch("branch/lists", {

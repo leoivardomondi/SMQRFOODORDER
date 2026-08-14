@@ -33,6 +33,8 @@ class SimpleItemResource extends JsonResource
             "item_type"      => $this->item_type,
             "status"         => $this->status,
             "description"    => $this->description === null ? '' : $this->description,
+            "visible_days"   => $this->visible_days ?? [],
+            "is_daily_offer" => $this->is_daily_offer,
             "caution"        => $this->caution === null ? '' : $this->caution,
             "thumb"          => $this->thumb,
             "cover"          => $this->cover,
@@ -44,12 +46,12 @@ class SimpleItemResource extends JsonResource
                             $offer->start_date,
                             $offer->end_date
                         ) && $offer->status === Status::ACTIVE) {
-                        $offer->flat_price     = AppLibrary::flatAmountFormat($price - ($price / 100 * $offer->amount));
+                        $offer->flat_price     = AppLibrary::flatAmountFormat($offer->discountedPrice($price));
                         $offer->convert_price  = AppLibrary::convertAmountFormat(
-                            $price - ($price / 100 * $offer->amount)
+                            $offer->discountedPrice($price)
                         );
                         $offer->currency_price = AppLibrary::currencyAmountFormat(
-                            $price - ($price / 100 * $offer->amount)
+                            $offer->discountedPrice($price)
                         );
                         return $offer;
                     }

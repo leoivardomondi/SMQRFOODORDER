@@ -16,6 +16,7 @@ class ItemVariation extends Model
 
     protected $fillable = [
         'item_id',
+        'linked_item_id',
         'item_attribute_id',
         'name',
         'price',
@@ -25,6 +26,7 @@ class ItemVariation extends Model
     protected $casts = [
         'id'                => 'integer',
         'item_id'           => 'integer',
+        'linked_item_id'    => 'integer',
         'item_attribute_id' => 'integer',
         'name'              => 'string',
         'price'             => 'decimal:6',
@@ -40,6 +42,11 @@ class ItemVariation extends Model
     public function itemAttribute()
     {
         return $this->belongsTo(ItemAttribute::class);
+    }
+
+    public function linkedItem()
+    {
+        return $this->belongsTo(Item::class, 'linked_item_id');
     }
 
     public function getCurrencyPriceAttribute(): string

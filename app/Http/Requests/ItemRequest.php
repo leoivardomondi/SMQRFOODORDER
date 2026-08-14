@@ -38,6 +38,8 @@ class ItemRequest extends FormRequest
             'price'            => ['required', new IniAmount()],
             'is_featured'      => ['required', 'numeric', 'not_in:0'],
             'description'      => ['nullable', 'string', 'max:5000'],
+            'visible_days'     => ['nullable', 'array'],
+            'visible_days.*'   => ['string', 'in:monday,tuesday,wednesday,thursday,friday,saturday,sunday'],
             'caution'          => ['nullable', 'string', 'max:5000'],
             'status'           => ['required', 'numeric', 'max:24'],
             'order'            => ['required', 'numeric'],

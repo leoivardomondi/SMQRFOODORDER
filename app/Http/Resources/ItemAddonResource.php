@@ -32,7 +32,7 @@ class ItemAddonResource extends JsonResource
                 $offer->start_date,
                 $offer->end_date
             ) && $offer->status == Status::ACTIVE) {
-                $amount                = ($price - ($price / 100 * $offer->amount));
+                        $amount                = $offer->discountedPrice($price);
                 $offer->flat_price     = AppLibrary::flatAmountFormat($amount);
                 $offer->convert_price  = AppLibrary::convertAmountFormat($amount);
                 $offer->currency_price = AppLibrary::currencyAmountFormat($amount);

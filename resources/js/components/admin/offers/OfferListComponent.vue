@@ -91,6 +91,7 @@
                             <th class="db-table-head-th">{{ $t("label.amount") }}</th>
                             <th class="db-table-head-th">{{ $t("label.start_date") }}</th>
                             <th class="db-table-head-th">{{ $t("label.end_date") }}</th>
+                            <th class="db-table-head-th">Visible days</th>
                             <th class="db-table-head-th">{{ $t("label.status") }}</th>
                             <th class="db-table-head-th hidden-print"
                                 v-if="permissionChecker('offers_show') || permissionChecker('offers_edit') || permissionChecker('offers_delete')">
@@ -107,6 +108,9 @@
                             <td class="db-table-body-td">{{ offer.flat_amount }}</td>
                             <td class="db-table-body-td">{{ offer.convert_start_date }}</td>
                             <td class="db-table-body-td">{{ offer.convert_end_date }}</td>
+                            <td class="db-table-body-td">
+                                <span class="capitalize">{{ visibleDays(offer) }}</span>
+                            </td>
                             <td class="db-table-body-td">
                                 <span :class="statusClass(offer.status)">
                                     {{ enums.statusEnumArray[offer.status] }}
@@ -161,6 +165,7 @@ import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
 import SmIconViewComponent from "../components/buttons/SmIconViewComponent";
 import displayModeEnum from "../../../enums/modules/displayModeEnum";
+import discountTypeEnum from "../../../enums/modules/discountTypeEnum";
 
 export default {
     name: "OfferListComponent",
@@ -202,9 +207,12 @@ export default {
             props: {
                 form: {
                     name: "",
+                    description: "",
                     amount: "",
+                    discount_type: discountTypeEnum.PERCENTAGE,
                     start_date: "",
                     end_date: "",
+                    visible_days: [],
                     status: statusEnum.ACTIVE,
                 },
                 search: {
@@ -252,6 +260,13 @@ export default {
         textShortener: function (text, number = 30) {
             return appService.textShortener(text, number);
         },
+        visibleDays: function (offer) {
+            if (!offer.visible_days || offer.visible_days.length === 0) {
+                return "Every day";
+            }
+
+            return offer.visible_days.join(", ");
+        },
         handleSlide: function (id) {
             return appService.handleSlide(id);
         },
@@ -287,10 +302,13 @@ export default {
                     this.props.errors = {};
                     this.props.form = {
                         name: offer.name,
+                        description: offer.description || "",
                         status: offer.status,
                         amount: offer.flat_amount,
+                        discount_type: offer.discount_type || discountTypeEnum.PERCENTAGE,
                         start_date: offer.start_date,
                         end_date: offer.end_date,
+                        visible_days: offer.visible_days || [],
                     };
                 })
                 .catch((err) => {

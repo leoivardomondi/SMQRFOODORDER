@@ -124,7 +124,7 @@ export default {
     },
     adminInvitationConfirmation: function () {
         return new VueSimpleAlert.confirm(
-            "Each active administrator will receive a secure password setup email.",
+            "Each selected active user will receive a secure password setup email.",
             "Send setup emails?",
             "question",
             {

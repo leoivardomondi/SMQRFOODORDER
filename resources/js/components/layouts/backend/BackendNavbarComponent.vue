@@ -278,7 +278,18 @@ export default {
                         body: payload.notification.body,
                         icon: '/images/default/firebase-logo.png'
                     };
-                    new Notification(notificationTitle, notificationOptions);
+                    const browserNotification = new Notification(notificationTitle, notificationOptions);
+                    const orderTopics = ['new-order-found', 'new-table-order-found'];
+                    if (orderTopics.includes(payload.data?.topicName) && payload.data?.orderId) {
+                        browserNotification.onclick = () => {
+                            window.focus();
+                            browserNotification.close();
+                            this.$router.push({
+                                name: 'admin.order.show',
+                                params: { id: payload.data.orderId }
+                            });
+                        };
+                    }
 
                     if (payload.data.topicName === 'new-order-found' && this.orderNotification.permission) {
                         this.orderNotificationStatus = true;

@@ -3,6 +3,7 @@ const roleEnum = Object.freeze({
     CUSTOMER: 2,
     DELIVERY_BOY: 3,
     WAITER: 4,
-    CHEF: 5
+    CHEF: 5,
+    BRANCH_MANAGER: 6
 });
 export default roleEnum;

@@ -33,6 +33,8 @@ class ItemResource extends JsonResource
             "is_featured"      => $this->is_featured,
             "status"           => $this->status,
             "description"      => $this->description === null ? '' : $this->description,
+            "visible_days"     => $this->visible_days ?? [],
+            "is_daily_offer"   => $this->is_daily_offer,
             "caution"          => $this->caution === null ? '' : $this->caution,
             "order"            => $this->orders->count(),
             "thumb"            => $this->thumb,
@@ -48,7 +50,7 @@ class ItemResource extends JsonResource
             "offer"            => SimpleOfferResource::collection(
                 $this->offer->filter(function ($offer) use ($price) {
                     if (Carbon::now()->between($offer->start_date, $offer->end_date) && $offer->status === Status::ACTIVE) {
-                        $amount                = ($price - ($price / 100 * $offer->amount));
+                        $amount                = $offer->discountedPrice($price);
                         $offer->flat_price     = AppLibrary::flatAmountFormat($amount);
                         $offer->convert_price  = AppLibrary::convertAmountFormat($amount);
                         $offer->currency_price = AppLibrary::currencyAmountFormat($amount);

@@ -2,6 +2,12 @@
     <LoadingComponent :props="loading" />
     <section class="mb-24 sm:mb-16 mt-4 sm:mt-8">
         <div class="container">
+            <div v-if="offer.image" class="mb-8 overflow-hidden rounded-2xl bg-black">
+                <img :src="offer.image" :alt="offer.name" class="block w-full h-auto" />
+            </div>
+            <div v-if="offer.description" class="mb-8 max-w-3xl">
+                <p class="text-base sm:text-lg leading-7 text-body-text">{{ offer.description }}</p>
+            </div>
             <div class="flex gap-2 sm:gap-4 items-start justify-between mb-4 sm:mb-6">
                 <h2 class="capitalize text-lg sm:text-2xl font-semibold text-primary">
                     {{ offer.name }}

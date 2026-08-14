@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import ENV from '../config/env';
 import appService from "../services/appService";
 const DashboardComponent = () => import("../components/admin/dashboard/DashboardComponent.vue");
+const EmployeeListComponent = () => import("../components/admin/employees/EmployeeListComponent.vue");
 const NotFoundComponent = () => import("../components/frontend/otherPage/NotFoundComponent.vue");
 const ExceptionComponent = () => import("../components/frontend/otherPage/ExceptionComponent.vue");
 import store from "../store";
@@ -62,6 +63,39 @@ const baseRoutes = [
             breadcrumb: "dashboard",
         },
     },
+    {
+        path: "/admin/branch-managers",
+        component: EmployeeListComponent,
+        name: "admin.branch-managers",
+        meta: {
+            isFrontend: false,
+            auth: true,
+            permissionUrl: "employees",
+            breadcrumb: "branch_managers",
+        },
+    },
+    {
+        path: "/admin/pos-operators",
+        component: EmployeeListComponent,
+        name: "admin.pos-operators",
+        meta: {
+            isFrontend: false,
+            auth: true,
+            permissionUrl: "employees",
+            breadcrumb: "pos_operators",
+        },
+    },
+    {
+        path: "/admin/stuff",
+        component: EmployeeListComponent,
+        name: "admin.stuff",
+        meta: {
+            isFrontend: false,
+            auth: true,
+            permissionUrl: "employees",
+            breadcrumb: "stuff",
+        },
+    },
 ];
 
 export const routes = baseRoutes.concat(
@@ -106,6 +140,11 @@ const router = createRouter({
     }
 });
 
+// Start restored admin sessions on the Online Orders page.
+// This resets when the app bundle loads, so refreshes and reopened app sessions
+// return admins to incoming orders without affecting normal navigation.
+let isInitialNavigation = true;
+
 // Recover once when an open tab still references a route chunk from an older build.
 router.onError((error, to) => {
     const message = String(error?.message || error);
@@ -138,6 +177,22 @@ router.afterEach(() => {
 });
 
 router.beforeEach((to, from, next) => {
+    const roleId = store.getters.authInfo?.role_id;
+    const orderFirstRole = roleId === roleEnum.ADMIN || roleId === roleEnum.BRANCH_MANAGER;
+
+    if (
+        store.getters.authStatus &&
+        orderFirstRole &&
+        (isInitialNavigation || to.name === "admin.dashboard") &&
+        to.name !== "admin.order.list"
+    ) {
+        isInitialNavigation = false;
+        next({ name: "admin.order.list" });
+        return;
+    }
+
+    isInitialNavigation = false;
+
     if (to.meta.riderOnly === true && store.getters.authInfo?.role_id !== roleEnum.DELIVERY_BOY) {
         next({ name: store.getters.authStatus ? "frontend.home" : "auth.login" });
         return;

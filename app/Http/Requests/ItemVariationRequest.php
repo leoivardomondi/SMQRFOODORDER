@@ -37,6 +37,7 @@ class ItemVariationRequest extends FormRequest
                 )
             ],
             'item_attribute_id' => ['required', 'numeric'],
+            'linked_item_id'    => ['nullable', 'integer', 'exists:items,id'],
             'price'             => ['required', new IniAmount(true)],
             'caution'           => ['nullable', 'string', 'max:5000'],
             'status'            => ['required', 'numeric', 'max:24'],

@@ -49,7 +49,10 @@ class FirebaseService
                             'image' => (string) ($data->image ?? ''),
                             'topicName' => $topicName,
                             'orderId' => (string) ($data->order_id ?? ''),
-                            'url' => str_contains($topicName, 'order') ? '/admin/online-orders' : '/',
+                            'url' => in_array($topicName, ['new-order-found', 'new-table-order-found'], true)
+                                && !blank($data->order_id ?? null)
+                                ? '/admin/online-orders/show/' . $data->order_id
+                                : (str_contains($topicName, 'order') ? '/admin/online-orders' : '/'),
                         ],
                         'android' => [
                             'priority' => 'high',

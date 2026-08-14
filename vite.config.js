@@ -51,4 +51,9 @@ export default defineConfig({
     optimizeDeps: {
         include: ['quill'],
     },
+    server: {
+        watch: {
+            ignored: ['**/public/**'],
+        },
+    },
 });

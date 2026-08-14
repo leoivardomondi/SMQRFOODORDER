@@ -45,8 +45,8 @@ export const administrator = {
 
     },
     actions: {
-        sendSetupInvitations: function () {
-            return axios.post('/admin/administrator/send-setup-invitations');
+        sendSetupInvitations: function (context, payload) {
+            return axios.post('/admin/administrator/send-setup-invitations', payload);
         },
         lists: function (context, payload) {
             return new Promise((resolve, reject) => {

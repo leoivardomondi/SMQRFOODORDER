@@ -8,6 +8,7 @@ use App\Enums\Status;
 use Exception;
 use App\Models\Item;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 use App\Models\ItemVariation;
 use App\Http\Requests\ItemRequest;
 use Illuminate\Support\Facades\DB;
@@ -63,6 +64,17 @@ class ItemService
                         }
                     }
                 }
+            })->where(function ($query) {
+                $today = strtolower(Carbon::now()->format('l'));
+                $query->whereDoesntHave('category', function ($category) {
+                    $category->where('name', 'LIKE', '%DAILY OFFER%');
+                })->orWhere(function ($dailyOffer) use ($today) {
+                    $dailyOffer->whereHas('category', function ($category) {
+                        $category->where('name', 'LIKE', '%DAILY OFFER%');
+                    })->where(function ($days) use ($today) {
+                        $days->whereNull('visible_days')->orWhereJsonContains('visible_days', $today);
+                    });
+                });
             })->orderBy($orderColumn, $orderType)->$method(
                 $methodValue
             );

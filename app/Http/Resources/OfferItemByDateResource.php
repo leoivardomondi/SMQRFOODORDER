@@ -20,7 +20,7 @@ class OfferItemByDateResource extends JsonResource
                 foreach ($offers as $offer) {
                     if (count($offer->offerItems) > 0) {
                         foreach ($offer->offerItems as $item) {
-                            $itemPrice = ($item->item?->price - ($item->item?->price / 100 * ($offer->amount)));
+                            $itemPrice = $offer->discountedPrice((float) $item->item?->price);
                             $items[]   = [
                                 "id"                                 => $item->item?->id,
                                 "offer_id"                           => $offer->id,

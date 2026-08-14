@@ -4,7 +4,6 @@ namespace App\Services;
 
 
 use App\Enums\Role;
-use App\Enums\SwitchBox;
 use App\Mail\OrderGotMail;
 use App\Models\FrontendOrder;
 use App\Models\NotificationAlert;
@@ -28,22 +27,13 @@ class OrderGotMailNotificationBuilder
     {
         if (!blank($this->order)) {
             $emailSuperAdmins = User::role(Role::SUPER_ADMIN)->whereNotNull('email')->get();
-            $emailAllAdmins = User::role(Role::ADMIN)->where(['branch_id' => 0])->whereNotNull('email')->get();
             $emailBranchAdmins = User::role(Role::ADMIN)->where(['branch_id' => $this->order->branch_id])->whereNotNull('email')->get();
-            $emailBranchManagers = User::role(Role::BRANCH_MANAGER)->where(['branch_id' => $this->order->branch_id])->whereNotNull('email')->get();
 
             $i = 0;
             $emailArray = [];
             if (!blank($emailSuperAdmins)) {
                 foreach ($emailSuperAdmins as $emailSuperAdmin) {
                     $emailArray[$i] = $emailSuperAdmin->email;
-                    $i++;
-                }
-            }
-
-            if (!blank($emailAllAdmins)) {
-                foreach ($emailAllAdmins as $emailAllAdmin) {
-                    $emailArray[$i] = $emailAllAdmin->email;
                     $i++;
                 }
             }
@@ -55,34 +45,25 @@ class OrderGotMailNotificationBuilder
                 }
             }
 
-            if (!blank($emailBranchManagers)) {
-                foreach ($emailBranchManagers as $emailBranchManager) {
-                    $emailArray[$i] = $emailBranchManager->email;
-                    $i++;
-                }
-            }
-
             if (count($emailArray) > 0) {
                 try {
                     $notificationAlert = NotificationAlert::where(['language' => 'admin_and_branch_manager_new_order_message'])->first();
-                    if ($notificationAlert && $notificationAlert->mail == SwitchBox::ON) {
-                        try {
-                            $emailArray = array_values(array_unique($emailArray));
-                            $this->order->loadMissing([
-                                'orderItems.orderItem',
-                                'user',
-                                'address',
-                                'branch',
-                                'transaction',
-                            ]);
+                    $message = $notificationAlert?->mail_message ?? 'You have received a new order.';
 
-                            Mail::to($emailArray[0])
-                                ->cc(array_slice($emailArray, 1))
-                                ->send(new OrderGotMail($this->order, $notificationAlert->mail_message));
-                        } catch (Exception $e) {
-                            Log::info($e->getMessage());
-                        }
-                    }
+                    // New-order emails to branch recipients are mandatory and must
+                    // not depend on the optional notification toggle.
+                    $emailArray = array_values(array_unique($emailArray));
+                    $this->order->loadMissing([
+                        'orderItems.orderItem',
+                        'user',
+                        'address',
+                        'branch',
+                        'transaction',
+                    ]);
+
+                    Mail::to($emailArray[0])
+                        ->cc(array_slice($emailArray, 1))
+                        ->send(new OrderGotMail($this->order, $message));
                 } catch (Exception $e) {
                     Log::info($e->getMessage());
                 }

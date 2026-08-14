@@ -5,6 +5,7 @@
             <div class="db-card-header border-none">
                 <h3 class="db-card-title">{{ $t("menu.chefs") }}</h3>
                 <div class="db-card-filter">
+                    <AccountSetupEmailsComponent :users="chefs" v-if="permissionChecker('chefs_edit')" />
                     <TableLimitComponent :method="list" :search="props.search" :page="paginationPage" />
                     <FilterComponent @click.prevent="handleSlide('chef-filter')" />
                     <div class="dropdown-group">
@@ -154,11 +155,13 @@ import ExportComponent from "../components/buttons/export/ExportComponent";
 import PrintComponent from "../components/buttons/export/PrintComponent";
 import ExcelComponent from "../components/buttons/export/ExcelComponent";
 import ChefCreateComponent from "./ChefCreateComponent.vue";
+import AccountSetupEmailsComponent from "../components/AccountSetupEmailsComponent";
 
 export default {
     name: "ChefListComponent",
     components: {
         ChefCreateComponent,
+        AccountSetupEmailsComponent,
         TableLimitComponent,
         PaginationSMBox,
         PaginationBox,

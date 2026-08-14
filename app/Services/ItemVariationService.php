@@ -33,7 +33,7 @@ class ItemVariationService
             $orderColumn = $request->get('order_column') ?? 'id';
             $orderType   = $request->get('order_type') ?? 'desc';
 
-            return ItemVariation::with('item', 'itemAttribute')->where(['item_id' => $item->id])->where(
+            return ItemVariation::with('item', 'itemAttribute', 'linkedItem')->where(['item_id' => $item->id])->where(
                 function ($query) use ($requests) {
                     foreach ($requests as $key => $request) {
                         if (in_array($key, $this->itemVariationFilter)) {
@@ -59,7 +59,7 @@ class ItemVariationService
             $orderColumn = $request->get('order_column') ?? 'id';
             $orderType   = $request->get('order_type') ?? 'desc';
 
-            $itemVariations = ItemVariation::with('item', 'itemAttribute')->where(['item_id' => $item->id])->where(
+            $itemVariations = ItemVariation::with('item', 'itemAttribute', 'linkedItem')->where(['item_id' => $item->id])->where(
                 function ($query) use ($requests) {
                     foreach ($requests as $key => $request) {
                         if (in_array($key, $this->itemVariationFilter)) {
@@ -82,6 +82,8 @@ class ItemVariationService
                                 (object)[
                                     'id'                => $itemVariation->id,
                                     'item_id'           => $itemVariation->item_id,
+                                    'linked_item_id'    => $itemVariation->linked_item_id,
+                                    'linked_item'       => $itemVariation->linkedItem,
                                     'item_attribute_id' => $itemVariation->item_attribute_id,
                                     'name'              => $itemVariation->name,
                                     'price'             => $itemVariation->price,
@@ -96,6 +98,8 @@ class ItemVariationService
                         $array[$itemVariation->item_attribute_id]->children[] = (object)[
                             'id'                => $itemVariation->id,
                             'item_id'           => $itemVariation->item_id,
+                            'linked_item_id'    => $itemVariation->linked_item_id,
+                            'linked_item'       => $itemVariation->linkedItem,
                             'item_attribute_id' => $itemVariation->item_attribute_id,
                             'name'              => $itemVariation->name,
                             'price'             => $itemVariation->price,
@@ -107,7 +111,9 @@ class ItemVariationService
                     }
                 }
             }
-            return collect($array);
+            // The frontend renders grouped variations as a list. Re-index the
+            // collection so attribute IDs do not become JSON object keys.
+            return collect(array_values($array));
         } catch (Exception $exception) {
             Log::info($exception->getMessage());
             throw new Exception($exception->getMessage(), 422);

@@ -19,8 +19,10 @@ class OfferResource extends JsonResource
         return [
             'id'                 => $this->id,
             'name'               => $this->name,
+            'description'        => $this->description,
             "slug"               => $this->slug,
             'amount'             => $this->amount === null ? 0 : $this->amount,
+            'discount_type'     => $this->discount_type,
             "flat_amount"        => AppLibrary::flatAmountFormat($this->amount),
             "convert_amount"     => AppLibrary::convertAmountFormat($this->amount),
             'status'             => $this->status,
@@ -29,6 +31,7 @@ class OfferResource extends JsonResource
             'convert_end_date'   => AppLibrary::datetime($this->end_date),
             'start_date'         => $this->start_date,
             'end_date'           => $this->end_date,
+            'visible_days'       => $this->visible_days ?? [],
             'items'              => SimpleItemResource::collection($this->items->load('offer', 'category')),
         ];
     }

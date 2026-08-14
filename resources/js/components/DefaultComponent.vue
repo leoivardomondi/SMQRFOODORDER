@@ -8,7 +8,6 @@
       <FrontendMobileAccountComponent />
       <FrontendCookiesComponent />
       <FrontendFooterComponent v-if="!focusedLayout" />
-      <WhatsappSupportComponent v-if="!focusedLayout" />
     </div>
 
     <div v-if="theme === 'backend'">
@@ -34,7 +33,6 @@ import FrontendMobileNavBarComponent from "./layouts/frontend/FrontendMobileNavB
 import FrontendMobileAccountComponent from "./layouts/frontend/FrontendMobileAccountComponent";
 import FrontendCartComponent from "./layouts/frontend/FrontendCartComponent";
 import FrontendCookiesComponent from "./layouts/frontend/FrontendCookiesComponent";
-import WhatsappSupportComponent from "./layouts/frontend/WhatsappSupportComponent";
 import displayModeEnum from "../enums/modules/displayModeEnum";
 import env from "../config/env";
 import { initCartAbandonmentTracker } from "../services/cartAbandonmentService";
@@ -50,8 +48,7 @@ export default {
     FrontendFooterComponent,
     FrontendNavbarComponent,
     BackendNavbarComponent,
-    BackendMenuComponent,
-    WhatsappSupportComponent
+    BackendMenuComponent
   },
   data() {
     return {

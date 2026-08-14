@@ -5,10 +5,30 @@
             <div class="db-card-header border-none">
                 <h3 class="db-card-title">{{ $t("menu.administrators") }}</h3>
                 <div class="db-card-filter">
-                    <button v-if="permissionChecker('administrators_edit')" @click.prevent="sendSetupInvitations" type="button" class="db-btn py-2 text-black bg-[#cdaa5d]">
-                        <i class="fa-solid fa-envelope"></i>
-                        <span>Send Setup Emails</span>
-                    </button>
+                    <div v-if="permissionChecker('administrators_edit')" class="relative">
+                        <button @click.prevent="toggleSetupRecipients" type="button" class="db-btn py-2 text-black bg-[#cdaa5d]">
+                            <i class="fa-solid fa-envelope"></i>
+                            <span>Send Setup Emails</span>
+                        </button>
+                        <div v-if="showSetupRecipients" class="absolute right-0 z-30 mt-2 w-80 rounded-lg border border-gray-200 bg-white p-4 shadow-lg">
+                            <div class="mb-3 flex items-center justify-between">
+                                <strong class="text-sm text-heading">Choose recipients</strong>
+                                <button type="button" class="text-xs text-primary" @click="toggleAllRecipients">
+                                    {{ allRecipientsSelected ? 'Clear all' : 'Select all' }}
+                                </button>
+                            </div>
+                            <div class="max-h-56 space-y-2 overflow-y-auto">
+                                <label v-for="administrator in administratorsWithEmail" :key="administrator.id" class="flex cursor-pointer items-start gap-2 text-sm text-heading">
+                                    <input v-model="selectedAdministratorIds" type="checkbox" :value="administrator.id" class="mt-1">
+                                    <span>{{ administrator.name }}<small class="block text-paragraph">{{ administrator.email }}</small></span>
+                                </label>
+                                <p v-if="administratorsWithEmail.length === 0" class="text-sm text-paragraph">No administrators with email addresses found.</p>
+                            </div>
+                            <button type="button" class="mt-4 w-full db-btn py-2 text-white bg-primary disabled:opacity-50" :disabled="selectedAdministratorIds.length === 0" @click="sendSetupInvitations">
+                                Send selected ({{ selectedAdministratorIds.length }})
+                            </button>
+                        </div>
+                    </div>
                     <TableLimitComponent :method="list" :search="props.search" :page="paginationPage" />
                     <FilterComponent @click.prevent="handleSlide('administrator-filter')" />
                     <div class="dropdown-group">
@@ -223,6 +243,8 @@ export default {
                 },
             },
             country_code: "",
+            showSetupRecipients: false,
+            selectedAdministratorIds: [],
         };
     },
     mounted() {
@@ -267,14 +289,33 @@ export default {
         },
         countryCode: function () {
             return this.$store.getters['countryCode/show'];
+        },
+        administratorsWithEmail: function () {
+            return this.administrators.filter((administrator) => administrator.email);
+        },
+        allRecipientsSelected: function () {
+            return this.administratorsWithEmail.length > 0 && this.selectedAdministratorIds.length === this.administratorsWithEmail.length;
         }
     },
     methods: {
+        toggleSetupRecipients: function () {
+            this.showSetupRecipients = !this.showSetupRecipients;
+        },
+        toggleAllRecipients: function () {
+            this.selectedAdministratorIds = this.allRecipientsSelected
+                ? []
+                : this.administratorsWithEmail.map((administrator) => administrator.id);
+        },
         sendSetupInvitations: function () {
+            if (!this.selectedAdministratorIds.length) return;
             appService.adminInvitationConfirmation().then(() => {
                 this.loading.isActive = true;
-                this.$store.dispatch('administrator/sendSetupInvitations').then((res) => {
+                this.$store.dispatch('administrator/sendSetupInvitations', {
+                    user_ids: this.selectedAdministratorIds,
+                }).then((res) => {
                     this.loading.isActive = false;
+                    this.showSetupRecipients = false;
+                    this.selectedAdministratorIds = [];
                     alertService.success(res.data.message);
                     if (res.data.failed?.length) alertService.warning('Some emails could not be sent: ' + res.data.failed.join(', '));
                 }).catch((err) => {
