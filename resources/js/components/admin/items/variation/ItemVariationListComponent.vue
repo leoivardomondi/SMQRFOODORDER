@@ -10,6 +10,7 @@
                 <thead class="db-table-head">
                     <tr class="db-table-head-tr">
                         <th class="db-table-head-th">{{ $t("label.name") }}</th>
+                        <th class="db-table-head-th">Existing product</th>
                         <th class="db-table-head-th">{{ $t("label.additional_price") }}</th>
                         <th class="db-table-head-th">{{ $t("label.status") }}</th>
                         <th class="db-table-head-th">{{ $t("label.action") }}</th>
@@ -19,6 +20,9 @@
                     <tr class="db-table-body-tr" v-for="child in variation.children" :key="child.id">
                         <td class="db-table-body-td">
                             {{ child.name }}
+                        </td>
+                        <td class="db-table-body-td">
+                            {{ child.linked_item || '—' }}
                         </td>
                         <td class="db-table-body-td">
                             {{ child.flat_price }}
