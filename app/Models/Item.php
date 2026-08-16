@@ -7,6 +7,7 @@ use App\Enums\Status;
 use Spatie\Image\Enums\Fit;
 use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Builder;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -72,6 +73,16 @@ class Item extends Model implements HasMedia
     public function getIsDailyOfferAttribute(): bool
     {
         return str_contains(strtoupper(optional($this->category)->name ?? ''), 'DAILY OFFER');
+    }
+
+    public function scopeVisibleToday(Builder $query): Builder
+    {
+        $today = strtolower(Carbon::now()->format('l'));
+
+        return $query->where(function (Builder $days) use ($today): void {
+            $days->whereNull('visible_days')
+                ->orWhereJsonContains('visible_days', $today);
+        });
     }
 
     public function getPreviewAttribute(): string

@@ -2,9 +2,9 @@
     <LoadingComponent :props="loading" />
     <div class="col-12">
         <div class="db-card db-tab-div active">
-            <div class="db-card-header border-none">
+            <div class="db-card-header flex-wrap gap-4 border-none">
                 <h3 class="db-card-title">{{ $t("menu.offers") }}</h3>
-                <div class="db-card-filter">
+                <div class="db-card-filter w-full flex-wrap justify-end lg:w-auto">
                     <TableLimitComponent :method="list" :search="props.search" :page="paginationPage" />
                     <FilterComponent @click.prevent="handleSlide('offer-filter')" />
                     <div class="dropdown-group">
@@ -83,8 +83,8 @@
                     </div>
                 </form>
             </div>
-            <div class="db-table-responsive">
-                <table class="db-table stripe" id="print" :dir="direction">
+            <div class="db-table-responsive max-w-full overflow-x-auto">
+                <table class="db-table min-w-[920px] stripe" id="print" :dir="direction">
                     <thead class="db-table-head">
                         <tr class="db-table-head-tr">
                             <th class="db-table-head-th">{{ $t("label.name") }}</th>

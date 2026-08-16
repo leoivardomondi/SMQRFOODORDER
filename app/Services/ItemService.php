@@ -8,7 +8,6 @@ use App\Enums\Status;
 use Exception;
 use App\Models\Item;
 use Illuminate\Support\Str;
-use Carbon\Carbon;
 use App\Models\ItemVariation;
 use App\Http\Requests\ItemRequest;
 use Illuminate\Support\Facades\DB;
@@ -64,18 +63,7 @@ class ItemService
                         }
                     }
                 }
-            })->where(function ($query) {
-                $today = strtolower(Carbon::now()->format('l'));
-                $query->whereDoesntHave('category', function ($category) {
-                    $category->where('name', 'LIKE', '%DAILY OFFER%');
-                })->orWhere(function ($dailyOffer) use ($today) {
-                    $dailyOffer->whereHas('category', function ($category) {
-                        $category->where('name', 'LIKE', '%DAILY OFFER%');
-                    })->where(function ($days) use ($today) {
-                        $days->whereNull('visible_days')->orWhereJsonContains('visible_days', $today);
-                    });
-                });
-            })->orderBy($orderColumn, $orderType)->$method(
+            })->visibleToday()->orderBy($orderColumn, $orderType)->$method(
                 $methodValue
             );
         } catch (Exception $exception) {
@@ -244,7 +232,7 @@ class ItemService
     public function featuredItems()
     {
         try {
-            return Item::with('media','category','offer')->where(['is_featured' => Ask::YES, 'status' => Status::ACTIVE])->inRandomOrder()->limit(8)->get();
+            return Item::with('media','category','offer')->where(['is_featured' => Ask::YES, 'status' => Status::ACTIVE])->visibleToday()->inRandomOrder()->limit(8)->get();
         } catch (Exception $exception) {
             Log::info($exception->getMessage());
             throw new Exception($exception->getMessage(), 422);
@@ -254,7 +242,7 @@ class ItemService
     public function mostPopularItems()
     {
         try {
-            return Item::with('media', 'category','offer')->withCount('orders')->where(['status' => Status::ACTIVE])->orderBy('orders_count', 'desc')->limit(6)->get();
+            return Item::with('media', 'category','offer')->withCount('orders')->where(['status' => Status::ACTIVE])->visibleToday()->orderBy('orders_count', 'desc')->limit(6)->get();
         } catch (Exception $exception) {
             Log::info($exception->getMessage());
             throw new Exception($exception->getMessage(), 422);
