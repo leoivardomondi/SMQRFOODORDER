@@ -76,10 +76,16 @@ export default {
     },
 
     currencyFormat(amount, decimal, currency, position) {
+        const displayCurrency = String(currency || '').toUpperCase() === 'KES' ? 'Ksh' : currency;
+        const formattedAmount = Number(amount || 0).toLocaleString('en-US', {
+            minimumFractionDigits: decimal,
+            maximumFractionDigits: decimal,
+        });
+
         if (position === currencyPositionEnum.LEFT) {
-            return currency + parseFloat(amount).toFixed(decimal);
+            return `${displayCurrency} ${formattedAmount}`;
         } else {
-            return parseFloat(amount).toFixed(decimal) + currency;
+            return `${formattedAmount} ${displayCurrency}`;
         }
     },
 

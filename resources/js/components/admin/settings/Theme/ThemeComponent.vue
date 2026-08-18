@@ -111,7 +111,7 @@
                                 <h4>Your storefront</h4>
                                 <p>See how the palette works across content, cards, and actions.</p>
                                 <div class="theme-preview-card">
-                                    <div><strong>Signature item</strong><small>Freshly prepared</small><em>KES 850</em></div>
+                                    <div><strong>Signature item</strong><small>Freshly prepared</small><em>Ksh 850</em></div>
                                     <button type="button">Add to cart</button>
                                 </div>
                             </div>

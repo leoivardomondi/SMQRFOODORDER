@@ -249,10 +249,13 @@ class AppLibrary
 
     public static function currencyAmountFormat($amount): string
     {
+        $currency = strtoupper((string) env('CURRENCY_SYMBOL')) === 'KES' ? 'Ksh' : env('CURRENCY_SYMBOL');
+        $formatted = number_format($amount, env('CURRENCY_DECIMAL_POINT'), '.', ',');
+
         if (env('CURRENCY_POSITION') == CurrencyPosition::LEFT) {
-            return env('CURRENCY_SYMBOL') . number_format($amount, env('CURRENCY_DECIMAL_POINT'), '.', '');
+            return $currency . ' ' . $formatted;
         }
-        return number_format($amount, env('CURRENCY_DECIMAL_POINT'), '.', '') . env('CURRENCY_SYMBOL');
+        return $formatted . ' ' . $currency;
     }
 
     public static function flatAmountFormat($amount): string
