@@ -668,7 +668,7 @@ body.product-page-open .pwa-install-modal {
 }
 
 .frontend-theme .product-card-list-item {
-    border-color: var(--store-border) !important;
+    border-color: color-mix(in srgb, var(--store-border) 55%, var(--store-surface)) !important;
     background: var(--store-surface) !important;
     border-radius: var(--store-radius);
     padding: 12px;
