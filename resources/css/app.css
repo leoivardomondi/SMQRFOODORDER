@@ -544,6 +544,12 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
     --store-input-bg: color-mix(in srgb, var(--store-surface) 96%, var(--store-heading));
     --store-muted-text: color-mix(in srgb, var(--store-body-text) 82%, var(--store-surface));
     --store-primary-border: color-mix(in srgb, var(--store-primary) 65%, var(--store-border));
+    --store-item-name: var(--store-heading);
+    --store-item-description: var(--store-body-text);
+    --store-item-price: var(--store-primary-hover);
+    --store-item-old-price: var(--store-body-text);
+    --store-category: var(--store-body-text);
+    --store-icon: var(--store-primary);
     min-height: 100vh;
     color: var(--store-body-text);
     background: var(--store-page-bg);
@@ -651,7 +657,34 @@ body.product-page-open .pwa-install-modal {
 
 .frontend-theme .product-card-grid-title,
 .frontend-theme .product-card-list-title {
-    color: var(--store-heading) !important;
+    color: var(--store-item-name) !important;
+}
+
+.frontend-theme .product-card-grid-describe,
+.frontend-theme .product-card-list-describe,
+.frontend-theme .product-card-grid-content-group > p,
+.frontend-theme .product-card-list-content-group > p {
+    color: var(--store-item-description) !important;
+}
+
+.frontend-theme .product-card-grid-price-current,
+.frontend-theme .product-card-list-price-current {
+    color: var(--store-item-price) !important;
+}
+
+.frontend-theme .product-card-grid-price-previous,
+.frontend-theme .product-card-list-price-previous {
+    color: var(--store-item-old-price) !important;
+}
+
+.frontend-theme .menu-swiper a:not(.text-primary) {
+    color: var(--store-category) !important;
+}
+
+.frontend-theme .product-card-grid-info-btn,
+.frontend-theme .product-card-grid-cart-btn i,
+.frontend-theme .product-card-list-cart-btn i {
+    color: var(--store-icon) !important;
 }
 
 .frontend-theme .header-search-group {

@@ -5,9 +5,9 @@
             <img class="w-24 h-24 sm:w-28 sm:h-28 rounded-xl object-contain bg-slate-950" :src="item.thumb" alt="thumbnail">
             <div class="flex-1 flex flex-col justify-start">
                 <div class="flex justify-between items-start mb-1">
-                    <h3 class="text-base sm:text-lg font-semibold text-white">{{ item.name }}</h3>
+                    <h3 class="text-base sm:text-lg font-semibold text-heading">{{ item.name }}</h3>
                     <div class="text-right">
-                        <h4 class="text-base font-bold text-white">
+                        <h4 class="text-base font-bold text-primary">
                             {{ item.offer.length > 0 ? item.offer[0].currency_price : item.currency_price }}
                         </h4>
                         <del v-if="item.offer.length > 0" class="text-xs text-gray-400 block">
@@ -18,7 +18,7 @@
                         </div>
                     </div>
                 </div>
-                <p class="text-sm text-slate-300 leading-snug line-clamp-3 w-4/5">{{ item.description }}</p>
+                <p class="text-sm text-paragraph leading-snug line-clamp-3 w-4/5">{{ item.description }}</p>
                 <div class="absolute bottom-0 right-0">
                     <button v-if="cartQuantity(item) === 0" @click.prevent="handleAddItem(item)" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition">
                         <i class="fa-solid fa-plus text-sm"></i>
@@ -43,13 +43,13 @@
             <img class="product-card-grid-image" :class="item.is_daily_offer ? 'object-contain bg-slate-950' : ''" :src="item.cover" alt="product">
             <div class="product-card-grid-content-group">
                 <div class="product-card-grid-header-group">
-                    <h3 class="product-card-grid-title !text-white font-semibold">{{ textShortener(item.name, 26) }}</h3>
+                    <h3 class="product-card-grid-title font-semibold">{{ textShortener(item.name, 26) }}</h3>
                     <button type="button" class="product-card-grid-info-btn info-btn leading-none"
                         data-modal="#item-info-modal" @click.prevent="infoModalShow(item.name, item.caution)">
                         <i class="lab lab-information font-fill-paragraph transition lab-font-size-16"></i>
                     </button>
                 </div>
-                <p class="product-card-grid-describe char-limit !text-slate-300">{{ textShortener(item.description, 50) }}</p>
+                <p class="product-card-grid-describe char-limit">{{ textShortener(item.description, 50) }}</p>
                 <div class="product-card-grid-footer-group">
                     <div class="product-card-grid-price-group">
                         <del v-if="item.offer.length > 0" class="product-card-grid-price-previous">
