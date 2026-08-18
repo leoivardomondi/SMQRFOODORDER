@@ -5,20 +5,20 @@
             <img class="product-card-list-image w-20 h-20 sm:w-24 sm:h-24 rounded-xl object-cover" :src="item.thumb" alt="thumbnail">
             <div class="product-card-list-content flex-1 min-w-0 flex flex-col justify-start">
                 <div class="flex justify-between items-start mb-1">
-                    <h3 class="product-card-list-title text-base sm:text-lg font-semibold text-heading">{{ item.name }}</h3>
+                    <h3 class="product-card-list-title text-sm sm:text-base font-medium text-heading">{{ item.name }}</h3>
                     <div class="product-card-list-price-group flex flex-col items-end gap-0.5 text-right whitespace-nowrap shrink-0 ml-2">
-                        <h4 class="product-card-list-price-current text-base font-bold text-primary whitespace-nowrap">
+                        <h4 class="product-card-list-price-current text-sm sm:text-base font-semibold text-primary whitespace-nowrap">
                             {{ item.offer.length > 0 ? item.offer[0].currency_price : item.currency_price }}
                         </h4>
                         <del v-if="item.offer.length > 0" class="product-card-list-price-previous text-xs text-gray-400 block">
                             {{ item.currency_price }}
                         </del>
-                        <div v-if="item.offer.length > 0" class="bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded inline-block mt-1">
+                        <div v-if="item.offer.length > 0" class="bg-red-500 text-white text-[10px] font-semibold px-1.5 py-0.5 rounded inline-block mt-1">
                             -20%
                         </div>
                     </div>
                 </div>
-                <p class="product-card-list-describe text-sm text-paragraph leading-snug line-clamp-3 w-4/5">{{ item.description }}</p>
+                <p class="product-card-list-describe text-xs sm:text-sm font-normal text-paragraph leading-snug line-clamp-3 w-4/5">{{ item.description }}</p>
                 <div class="absolute bottom-0 right-0">
                     <button v-if="cartQuantity(item) === 0" @click.prevent="handleAddItem(item)" class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-600 hover:bg-gray-200 transition">
                         <i class="fa-solid fa-plus text-sm"></i>
