@@ -751,6 +751,10 @@ body.product-page-open .pwa-install-modal {
     margin-bottom: 5px;
 }
 
+.featured-item-carousel .product-card-grid-info-btn {
+    display: none;
+}
+
 .featured-item-carousel .product-card-grid-title {
     max-width: 100%;
     font-size: 11px;
