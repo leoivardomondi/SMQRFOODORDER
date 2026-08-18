@@ -5,10 +5,10 @@
         <i class="fa-solid fa-xmark"></i>
       </button>
       <img class="block max-h-[68vh] w-full object-contain bg-black" :src="featuredOffer.image" :alt="featuredOffer.name">
-      <div class="p-5 text-white sm:p-6">
+      <div class="offer-popup-content p-5 sm:p-6">
         <p class="mb-1 text-xs font-semibold uppercase tracking-[0.2em] text-primary">Today’s offer</p>
-        <h2 class="text-2xl font-bold">{{ featuredOffer.name }}</h2>
-        <p v-if="featuredOffer.description" class="mt-2 leading-6 text-slate-300">{{ featuredOffer.description }}</p>
+        <h2 class="offer-title text-2xl font-bold">{{ featuredOffer.name }}</h2>
+        <p v-if="featuredOffer.description" class="offer-description mt-2 leading-6">{{ featuredOffer.description }}</p>
         <router-link :to="{ name: 'frontend.offers.item', params: { slug: featuredOffer.slug } }" class="mt-5 inline-flex w-full items-center justify-center rounded-full bg-primary px-5 py-3 font-semibold text-black" @click="closeOfferPopup">
           View offer
         </router-link>
@@ -24,8 +24,8 @@
           <img class="block w-full h-auto" :src="offer.image" :alt="offer.name" />
         </router-link>
         <div class="p-5 sm:p-6">
-          <h3 class="text-xl sm:text-2xl font-semibold text-heading">{{ offer.name }}</h3>
-          <p v-if="offer.description" class="mt-2 text-sm sm:text-base leading-6 text-paragraph">{{ offer.description }}</p>
+          <h3 class="offer-title text-xl sm:text-2xl font-semibold text-heading">{{ offer.name }}</h3>
+          <p v-if="offer.description" class="offer-description mt-2 text-sm sm:text-base leading-6 text-paragraph">{{ offer.description }}</p>
           <router-link :to="{ name: 'frontend.offers.item', params: { slug: offer.slug } }"
             class="mt-5 inline-flex items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-black">
             View offer

@@ -87,17 +87,25 @@
                         </div>
                     </div>
                     <div class="form-col-12 lg:form-col-7">
-                        <div class="theme-color-grid">
-                            <label v-for="field in colorFields" :key="field.key" class="theme-color-field">
-                                <span>{{ field.label }}</span>
-                                <div class="theme-color-control">
-                                    <input type="color" v-model="colors[field.key]" :aria-label="field.label" />
-                                    <input type="text" v-model="colors[field.key]" maxlength="7"
-                                        pattern="^#[0-9A-Fa-f]{6}$" class="db-field-control"
-                                        :class="errors[field.key] ? 'invalid' : ''" />
+                        <div class="theme-color-groups">
+                            <section v-for="group in colorGroups" :key="group.key" class="theme-color-group">
+                                <div class="theme-color-group-heading">
+                                    <h5>{{ group.label }}</h5>
+                                    <p>{{ group.description }}</p>
                                 </div>
-                                <small class="db-field-alert" v-if="errors[field.key]">{{ errors[field.key][0] }}</small>
-                            </label>
+                                <div class="theme-color-grid">
+                                    <label v-for="field in group.fields" :key="field.key" class="theme-color-field">
+                                        <span>{{ field.label }}</span>
+                                        <div class="theme-color-control">
+                                            <input type="color" v-model="colors[field.key]" :aria-label="field.label" />
+                                            <input type="text" v-model="colors[field.key]" maxlength="7"
+                                                pattern="^#[0-9A-Fa-f]{6}$" class="db-field-control"
+                                                :class="errors[field.key] ? 'invalid' : ''" />
+                                        </div>
+                                        <small class="db-field-alert" v-if="errors[field.key]">{{ errors[field.key][0] }}</small>
+                                    </label>
+                                </div>
+                            </section>
                         </div>
                     </div>
                     <div class="form-col-12 lg:form-col-5">
@@ -165,6 +173,7 @@ export default {
                 theme_item_name_color: "#1f1f39", theme_item_description_color: "#6e7191",
                 theme_item_price_color: "#115e59", theme_item_old_price_color: "#6e7191",
                 theme_category_color: "#6e7191", theme_icon_color: "#0f766e",
+                theme_offer_title_color: "#1f1f39", theme_offer_description_color: "#6e7191",
                 theme_nav_background_color: "#ffffff", theme_nav_text_color: "#6e7191", theme_nav_active_color: "#115e59",
                 theme_nav_icon_color: "#6e7191", theme_nav_active_icon_color: "#115e59",
             };
@@ -190,20 +199,32 @@ export default {
         radiusOptions() {
             return ["0px", "6px", "12px", "18px", "24px"];
         },
-        colorFields() {
+        colorGroups() {
+            const field = (key, label) => ({ key, label });
             return [
-                ["theme_primary_color", "Primary buttons"], ["theme_primary_hover_color", "Links & hover"],
-                ["theme_button_text_color", "Button text"], ["theme_page_background", "Page background"],
-                ["theme_surface_color", "Cards & panels"], ["theme_header_background", "Header & mobile nav"],
-                ["theme_footer_background", "Footer"], ["theme_heading_color", "Headings"],
-                ["theme_body_text_color", "Body text"], ["theme_border_color", "Borders"],
-                ["theme_item_name_color", "Item names"], ["theme_item_description_color", "Item descriptions"],
-                ["theme_item_price_color", "Item prices"], ["theme_item_old_price_color", "Old prices"],
-                ["theme_category_color", "Category tabs"], ["theme_icon_color", "Icons"],
-                ["theme_nav_background_color", "Navigation background"], ["theme_nav_text_color", "Navigation text"],
-                ["theme_nav_active_color", "Active navigation text"],
-                ["theme_nav_icon_color", "Navigation icons"], ["theme_nav_active_icon_color", "Active navigation icons"],
-            ].map(([key, label]) => ({ key, label }));
+                { key: "surfaces", label: "Surfaces & structure", description: "Set the page, cards, header, footer, borders, and primary action colors.", fields: [
+                    field("theme_primary_color", "Primary buttons"), field("theme_primary_hover_color", "Links & hover"),
+                    field("theme_button_text_color", "Button text"), field("theme_page_background", "Page background"),
+                    field("theme_surface_color", "Cards & panels"), field("theme_header_background", "Header"),
+                    field("theme_footer_background", "Footer"), field("theme_border_color", "Borders"),
+                ]},
+                { key: "content", label: "General content", description: "Control the default colors used by headings, body copy, categories, and icons.", fields: [
+                    field("theme_heading_color", "Headings"), field("theme_body_text_color", "Body text"),
+                    field("theme_category_color", "Category tabs"), field("theme_icon_color", "General icons"),
+                ]},
+                { key: "items", label: "Item cards", description: "Make item names, descriptions, current prices, and old prices readable independently.", fields: [
+                    field("theme_item_name_color", "Item names"), field("theme_item_description_color", "Item descriptions"),
+                    field("theme_item_price_color", "Item prices"), field("theme_item_old_price_color", "Old prices"),
+                ]},
+                { key: "offers", label: "Offers", description: "Set offer titles and descriptions separately from the rest of the storefront.", fields: [
+                    field("theme_offer_title_color", "Offer titles"), field("theme_offer_description_color", "Offer descriptions"),
+                ]},
+                { key: "navigation", label: "Navigation & mobile bar", description: "Customize navigation background, inactive and active text, and both icon states.", fields: [
+                    field("theme_nav_background_color", "Navigation background"), field("theme_nav_text_color", "Navigation text"),
+                    field("theme_nav_active_color", "Active navigation text"), field("theme_nav_icon_color", "Navigation icons"),
+                    field("theme_nav_active_icon_color", "Active navigation icons"),
+                ]},
+            ];
         },
         previewStyle() {
             return {
@@ -214,6 +235,8 @@ export default {
                 "--preview-body": this.colors.theme_body_text_color, "--preview-border": this.colors.theme_border_color,
                 "--preview-item-name": this.colors.theme_item_name_color, "--preview-item-description": this.colors.theme_item_description_color,
                 "--preview-item-price": this.colors.theme_item_price_color,
+                "--preview-offer-title": this.colors.theme_offer_title_color,
+                "--preview-offer-description": this.colors.theme_offer_description_color,
             };
         },
     },
@@ -304,6 +327,6 @@ export default {
 </script>
 
 <style scoped>
-.theme-color-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-top:12px;padding-top:24px;border-top:1px solid #e5e7eb}.theme-color-heading h4{font-size:18px;font-weight:700;color:#1f1f39}.theme-color-heading p{margin-top:4px;font-size:13px;color:#6e7191}.theme-reset-btn{flex-shrink:0;padding:8px 12px;border:1px solid #d9dbe9;border-radius:8px;color:#6e7191;font-size:13px;font-weight:600}.theme-color-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.theme-color-field>span{display:block;margin-bottom:7px;color:#1f1f39;font-size:13px;font-weight:600}.theme-color-control{display:flex;align-items:center;gap:8px}.theme-color-control input[type=color]{width:42px;height:42px;flex:none;padding:3px;border:1px solid #d9dbe9;border-radius:9px;background:#fff;cursor:pointer}.theme-color-control .db-field-control{height:42px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase}.theme-preview{position:sticky;top:20px;overflow:hidden;min-height:360px;border:1px solid var(--preview-border);border-radius:14px;color:var(--preview-body);background:var(--preview-page);box-shadow:0 14px 38px rgb(31 31 57 / 12%)}.theme-preview-header{display:flex;align-items:center;gap:14px;min-height:62px;padding:12px 16px;color:var(--preview-heading);background:var(--preview-header);border-bottom:1px solid var(--preview-border);font-size:11px}.theme-preview-header img{width:72px;max-height:30px;object-fit:contain;margin-right:auto}.theme-preview-body{padding:26px 20px}.theme-preview-kicker{color:var(--preview-hover);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em}.theme-preview-body h4{margin-top:7px;color:var(--preview-heading);font:600 24px/1.2 Georgia,serif}.theme-preview-body>p:not(.theme-preview-kicker){margin-top:8px;font-size:12px;line-height:1.6}.theme-preview-card{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:22px;padding:15px;border:1px solid var(--preview-border);border-radius:10px;background:var(--preview-surface)}.theme-preview-card strong,.theme-preview-card small{display:block}.theme-preview-card strong{color:var(--preview-heading);font-size:13px}.theme-preview-card small{margin-top:3px;color:var(--preview-body);font-size:10px}.theme-preview-card button{padding:9px 12px;border-radius:7px;color:var(--preview-button-text);background:var(--preview-primary);font-size:10px;font-weight:700}.theme-preview-card button:hover{background:var(--preview-hover)}.theme-preview-footer{padding:13px 20px;color:var(--preview-body);background:var(--preview-footer);border-top:1px solid var(--preview-border);font-size:10px}@media(max-width:640px){.theme-color-grid{grid-template-columns:1fr}.theme-color-heading{flex-direction:column}}
+.theme-color-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-top:12px;padding-top:24px;border-top:1px solid #e5e7eb}.theme-color-heading h4{font-size:18px;font-weight:700;color:#1f1f39}.theme-color-heading p{margin-top:4px;font-size:13px;color:#6e7191}.theme-reset-btn{flex-shrink:0;padding:8px 12px;border:1px solid #d9dbe9;border-radius:8px;color:#6e7191;font-size:13px;font-weight:600}.theme-color-groups{display:grid;gap:18px}.theme-color-group{padding:16px;border:1px solid #e5e7eb;border-radius:12px;background:#fafbfc}.theme-color-group-heading{margin-bottom:12px}.theme-color-group-heading h5{margin:0;color:#1f1f39;font-size:14px;font-weight:700}.theme-color-group-heading p{margin:3px 0 0;color:#6e7191;font-size:12px;line-height:1.45}.theme-color-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.theme-color-field>span{display:block;margin-bottom:7px;color:#1f1f39;font-size:13px;font-weight:600}.theme-color-control{display:flex;align-items:center;gap:8px}.theme-color-control input[type=color]{width:42px;height:42px;flex:none;padding:3px;border:1px solid #d9dbe9;border-radius:9px;background:#fff;cursor:pointer}.theme-color-control .db-field-control{height:42px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace;text-transform:uppercase}.theme-preview{position:sticky;top:20px;overflow:hidden;min-height:360px;border:1px solid var(--preview-border);border-radius:14px;color:var(--preview-body);background:var(--preview-page);box-shadow:0 14px 38px rgb(31 31 57 / 12%)}.theme-preview-header{display:flex;align-items:center;gap:14px;min-height:62px;padding:12px 16px;color:var(--preview-heading);background:var(--preview-header);border-bottom:1px solid var(--preview-border);font-size:11px}.theme-preview-header img{width:72px;max-height:30px;object-fit:contain;margin-right:auto}.theme-preview-body{padding:26px 20px}.theme-preview-kicker{color:var(--preview-hover);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em}.theme-preview-body h4{margin-top:7px;color:var(--preview-heading);font:600 24px/1.2 Georgia,serif}.theme-preview-body>p:not(.theme-preview-kicker){margin-top:8px;font-size:12px;line-height:1.6}.theme-preview-card{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:22px;padding:15px;border:1px solid var(--preview-border);border-radius:10px;background:var(--preview-surface)}.theme-preview-card strong,.theme-preview-card small{display:block}.theme-preview-card strong{color:var(--preview-item-name)}.theme-preview-card small{margin-top:3px;color:var(--preview-item-description);font-size:10px}.theme-preview-card em{display:block;margin-top:7px;color:var(--preview-item-price);font-size:12px;font-style:normal;font-weight:700}.theme-preview-card button{padding:9px 12px;border-radius:7px;color:var(--preview-button-text);background:var(--preview-primary);font-size:10px;font-weight:700}.theme-preview-card button:hover{background:var(--preview-hover)}.theme-preview-footer{padding:13px 20px;color:var(--preview-body);background:var(--preview-footer);border-top:1px solid var(--preview-border);font-size:10px}@media(max-width:640px){.theme-color-grid{grid-template-columns:1fr}.theme-color-heading{flex-direction:column}}
 .theme-preview-card strong{color:var(--preview-item-name)}.theme-preview-card small{color:var(--preview-item-description)}.theme-preview-card em{display:block;margin-top:7px;color:var(--preview-item-price);font-size:12px;font-style:normal;font-weight:700}
 </style>

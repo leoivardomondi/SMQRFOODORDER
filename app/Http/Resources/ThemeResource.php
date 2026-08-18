@@ -45,6 +45,8 @@ class ThemeResource extends JsonResource
             "theme_item_old_price_color" => $this->info['theme_item_old_price_color'] ?? ($this->info['theme_body_text_color'] ?? '#6e7191'),
             "theme_category_color"     => $this->info['theme_category_color'] ?? ($this->info['theme_body_text_color'] ?? '#6e7191'),
             "theme_icon_color"         => $this->info['theme_icon_color'] ?? ($this->info['theme_primary_color'] ?? '#0f766e'),
+            "theme_offer_title_color"  => $this->info['theme_offer_title_color'] ?? ($this->info['theme_heading_color'] ?? '#1f1f39'),
+            "theme_offer_description_color" => $this->info['theme_offer_description_color'] ?? ($this->info['theme_body_text_color'] ?? '#6e7191'),
             "theme_nav_background_color" => $this->info['theme_nav_background_color'] ?? ($this->info['theme_header_background'] ?? '#ffffff'),
             "theme_nav_text_color"     => $this->info['theme_nav_text_color'] ?? ($this->info['theme_body_text_color'] ?? '#6e7191'),
             "theme_nav_active_color"   => $this->info['theme_nav_active_color'] ?? ($this->info['theme_primary_hover_color'] ?? '#115e59'),

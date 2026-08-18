@@ -78,6 +78,8 @@ export default {
         '--store-item-old-price': settings.theme_item_old_price_color || settings.theme_body_text_color || '#6e7191',
         '--store-category': settings.theme_category_color || settings.theme_body_text_color || '#6e7191',
         '--store-icon': settings.theme_icon_color || settings.theme_primary_color || '#0f766e',
+        '--store-offer-title': settings.theme_offer_title_color || settings.theme_heading_color || '#1f1f39',
+        '--store-offer-description': settings.theme_offer_description_color || settings.theme_body_text_color || '#6e7191',
         '--store-nav-bg': settings.theme_nav_background_color || settings.theme_header_background || '#ffffff',
         '--store-nav-text': settings.theme_nav_text_color || settings.theme_body_text_color || '#6e7191',
         '--store-nav-active': settings.theme_nav_active_color || settings.theme_primary_hover_color || '#115e59',

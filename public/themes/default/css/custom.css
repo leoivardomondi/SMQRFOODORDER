@@ -437,7 +437,8 @@
     transform-origin: top !important;
 }
 
-/* High Contrast & Readability Enhancements */
+/* Storefront text colors are controlled by the database-driven theme in app.css. */
+/*
 .product-card-grid-title {
     color: #ffffff !important;
     font-weight: 600 !important;
@@ -475,3 +476,4 @@
 .product-card-grid-describe {
     color: #cbd5e1 !important;
 }
+*/

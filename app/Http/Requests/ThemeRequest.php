@@ -45,6 +45,8 @@ class ThemeRequest extends FormRequest
             'theme_item_old_price_color' => $color,
             'theme_category_color'     => $color,
             'theme_icon_color'         => $color,
+            'theme_offer_title_color'  => $color,
+            'theme_offer_description_color' => $color,
             'theme_nav_background_color' => $color,
             'theme_nav_text_color'       => $color,
             'theme_nav_active_color'     => $color,

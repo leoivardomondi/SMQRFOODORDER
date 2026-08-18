@@ -551,6 +551,8 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
     --store-item-old-price: var(--store-body-text);
     --store-category: var(--store-body-text);
     --store-icon: var(--store-primary);
+    --store-offer-title: var(--store-heading);
+    --store-offer-description: var(--store-body-text);
     min-height: 100vh;
     color: var(--store-body-text);
     background: var(--store-page-bg);
@@ -704,6 +706,15 @@ body.product-page-open .pwa-install-modal {
     color: var(--store-category) !important;
 }
 
+.frontend-theme .offer-popup-content,
+.frontend-theme .offer-carousel-card > div {
+    color: var(--store-offer-description);
+    background: var(--store-surface);
+}
+
+.frontend-theme .offer-title { color: var(--store-offer-title) !important; }
+.frontend-theme .offer-description { color: var(--store-offer-description) !important; }
+
 .frontend-theme .product-card-grid-info-btn,
 .frontend-theme .product-card-grid-cart-btn i,
 .frontend-theme .product-card-list-cart-btn i {
@@ -819,7 +830,12 @@ body.product-page-open .pwa-install-modal {
 }
 
 .offer-carousel-card p {
-    display: none;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    overflow: hidden;
+    font-size: 10px;
+    line-height: 1.35;
 }
 
 .offer-carousel-card a:not(:first-child) {
