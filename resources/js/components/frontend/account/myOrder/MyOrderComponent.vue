@@ -1,6 +1,6 @@
 <template>
     <LoadingComponent :props="loading" />
-    <section class="pt-6 pb-24 sm:pt-8 sm:pb-16">
+    <section class="orders-page pt-6 pb-24 sm:pt-8 sm:pb-16">
         <div class="container max-w-3xl">
             <router-link :to="{ name: 'frontend.home' }" class="mb-3 inline-flex items-center gap-2 text-primary">
                 <i class="lab lab-undo lab-font-size-16"></i>

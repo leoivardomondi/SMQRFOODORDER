@@ -99,7 +99,7 @@
             </div>
 
             <div v-if="carts.length > 0 && orderType !== null && (setting.order_setup_delivery === activityEnum.ENABLE || setting.order_setup_takeaway === activityEnum.ENABLE)"
-                class="p-4 bg-white border-t border-gray-100">
+                class="cart-summary-footer p-4 bg-white border-t border-gray-100">
                 <div class="flex items-center justify-between mb-4">
                     <h3 class="capitalize text-lg font-bold text-gray-900">{{ $t('label.subtotal') }}</h3>
                     <h4 class="text-lg font-bold text-gray-900">

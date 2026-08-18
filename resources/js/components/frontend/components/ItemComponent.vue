@@ -104,7 +104,7 @@
                 class="sticky top-0 left-0 right-0 z-40 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between shadow-md transition-all duration-300 flex-shrink-0">
                 <div class="flex items-center gap-3 min-w-0 pr-2">
                     <!-- Close Button -->
-                    <button class="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-black hover:bg-gray-200 transition flex-shrink-0"
+                    <button class="product-variation-close w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-black hover:bg-gray-200 transition flex-shrink-0"
                         @click.prevent="variationModalHide" aria-label="Close product view">
                         <i class="fa-solid fa-xmark text-sm !text-black"></i>
                     </button>
@@ -124,7 +124,7 @@
                     <img class="max-w-full max-h-[380px] w-auto h-auto object-contain mx-auto rounded-lg shadow-md" :src="item.preview || item.cover || item.thumb" alt="product image">
                     <!-- Floating Close Button when at the top (before scrolling) -->
                     <button v-show="!isScrolled"
-                        class="absolute top-4 left-4 w-10 h-10 flex items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 transition z-20 shadow-md"
+                        class="product-variation-close absolute top-4 left-4 w-10 h-10 flex items-center justify-center rounded-full bg-black/60 text-white hover:bg-black/80 transition z-20 shadow-md"
                         @click.prevent="variationModalHide" aria-label="Close product view">
                         <i class="fa-solid fa-xmark text-lg text-white"></i>
                     </button>
@@ -144,7 +144,7 @@
 
                     <!-- Quantity Selector -->
                     <div class="flex justify-center mb-6">
-                        <div class="flex items-center gap-6 px-6 py-3 rounded-full bg-gray-800 text-white">
+                        <div class="product-variation-quantity flex items-center gap-6 px-6 py-3 rounded-full bg-gray-800 text-white">
                             <button @click.prevent="quantityDecrement" class="text-gray-400 hover:text-white" aria-label="Decrease quantity">
                                 <i class="fa-solid fa-minus text-lg"></i>
                             </button>
@@ -164,8 +164,8 @@
                                     v-for="variation in item.variations[attribute.id]"
                                     :key="variation.id"
                                     @click.prevent="changeVariationAdjust(attribute.id, variation.id)"
-                                    class="px-4 py-2 text-sm rounded-lg border transition font-medium"
-                                    :class="temp.item_variations.variations[attribute.id] === variation.id ? 'border-primary bg-primary/20 text-primary font-bold' : 'border-gray-800 text-gray-300 bg-gray-900'">
+                                    class="product-variation-option px-4 py-2 text-sm rounded-lg border transition font-medium"
+                                    :class="temp.item_variations.variations[attribute.id] === variation.id ? 'is-selected border-primary bg-primary/20 text-primary font-bold' : ''">
                                     {{ variation.name }} <span v-if="variation.convert_price > 0" class="text-xs opacity-75">(+{{ variation.currency_price }})</span>
                                 </button>
                             </div>
@@ -176,7 +176,7 @@
                     <div v-if="item.extras && item.extras.length > 0" class="mb-6">
                         <h3 class="text-sm font-semibold text-white mb-2 capitalize">Extras</h3>
                         <div class="flex flex-col gap-2">
-                            <label v-for="extra in item.extras" :key="extra.id" class="flex items-center justify-between p-3 rounded-xl border border-gray-800 bg-gray-900 cursor-pointer hover:border-primary transition">
+                            <label v-for="extra in item.extras" :key="extra.id" class="product-variation-extra flex items-center justify-between p-3 rounded-xl border border-gray-800 bg-gray-900 cursor-pointer hover:border-primary transition">
                                 <div class="flex items-center gap-3">
                                     <input type="checkbox" :value="extra.id" @change="changeExtra($event, extra.id, extra.name)" class="w-4 h-4 rounded text-primary focus:ring-primary bg-gray-800 border-gray-700">
                                     <span class="text-sm font-medium text-gray-200">{{ extra.name }}</span>
@@ -193,7 +193,7 @@
                                 <span>{{ groupTitle }}</span>
                             </h3>
                             <div class="flex flex-col gap-3">
-                                <div v-for="addon in addonGroup" :key="addon.id" class="flex items-center justify-between p-3 rounded-xl border border-gray-800 bg-gray-900">
+                                <div v-for="addon in addonGroup" :key="addon.id" class="product-variation-addon flex items-center justify-between p-3 rounded-xl border border-gray-800 bg-gray-900">
                                     <div class="flex items-center gap-3">
                                         <img :src="addon.thumb" alt="addon image" class="w-12 h-12 rounded-lg object-cover bg-gray-800">
                                         <div>
@@ -232,7 +232,7 @@
             </div>
 
             <!-- Fixed Bottom Action -->
-            <div class="fixed bottom-0 left-0 w-full p-4 bg-black/95 backdrop-blur-md border-t border-gray-800 z-30">
+            <div class="product-variation-footer fixed bottom-0 left-0 w-full p-4 bg-black/95 backdrop-blur-md border-t border-gray-800 z-30">
                 <button type="button" :disabled="temp.total_price <= 0" @click.prevent="addToCart"
                     class="w-full bg-primary text-white font-bold text-lg py-4 rounded-full shadow-lg hover:bg-primary-dark transition flex justify-center items-center">
                     Add {{ temp.quantity }} for {{

@@ -1,6 +1,6 @@
 <template>
     <LoadingComponent :props="loading" />
-    <section class="py-4 sm:py-6">
+    <section class="checkout-page py-4 sm:py-6">
         <div class="container max-w-[965px]">
             <router-link :to="{ name: 'frontend.home' }"
                 class="text-xs font-medium inline-flex mb-3 items-center gap-2 text-primary">
@@ -279,7 +279,7 @@
                             <h3 class="text-base font-semibold mb-4 text-white">Select your payment method</h3>
                             <div class="flex flex-col gap-3">
                                 <!-- Online Payment -->
-                                <label class="flex w-full min-w-0 items-center justify-between gap-3 p-3 rounded-lg border cursor-pointer transition bg-gray-900/50 border-gray-700"
+                                <label class="checkout-payment-option flex w-full min-w-0 items-center justify-between gap-3 p-3 rounded-lg border cursor-pointer transition bg-gray-900/50 border-gray-700"
                                     :class="checkoutProps.form.payment_method === enums.paymentTypeEnum.E_WALLET ? 'border-primary ring-1 ring-primary' : ''"
                                     @click="checkoutProps.form.payment_method = enums.paymentTypeEnum.E_WALLET">
                                     <div class="flex min-w-0 flex-1 items-center gap-3">
@@ -296,7 +296,7 @@
 
                                 <!-- Cash -->
                                 <label v-if="showCashOnDelivery"
-                                    class="flex w-full min-w-0 items-center justify-between gap-3 p-3 rounded-lg border cursor-pointer bg-gray-900/50 border-gray-700 transition"
+                                    class="checkout-payment-option flex w-full min-w-0 items-center justify-between gap-3 p-3 rounded-lg border cursor-pointer bg-gray-900/50 border-gray-700 transition"
                                     :class="checkoutProps.form.payment_method === enums.paymentTypeEnum.CASH_ON_DELIVERY ? 'border-primary ring-1 ring-primary' : ''"
                                     @click="checkoutProps.form.payment_method = enums.paymentTypeEnum.CASH_ON_DELIVERY">
                                     <div class="flex min-w-0 flex-1 items-center gap-3">

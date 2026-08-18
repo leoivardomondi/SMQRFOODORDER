@@ -61,6 +61,14 @@ export default {
   computed: {
     frontendThemeStyle: function () {
       const settings = this.$store.getters['frontendSetting/lists'] || {};
+      const configuredNavText = settings.theme_nav_text_color;
+      const configuredNavIcon = settings.theme_nav_icon_color;
+      const navText = configuredNavText && configuredNavText.toLowerCase() === '#6e7191'
+        ? '#334155'
+        : (configuredNavText || settings.theme_body_text_color || '#334155');
+      const navIcon = configuredNavIcon && configuredNavIcon.toLowerCase() === '#6e7191'
+        ? '#475569'
+        : (configuredNavIcon || navText);
       return {
         '--store-primary': settings.theme_primary_color || '#0f766e',
         '--store-primary-hover': settings.theme_primary_hover_color || '#115e59',
@@ -81,9 +89,9 @@ export default {
         '--store-offer-title': settings.theme_offer_title_color || settings.theme_heading_color || '#1f1f39',
         '--store-offer-description': settings.theme_offer_description_color || settings.theme_body_text_color || '#6e7191',
         '--store-nav-bg': settings.theme_nav_background_color || settings.theme_header_background || '#ffffff',
-        '--store-nav-text': settings.theme_nav_text_color || settings.theme_body_text_color || '#6e7191',
+        '--store-nav-text': navText,
         '--store-nav-active': settings.theme_nav_active_color || settings.theme_primary_hover_color || '#115e59',
-        '--store-nav-icon': settings.theme_nav_icon_color || settings.theme_nav_text_color || '#6e7191',
+        '--store-nav-icon': navIcon,
         '--store-nav-active-icon': settings.theme_nav_active_icon_color || settings.theme_nav_active_color || '#115e59',
         '--store-font': settings.theme_font_family || 'Inter, sans-serif',
         '--store-heading-font': settings.theme_heading_font_family || 'Inter, sans-serif',

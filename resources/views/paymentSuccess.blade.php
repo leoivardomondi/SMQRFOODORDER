@@ -12,6 +12,44 @@
     <link rel="stylesheet" href="{{ asset('themes/default/fonts/lab/lab.css') }}">
     <link rel="stylesheet" href="{{ asset('themes/default/css/custom.css') }}">
     <style>
+        :root {
+            --payment-page-bg: {{ $theme['theme_page_background'] ?? '#ffffff' }};
+            --payment-surface: {{ $theme['theme_surface_color'] ?? '#ffffff' }};
+            --payment-heading: {{ $theme['theme_heading_color'] ?? '#1f1f39' }};
+            --payment-body: {{ $theme['theme_body_text_color'] ?? '#334155' }};
+            --payment-primary: {{ $theme['theme_primary_color'] ?? '#0f766e' }};
+            --payment-button-text: {{ $theme['theme_button_text_color'] ?? '#ffffff' }};
+            --payment-border: {{ $theme['theme_border_color'] ?? '#e2e8f0' }};
+        }
+        body.payment-success-page {
+            margin: 0;
+            background: var(--payment-page-bg);
+            color: var(--payment-body);
+        }
+        .payment-success-page .payment-success-card {
+            color: var(--payment-body);
+        }
+        .payment-success-page .payment-transaction-label {
+            color: var(--payment-heading);
+            background: color-mix(in srgb, var(--payment-surface) 88%, var(--payment-heading));
+        }
+        .payment-success-page .payment-transaction-value {
+            color: var(--payment-heading);
+            background: var(--payment-surface);
+            border: 1px solid var(--payment-border);
+            border-top: 0;
+        }
+        .payment-success-page .payment-success-heading {
+            color: var(--payment-primary);
+        }
+        .payment-success-page .payment-order-link {
+            color: var(--payment-button-text);
+            background: var(--payment-primary);
+        }
+        .payment-success-page .payment-order-link:hover,
+        .payment-success-page .payment-order-link:focus {
+            color: var(--payment-button-text);
+        }
         .whatsapp-paid-order-btn {
             display: block;
             width: 100%;
@@ -42,23 +80,23 @@
         }
     </style>
 </head>
-<body>
+<body class="payment-success-page">
 
-<div class="py-14 px-4 w-full max-w-2xl mx-auto flex flex-col items-center justify-center">
+<div class="payment-success-card py-14 px-4 w-full max-w-2xl mx-auto flex flex-col items-center justify-center">
     <a href="{{ route('home') }}" class="w-36 mb-8">
         <img class="w-full" src="{{ $logo->logo }}" alt="logo">
     </a>
 
     <img class="w-full max-w-[120px] mb-3" src="{{ asset('images/default/payment-success.gif') }}" alt="success">
 
-    <h3 class="text-[22px] font-medium leading-[34px] text-center text-[#1AB759] mb-12">
+    <h3 class="payment-success-heading text-[22px] font-medium leading-[34px] text-center mb-12">
         <span class="block">{{ __('all.label.congratulations') }}</span>
         {{ __('all.message.payment_successful') }}
     </h3>
     <div class="w-full max-w-[360px]">
         <dl class="text-center shadow-xs w-full mb-8">
-            <dt class="uppercase py-2.5 rounded-tl-lg rounded-tr-lg text-heading bg-[#F7F7FC]">{{ __('all.label.transaction_id')  }}</dt>
-            <dd class="uppercase py-3 rounded-bl-lg rounded-br-lg payment-font-size font-medium leading-10 text-heading bg-white">{{ $order?->transaction?->transaction_no }}</dd>
+            <dt class="payment-transaction-label uppercase py-2.5 rounded-tl-lg rounded-tr-lg">{{ __('all.label.transaction_id')  }}</dt>
+            <dd class="payment-transaction-value uppercase py-3 rounded-bl-lg rounded-br-lg payment-font-size font-medium leading-10">{{ $order?->transaction?->transaction_no }}</dd>
         </dl>
         @if($whatsappUrl)
             <p class="text-center text-heading mb-4">Send the detailed paid order with a receipt preview to the restaurant.</p>
@@ -67,7 +105,7 @@
             </button>
             <p id="share-status" class="share-status" role="status" aria-live="polite"></p>
         @endif
-        <a id="my-orders-route" href="{{ url('/my-orders') }}" class="block py-3 w-full rounded-3xl text-center text-base font-medium bg-primary text-white">My Orders</a>
+        <a id="my-orders-route" href="{{ url('/my-orders') }}" class="payment-order-link block py-3 w-full rounded-3xl text-center text-base font-medium">My Orders</a>
     </div>
 </div>
 

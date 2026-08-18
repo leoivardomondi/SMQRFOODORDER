@@ -174,8 +174,8 @@ export default {
                 theme_item_price_color: "#115e59", theme_item_old_price_color: "#6e7191",
                 theme_category_color: "#6e7191", theme_icon_color: "#0f766e",
                 theme_offer_title_color: "#1f1f39", theme_offer_description_color: "#6e7191",
-                theme_nav_background_color: "#ffffff", theme_nav_text_color: "#6e7191", theme_nav_active_color: "#115e59",
-                theme_nav_icon_color: "#6e7191", theme_nav_active_icon_color: "#115e59",
+                theme_nav_background_color: "#ffffff", theme_nav_text_color: "#334155", theme_nav_active_color: "#115e59",
+                theme_nav_icon_color: "#475569", theme_nav_active_icon_color: "#115e59",
             };
         },
         designDefaults() {

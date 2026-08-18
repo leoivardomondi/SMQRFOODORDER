@@ -879,10 +879,18 @@ body.product-page-open .pwa-install-modal {
 }
 
 .frontend-theme .product-card-grid-cart-btn {
-    color: var(--store-primary-hover);
+    color: var(--store-icon) !important;
     background: transparent !important;
     border: 1px solid var(--store-primary-border);
     box-shadow: none;
+}
+
+.frontend-theme .product-card-grid-cart-btn i,
+.frontend-theme .product-card-list-item button i,
+.frontend-theme .product-card-grid-cart-btn svg,
+.frontend-theme .product-card-list-item button svg {
+    color: var(--store-icon) !important;
+    fill: var(--store-icon) !important;
 }
 
 .frontend-theme .product-card-grid-cart-btn:hover {
@@ -921,7 +929,10 @@ body.product-page-open .pwa-install-modal {
 }
 
 .frontend-theme input::placeholder,
-.frontend-theme textarea::placeholder { color: var(--store-muted-text); }
+.frontend-theme textarea::placeholder {
+    color: var(--store-heading) !important;
+    opacity: 0.78 !important;
+}
 
 .frontend-theme .modal,
 .frontend-theme .drawer,
@@ -1075,6 +1086,7 @@ body.product-page-open .pwa-install-modal {
 .frontend-theme nav.fixed.bottom-0 a:not(.text-primary),
 .frontend-theme nav.fixed.bottom-0 button.user-profile-dropdown-box {
     color: var(--store-nav-text) !important;
+    opacity: 1 !important;
 }
 
 .frontend-theme nav.fixed.bottom-0 a.text-primary {
@@ -1088,6 +1100,10 @@ body.product-page-open .pwa-install-modal {
 
 .frontend-theme .pwa-install-modal {
     color: var(--store-body-text);
+    /* Keep the storefront visible behind the install prompt. The generic
+       themed modal rule uses an opaque page background, which hides it. */
+    background: rgb(0 0 0 / 42%) !important;
+    backdrop-filter: blur(1px);
 }
 
 .frontend-theme .pwa-install-card,
@@ -1130,6 +1146,326 @@ body.product-page-open .pwa-install-modal {
 .frontend-theme .pwa-install-action:hover,
 .frontend-theme .pwa-install-action:focus-visible {
     background: var(--store-primary-hover) !important;
+}
+
+/* Product detail / variation view ---------------------------------------
+   This view contains legacy dark utility classes. Re-map them to the same
+   storefront palette so product details remain readable in every theme. */
+.frontend-theme #item-variation-modal {
+    color: var(--store-body-text) !important;
+    background: var(--store-page-bg) !important;
+}
+
+.frontend-theme #item-variation-modal .bg-black,
+.frontend-theme #item-variation-modal .bg-black\/95 {
+    background: var(--store-page-bg) !important;
+}
+
+.frontend-theme #item-variation-modal .bg-white {
+    background: var(--store-header-bg) !important;
+}
+
+.frontend-theme #item-variation-modal .bg-slate-950,
+.frontend-theme #item-variation-modal .bg-gray-900 {
+    background: var(--store-surface) !important;
+}
+
+.frontend-theme #item-variation-modal .bg-gray-800 {
+    background: var(--store-muted-surface) !important;
+}
+
+.frontend-theme #item-variation-modal .border-gray-800,
+.frontend-theme #item-variation-modal .border-gray-700,
+.frontend-theme #item-variation-modal .border-gray-200 {
+    border-color: var(--store-border) !important;
+}
+
+.frontend-theme #item-variation-modal h2,
+.frontend-theme #item-variation-modal h3,
+.frontend-theme #item-variation-modal h4,
+.frontend-theme #item-variation-modal .text-white,
+.frontend-theme #item-variation-modal .text-gray-200 {
+    color: var(--store-heading) !important;
+}
+
+.frontend-theme #item-variation-modal p,
+.frontend-theme #item-variation-modal .text-gray-300,
+.frontend-theme #item-variation-modal .text-gray-400,
+.frontend-theme #item-variation-modal .text-gray-500 {
+    color: var(--store-body-text) !important;
+}
+
+.frontend-theme #item-variation-modal .text-primary {
+    color: var(--store-primary-hover) !important;
+}
+
+.frontend-theme #item-variation-modal .product-variation-close {
+    color: var(--store-heading) !important;
+    background: var(--store-muted-surface) !important;
+}
+
+.frontend-theme #item-variation-modal .product-variation-close i {
+    color: var(--store-heading) !important;
+}
+
+.frontend-theme #item-variation-modal .product-variation-option {
+    color: var(--store-body-text) !important;
+    background: var(--store-surface) !important;
+    border-color: var(--store-border) !important;
+}
+
+.frontend-theme #item-variation-modal .product-variation-option.is-selected {
+    color: var(--store-primary-hover) !important;
+    background: var(--store-primary-soft) !important;
+    border-color: var(--store-primary) !important;
+}
+
+.frontend-theme #item-variation-modal .product-variation-extra,
+.frontend-theme #item-variation-modal .product-variation-addon {
+    color: var(--store-heading) !important;
+    background: var(--store-surface) !important;
+    border-color: var(--store-border) !important;
+}
+
+.frontend-theme #item-variation-modal .product-variation-extra input {
+    accent-color: var(--store-primary);
+}
+
+.frontend-theme #item-variation-modal .product-variation-quantity {
+    color: var(--store-heading) !important;
+    background: var(--store-muted-surface) !important;
+}
+
+.frontend-theme #item-variation-modal .product-variation-quantity button {
+    color: var(--store-primary-hover) !important;
+}
+
+.frontend-theme #item-variation-modal textarea {
+    color: var(--store-heading) !important;
+    background: var(--store-input-bg) !important;
+    border-color: var(--store-border) !important;
+}
+
+.frontend-theme #item-variation-modal textarea::placeholder {
+    color: var(--store-body-text) !important;
+    opacity: 0.78 !important;
+}
+
+.frontend-theme #item-variation-modal .product-variation-footer {
+    background: color-mix(in srgb, var(--store-page-bg) 94%, var(--store-heading)) !important;
+    border-color: var(--store-border) !important;
+}
+
+.frontend-theme #item-variation-modal .product-variation-footer button {
+    color: var(--store-button-text) !important;
+    background: var(--store-primary) !important;
+}
+
+.frontend-theme #item-variation-modal .product-variation-footer button:hover {
+    background: var(--store-primary-hover) !important;
+}
+
+/* Cart drawer and checkout surfaces ------------------------------------- */
+.frontend-theme #cart {
+    background: rgb(0 0 0 / 42%) !important;
+}
+
+.frontend-theme #cart > div {
+    color: var(--store-body-text) !important;
+    background: var(--store-surface) !important;
+}
+
+.frontend-theme #cart .text-gray-900,
+.frontend-theme #cart .text-gray-800,
+.frontend-theme #cart .text-gray-700 {
+    color: var(--store-heading) !important;
+}
+
+.frontend-theme #cart .text-gray-500,
+.frontend-theme #cart .text-gray-400 {
+    color: var(--store-body-text) !important;
+}
+
+.frontend-theme #cart .bg-gray-100 {
+    color: var(--store-heading) !important;
+    background: var(--store-muted-surface) !important;
+}
+
+.frontend-theme #cart .border-gray-100 {
+    border-color: var(--store-border) !important;
+}
+
+.frontend-theme #cart .cart-summary-footer {
+    color: var(--store-heading) !important;
+    background: var(--store-surface) !important;
+    border-color: var(--store-border) !important;
+}
+
+.frontend-theme #cart .cart-switch + label,
+.frontend-theme .checkout-page .cart-switch + label {
+    color: var(--store-body-text) !important;
+}
+
+.frontend-theme #cart .cart-switch:checked + label,
+.frontend-theme .checkout-page .cart-switch:checked + label {
+    color: var(--store-button-text) !important;
+    background: var(--store-primary) !important;
+}
+
+.frontend-theme #cart .cart-switch + label:hover {
+    color: var(--store-primary-hover) !important;
+}
+
+.frontend-theme #cart .xmark-btn {
+    color: var(--store-button-text) !important;
+    background: var(--store-primary) !important;
+}
+
+.frontend-theme .checkout-page {
+    color: var(--store-body-text);
+    background: var(--store-page-bg);
+}
+
+.frontend-theme .checkout-page .bg-white {
+    background: var(--store-surface) !important;
+}
+
+.frontend-theme .checkout-page .bg-gray-50,
+.frontend-theme .checkout-page [class~="bg-gray-900/50"] {
+    background: var(--store-input-bg) !important;
+}
+
+.frontend-theme .checkout-page input,
+.frontend-theme .checkout-page select,
+.frontend-theme .checkout-page textarea {
+    color: var(--store-heading) !important;
+    background: var(--store-input-bg) !important;
+    border-color: var(--store-border) !important;
+}
+
+.frontend-theme .checkout-page input::placeholder,
+.frontend-theme .checkout-page textarea::placeholder {
+    color: var(--store-body-text) !important;
+    opacity: 0.78 !important;
+}
+
+.frontend-theme .checkout-page .checkout-payment-option {
+    color: var(--store-heading) !important;
+    background: var(--store-surface) !important;
+    border-color: var(--store-border) !important;
+}
+
+.frontend-theme .checkout-page .checkout-payment-option span {
+    color: var(--store-heading) !important;
+}
+
+.frontend-theme .checkout-page .checkout-payment-option.border-primary {
+    background: var(--store-primary-soft) !important;
+    border-color: var(--store-primary) !important;
+}
+
+.frontend-theme .checkout-page .checkout-time-card,
+.frontend-theme .checkout-page .checkout-address-card {
+    color: var(--store-heading) !important;
+    background: var(--store-surface) !important;
+    border-color: var(--store-border) !important;
+}
+
+.frontend-theme .checkout-page .checkout-time-card[class~="bg-primary/5"],
+.frontend-theme .checkout-page .checkout-address-card.active {
+    background: var(--store-primary-soft) !important;
+    border-color: var(--store-primary) !important;
+}
+
+.frontend-theme .checkout-page [class~="bg-gray-900/70"] {
+    color: var(--store-heading) !important;
+    background: var(--store-surface) !important;
+    border-color: var(--store-border) !important;
+}
+
+.frontend-theme .checkout-page [class~="text-gray-300"],
+.frontend-theme .checkout-page [class~="text-gray-400"] {
+    color: var(--store-body-text) !important;
+}
+
+.frontend-theme .checkout-page [class~="border-[#EFF0F6]"],
+.frontend-theme .checkout-page [class~="border-[#EFF0F6]/20"] {
+    border-color: var(--store-border) !important;
+}
+
+.frontend-theme .checkout-page .text-white {
+    color: var(--store-heading) !important;
+}
+
+.frontend-theme .checkout-page button.bg-primary,
+.frontend-theme .checkout-page button[class~="bg-primary"] {
+    color: var(--store-button-text) !important;
+    background: var(--store-primary) !important;
+}
+
+/* Customer screens after checkout: orders, tracking, status and receipts. */
+.frontend-theme .orders-page,
+.frontend-theme .order-details-page {
+    color: var(--store-body-text);
+}
+
+.frontend-theme .orders-page [class~="border-gray-2"],
+.frontend-theme .order-details-page [class~="border-gray-2"] {
+    border-color: var(--store-border) !important;
+}
+
+.frontend-theme .orders-page [class~="lab-color-blue"] {
+    color: var(--store-primary) !important;
+}
+
+.frontend-theme .order-tracking-banner {
+    color: var(--store-button-text) !important;
+    background: var(--store-primary) !important;
+}
+
+.frontend-theme .order-tracking-banner .text-primary,
+.frontend-theme .order-tracking-banner .text-white {
+    color: var(--store-button-text) !important;
+}
+
+.frontend-theme .order-tracking-banner .bg-white {
+    color: var(--store-heading) !important;
+}
+
+.frontend-theme .order-tracking-banner .bg-white i {
+    color: var(--store-primary) !important;
+}
+
+.frontend-theme .db-order-status::before {
+    background-color: var(--store-surface) !important;
+}
+
+.frontend-theme .db-order-status.check::before {
+    background-color: var(--store-primary) !important;
+}
+
+.frontend-theme #receipt .modal-dialog,
+.frontend-theme #receipt .modal-body,
+.frontend-theme #receipt #print {
+    color: var(--store-body-text) !important;
+    background: var(--store-surface) !important;
+}
+
+.frontend-theme #receipt [class~="border-gray-400"] {
+    border-color: var(--store-border) !important;
+}
+
+.frontend-theme #receipt .text-heading,
+.frontend-theme #receipt h3,
+.frontend-theme #receipt h4,
+.frontend-theme #receipt h5,
+.frontend-theme #receipt h6 {
+    color: var(--store-heading) !important;
+}
+
+.frontend-theme .receipt-print-button {
+    color: var(--store-button-text) !important;
+    background: var(--store-primary) !important;
 }
 
 .frontend-theme .shadow-xl,
