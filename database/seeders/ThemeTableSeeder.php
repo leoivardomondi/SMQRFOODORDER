@@ -38,6 +38,8 @@ class ThemeTableSeeder extends Seeder
             'theme_nav_background_color'  => '#ffffff',
             'theme_nav_text_color'        => '#6e7191',
             'theme_nav_active_color'      => '#115e59',
+            'theme_nav_icon_color'        => '#6e7191',
+            'theme_nav_active_icon_color' => '#115e59',
             'theme_font_family'          => 'Inter, sans-serif',
             'theme_heading_font_family'  => 'Inter, sans-serif',
             'theme_color_mode'           => 'light',

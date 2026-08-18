@@ -897,11 +897,15 @@ body.product-page-open .pwa-install-modal {
 
 .frontend-theme nav.fixed.bottom-0 a:not(.text-primary) i,
 .frontend-theme nav.fixed.bottom-0 button.user-profile-dropdown-box i {
-    color: var(--store-nav-text) !important;
+    color: var(--store-nav-icon) !important;
 }
 
 .frontend-theme nav.fixed.bottom-0 a.text-primary i {
-    color: var(--store-nav-active) !important;
+    color: var(--store-nav-active-icon) !important;
+}
+
+.frontend-theme nav.fixed.bottom-0 .mobcart {
+    color: var(--store-button-text) !important;
 }
 
 .frontend-theme nav.fixed.bottom-0 {

@@ -81,6 +81,8 @@ export default {
         '--store-nav-bg': settings.theme_nav_background_color || settings.theme_header_background || '#ffffff',
         '--store-nav-text': settings.theme_nav_text_color || settings.theme_body_text_color || '#6e7191',
         '--store-nav-active': settings.theme_nav_active_color || settings.theme_primary_hover_color || '#115e59',
+        '--store-nav-icon': settings.theme_nav_icon_color || settings.theme_nav_text_color || '#6e7191',
+        '--store-nav-active-icon': settings.theme_nav_active_icon_color || settings.theme_nav_active_color || '#115e59',
         '--store-font': settings.theme_font_family || 'Inter, sans-serif',
         '--store-heading-font': settings.theme_heading_font_family || 'Inter, sans-serif',
         '--store-color-scheme': settings.theme_color_mode || 'light',

@@ -48,6 +48,8 @@ class ThemeRequest extends FormRequest
             'theme_nav_background_color' => $color,
             'theme_nav_text_color'       => $color,
             'theme_nav_active_color'     => $color,
+            'theme_nav_icon_color'        => $color,
+            'theme_nav_active_icon_color' => $color,
             'theme_font_family'         => ['nullable', 'string', 'max:120'],
             'theme_heading_font_family' => ['nullable', 'string', 'max:120'],
             'theme_color_mode'          => ['nullable', 'in:light,dark'],

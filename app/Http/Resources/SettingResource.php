@@ -65,6 +65,8 @@ class SettingResource extends JsonResource
             'theme_nav_background_color'           => $this->info['theme_nav_background_color'] ?? ($this->info['theme_header_background'] ?? '#ffffff'),
             'theme_nav_text_color'                 => $this->info['theme_nav_text_color'] ?? ($this->info['theme_body_text_color'] ?? '#6e7191'),
             'theme_nav_active_color'               => $this->info['theme_nav_active_color'] ?? ($this->info['theme_primary_hover_color'] ?? '#115e59'),
+            'theme_nav_icon_color'                 => $this->info['theme_nav_icon_color'] ?? ($this->info['theme_nav_text_color'] ?? '#6e7191'),
+            'theme_nav_active_icon_color'          => $this->info['theme_nav_active_icon_color'] ?? ($this->info['theme_nav_active_color'] ?? '#115e59'),
             'theme_font_family'                    => $this->info['theme_font_family'] ?? 'Inter, sans-serif',
             'theme_heading_font_family'            => $this->info['theme_heading_font_family'] ?? 'Inter, sans-serif',
             'theme_color_mode'                     => $this->info['theme_color_mode'] ?? 'light',
