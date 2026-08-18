@@ -94,6 +94,9 @@
     const textWhatsappUrl = @json($whatsappUrl);
     const receiptStoreUrl = @json($receiptStoreUrl ?? '');
     const receiptLogoUrl = @json($logo->logo);
+    const brandName = @json($company['company_name'] ?? 'Restaurant');
+    const brandPrimary = @json($theme['theme_primary_color'] ?? '#0f766e');
+    const brandHeading = @json($theme['theme_heading_color'] ?? '#1f1f39');
 
     function wrapReceiptLine(context, text, maxWidth) {
         if (!text) return [''];
@@ -167,10 +170,10 @@
         context.fillRect(0, 0, canvas.width, canvas.height);
         context.fillStyle = '#ffffff';
         context.fillRect(14, 14, canvas.width - 28, canvas.height - 28);
-        context.strokeStyle = '#b79a4b';
+        context.strokeStyle = brandPrimary;
         context.lineWidth = 3;
         context.strokeRect(14, 14, canvas.width - 28, canvas.height - 28);
-        context.fillStyle = '#b79a4b';
+        context.fillStyle = brandPrimary;
         context.fillRect(14, 14, canvas.width - 28, 14);
 
         const logo = await loadReceiptLogo();
@@ -184,17 +187,17 @@
             context.beginPath();
             context.arc(width / 2, 105, 60, 0, Math.PI * 2);
             context.fill();
-            context.strokeStyle = '#b79a4b';
+            context.strokeStyle = brandPrimary;
             context.lineWidth = 4;
             context.stroke();
             context.fillStyle = '#ffffff';
             context.textAlign = 'center';
             context.font = '700 27px Rubik, Arial, sans-serif';
-            context.fillText('BWIBO', width / 2, 114);
+            context.fillText(brandName, width / 2, 114);
         }
 
         context.textAlign = 'center';
-        context.fillStyle = '#171717';
+        context.fillStyle = brandHeading;
         context.font = '800 38px Rubik, Arial, sans-serif';
         context.fillText('PAYMENT RECEIPT', width / 2, 213);
         context.fillStyle = '#187a3d';
@@ -203,7 +206,7 @@
         context.fillStyle = '#ffffff';
         context.font = '800 31px Rubik, Arial, sans-serif';
         context.fillText('PAID', width / 2, 274);
-        context.strokeStyle = '#b79a4b';
+        context.strokeStyle = brandPrimary;
         context.lineWidth = 2;
         context.setLineDash([10, 9]);
         context.beginPath();
@@ -261,7 +264,7 @@
             try {
                 const blob = await createReceiptBlob();
                 const formData = new FormData();
-                formData.append('receipt', blob, 'bwibo-paid-order-{{ $order->order_serial_no }}.png');
+        formData.append('receipt', blob, 'paid-order-{{ $order->order_serial_no }}.png');
                 const response = await fetch(receiptStoreUrl, {
                     method: 'POST',
                     headers: {

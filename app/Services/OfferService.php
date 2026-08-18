@@ -198,7 +198,9 @@ class OfferService
     public function show(Offer $offer): Offer
     {
         try {
-            return $offer->load('items');
+            return $offer->load(['items' => function ($query) {
+                $query->visibleToday();
+            }]);
         } catch (Exception $exception) {
             Log::info($exception->getMessage());
             throw new Exception($exception->getMessage(), 422);

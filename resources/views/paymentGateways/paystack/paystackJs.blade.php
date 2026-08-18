@@ -9,7 +9,7 @@
             }
         }
     }
-    $email = $order?->user?->email ?? $order->email ?? 'bwibomarketing@gmail.com';
+    $email = $order?->user?->email ?? $order->email ?? config('mail.from.address');
 @endphp
 
 <script src="https://js.paystack.co/v1/inline.js"></script>

@@ -46,7 +46,7 @@ export default {
             offer: {},
             items: {},
             itemProps: {
-                design: itemDesignEnum.LIST,
+                design: itemDesignEnum.GRID,
                 type: null,
             },
             route: null,

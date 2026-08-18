@@ -1,6 +1,6 @@
 <template>
   <div v-if="showOfferPopup && featuredOffer" class="fixed inset-0 z-[120] flex items-center justify-center bg-black/80 p-4" @click.self="closeOfferPopup">
-    <div class="relative max-h-[92vh] w-full max-w-xl overflow-y-auto rounded-2xl bg-[#111111] shadow-2xl">
+    <div class="relative max-h-[92vh] w-full max-w-xl overflow-y-auto rounded-2xl bg-white shadow-2xl">
       <button type="button" aria-label="Close offer" class="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/70 text-xl text-white" @click="closeOfferPopup">
         <i class="fa-solid fa-xmark"></i>
       </button>
@@ -19,7 +19,7 @@
     <div class="container">
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
       <article v-for="offer in offers" :key="offer.id"
-        class="overflow-hidden rounded-2xl border border-white/10 bg-[#111111] shadow-lg">
+        class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg">
         <router-link :to="{ name: 'frontend.offers.item', params: { slug: offer.slug } }" class="block bg-black">
           <img class="block w-full h-auto" :src="offer.image" :alt="offer.name" />
         </router-link>

@@ -7,6 +7,7 @@ use Exception;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Smartisan\Settings\Facades\Settings;
 
 class WeatherService
 {
@@ -36,7 +37,7 @@ class WeatherService
     {
         $lat        = $branch?->latitude ?? -1.2621325;
         $lng        = $branch?->longitude ?? 36.774585;
-        $branchName = $branch?->name ?? 'Bwibo Restaurant';
+        $branchName = $branch?->name ?? Settings::group('company')->get('company_name', 'Restaurant');
         $city       = $branch?->city ?? 'Nairobi';
 
         try {

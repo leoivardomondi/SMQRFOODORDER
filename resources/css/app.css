@@ -533,19 +533,22 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
 .cs-custom-switcher input:checked { @apply before:bg-primary ltr:after:left-[72%] rtl:after:right-[72%] }
 
 /* ================================================================
-   BWIBO RESTAURANT — FRONTEND BRAND THEME
-   Logo-derived palette: true black, charcoal, champagne gold, white.
-   Kept under .frontend-theme so the administration UI is unaffected.
+   Database-driven storefront theme. The administration UI is unaffected.
 ================================================================ */
 .frontend-theme {
-    --primary: 198 161 91;
-    --primary-slate: 226 201 134;
-    --primary-light: 36 31 22;
+    --primary: 15 118 110;
+    --primary-slate: 17 94 89;
+    --primary-light: 236 253 245;
     --store-primary-soft: color-mix(in srgb, var(--store-primary) 14%, var(--store-surface));
+    --store-muted-surface: color-mix(in srgb, var(--store-surface) 92%, var(--store-heading));
+    --store-input-bg: color-mix(in srgb, var(--store-surface) 96%, var(--store-heading));
+    --store-muted-text: color-mix(in srgb, var(--store-body-text) 82%, var(--store-surface));
+    --store-primary-border: color-mix(in srgb, var(--store-primary) 65%, var(--store-border));
     min-height: 100vh;
     color: var(--store-body-text);
     background: var(--store-page-bg);
-    color-scheme: dark;
+    color-scheme: var(--store-color-scheme, light);
+    font-family: var(--store-font);
 }
 
 .frontend-theme h1,
@@ -560,15 +563,15 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
 .frontend-theme h1,
 .frontend-theme h2,
 .frontend-theme .product-card-grid-title {
-    font-family: Georgia, 'Times New Roman', serif;
+    font-family: var(--store-heading-font);
     font-weight: 500;
     letter-spacing: 0.01em;
 }
 
 .frontend-theme .bg-white { background-color: var(--store-surface) !important; }
 .frontend-theme .bg-gray-50,
-.frontend-theme .bg-gray-100 { background-color: #1a1a1a !important; }
-.frontend-theme .bg-gray-200 { background-color: #252525 !important; }
+.frontend-theme .bg-gray-100 { background-color: var(--store-muted-surface) !important; }
+.frontend-theme .bg-gray-200 { background-color: var(--store-border) !important; }
 .frontend-theme .text-heading,
 .frontend-theme .text-gray-900,
 .frontend-theme .text-gray-800,
@@ -576,7 +579,7 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
 .frontend-theme .text-paragraph,
 .frontend-theme .text-gray-600,
 .frontend-theme .text-gray-500 { color: var(--store-body-text) !important; }
-.frontend-theme .text-gray-400 { color: #7f7f85 !important; }
+.frontend-theme .text-gray-400 { color: var(--store-muted-text) !important; }
 .frontend-theme .text-black { color: var(--store-heading) !important; }
 .frontend-theme .border-gray-100,
 .frontend-theme .border-gray-200,
@@ -591,24 +594,24 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
 .frontend-theme .text-primary { color: var(--store-primary-hover) !important; }
 .frontend-theme .border-primary { border-color: var(--store-primary) !important; }
 .frontend-theme [class~="border-primary/30"],
-.frontend-theme [class~="border-primary/50"] { border-color: rgb(198 161 91 / 65%) !important; }
+.frontend-theme [class~="border-primary/50"] { border-color: var(--store-primary-border) !important; }
 .frontend-theme .fill-primary { fill: var(--store-primary) !important; }
 .frontend-theme .stroke-primary { stroke: var(--store-primary) !important; }
 
 /* Convert legacy light-theme utility colors used by older frontend views. */
 .frontend-theme [class~="bg-[#F7F7FC]"],
-.frontend-theme [class~="bg-[#EFF0F6]"] { background-color: #171717 !important; }
+.frontend-theme [class~="bg-[#EFF0F6]"] { background-color: var(--store-page-bg) !important; }
 .frontend-theme [class~="bg-[#D8FFFC]"],
 .frontend-theme [class~="bg-[#BDEFFF]"],
-.frontend-theme [class~="bg-[#D6F5FF]"] { background-color: #241f16 !important; }
-.frontend-theme [class~="text-[#1F1F39]"] { color: #f7f7f7 !important; }
+.frontend-theme [class~="bg-[#D6F5FF]"] { background-color: var(--store-primary-soft) !important; }
+.frontend-theme [class~="text-[#1F1F39]"] { color: var(--store-heading) !important; }
 .frontend-theme [class~="text-[#6E7191]"],
-.frontend-theme [class~="text-[#A0A3BD]"] { color: #a8a8ad !important; }
+.frontend-theme [class~="text-[#A0A3BD]"] { color: var(--store-body-text) !important; }
 .frontend-theme [class~="text-[#00749B]"],
 .frontend-theme [class~="text-[#008BBA]"] { color: var(--store-primary-hover) !important; }
 .frontend-theme [class~="border-[#F7F7FC]"],
 .frontend-theme [class~="border-[#EFF0F6]"],
-.frontend-theme [class~="border-[#D9DBE9]"] { border-color: #45391f !important; }
+.frontend-theme [class~="border-[#D9DBE9]"] { border-color: var(--store-border) !important; }
 
 .frontend-theme .bg-primary.text-white,
 .frontend-theme button.bg-primary,
@@ -617,7 +620,7 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
 }
 
 .frontend-theme .ff-header {
-    background: #ffffff !important;
+    background: var(--store-header-bg) !important;
     border-bottom: 1px solid var(--store-border);
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
 }
@@ -638,17 +641,17 @@ body.product-page-open .pwa-install-modal {
 }
 
 .frontend-theme .ff-header nav a:not(.text-primary) {
-    color: #000000 !important;
+    color: var(--store-heading) !important;
 }
 
 .frontend-theme .mobile-search-btn-icon,
 .mobile-search-btn-icon {
-    color: #000000 !important;
+    color: var(--store-heading) !important;
 }
 
 .frontend-theme .product-card-grid-title,
 .frontend-theme .product-card-list-title {
-    color: #ffffff !important;
+    color: var(--store-heading) !important;
 }
 
 .frontend-theme .header-search-group {
@@ -660,6 +663,7 @@ body.product-page-open .pwa-install-modal {
 .frontend-theme .product-card-grid {
     background: var(--store-surface) !important;
     border-color: var(--store-border) !important;
+    border-radius: var(--store-radius);
     box-shadow: none;
 }
 
@@ -669,7 +673,7 @@ body.product-page-open .pwa-install-modal {
 }
 
 .frontend-theme .product-card-grid-image {
-    border-bottom: 1px solid #45391f;
+    border-bottom: 1px solid var(--store-border);
 }
 
 .frontend-theme .product-card-grid-price-current,
@@ -680,7 +684,7 @@ body.product-page-open .pwa-install-modal {
 .frontend-theme .product-card-grid-cart-btn {
     color: var(--store-primary-hover);
     background: transparent !important;
-    border: 1px solid #9f7e40;
+    border: 1px solid var(--store-primary-border);
     box-shadow: none;
 }
 
@@ -691,7 +695,7 @@ body.product-page-open .pwa-install-modal {
 
 .frontend-theme .menu-swiper > div,
 .frontend-theme .menu-swiper {
-    border-color: #45391f !important;
+    border-color: var(--store-border) !important;
 }
 
 .frontend-theme nav.fixed.bottom-0 {
@@ -710,17 +714,17 @@ body.product-page-open .pwa-install-modal {
 
 .frontend-theme .mobcart span {
     color: var(--store-button-text) !important;
-    background: #ffffff !important;
+    background: var(--store-surface) !important;
 }
 
 .frontend-theme input,
 .frontend-theme select,
 .frontend-theme textarea {
-    color: #ffffff;
+    color: var(--store-heading);
 }
 
 .frontend-theme input::placeholder,
-.frontend-theme textarea::placeholder { color: #77777d; }
+.frontend-theme textarea::placeholder { color: var(--store-muted-text); }
 
 .frontend-theme .modal,
 .frontend-theme .drawer,
@@ -728,47 +732,49 @@ body.product-page-open .pwa-install-modal {
 
 .frontend-theme .modal-dialog,
 .frontend-theme .payment-label {
-    color: #a8a8ad;
-    background-color: #151515 !important;
-    border-color: #45391f !important;
+    color: var(--store-body-text);
+    background-color: var(--store-surface) !important;
+    border-color: var(--store-border) !important;
+    border-radius: var(--store-radius);
 }
 
 .frontend-theme .checkout-address-card {
-    color: #a8a8ad;
-    background: #171717;
-    border-color: #45391f;
+    color: var(--store-body-text);
+    background: var(--store-muted-surface);
+    border-color: var(--store-border);
+    border-radius: var(--store-radius);
     cursor: pointer;
     transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease;
 }
 
 .frontend-theme .checkout-address-card .checkout-address-title { color: var(--store-primary-hover); }
-.frontend-theme .checkout-address-card .checkout-address-detail { color: #f2f2f2; }
+.frontend-theme .checkout-address-card .checkout-address-detail { color: var(--store-heading); }
 
 .frontend-theme .checkout-address-card.active {
-    color: #ffffff;
-    background: #241f16 !important;
+    color: var(--store-heading);
+    background: var(--store-primary-soft) !important;
     border-color: var(--store-primary) !important;
-    box-shadow: inset 0 0 0 1px rgb(198 161 91 / 22%);
+    box-shadow: inset 0 0 0 1px var(--store-primary-border);
 }
 
 .frontend-theme .checkout-address-card.active .checkout-address-title { color: var(--store-primary-hover); }
 .frontend-theme .checkout-address-card.active .checkout-address-detail { color: #ffffff; }
 
 .frontend-theme .checkout-time-card {
-    color: #ffffff;
-    background: #171717;
-    border-color: #45391f;
+    color: var(--store-heading);
+    background: var(--store-muted-surface);
+    border-color: var(--store-border);
 }
 
 .frontend-theme .checkout-time-card[class~="bg-primary/5"] {
-    background: #241f16 !important;
+    background: var(--store-primary-soft) !important;
     border-color: var(--store-primary) !important;
-    box-shadow: inset 0 0 0 1px rgb(198 161 91 / 18%);
+    box-shadow: inset 0 0 0 1px var(--store-primary-border);
 }
 
 .frontend-theme .address-form-dialog {
-    color: #f5f5f5;
-    background: #141414 !important;
+    color: var(--store-body-text);
+    background: var(--store-surface) !important;
     border: 1px solid var(--store-border);
 }
 
@@ -787,49 +793,49 @@ body.product-page-open .pwa-install-modal {
 
 .frontend-theme .map-search-control,
 .frontend-theme .address-form-control {
-    color: #ffffff !important;
-    background: #0d0d0d !important;
-    border: 1px solid #45391f !important;
+    color: var(--store-heading) !important;
+    background: var(--store-input-bg) !important;
+    border: 1px solid var(--store-border) !important;
     box-shadow: none !important;
 }
 
 .frontend-theme .map-search-control:focus-within,
 .frontend-theme .address-form-control:focus {
     border-color: var(--store-primary) !important;
-    box-shadow: 0 0 0 2px rgb(198 161 91 / 18%) !important;
+    box-shadow: 0 0 0 2px var(--store-primary-border) !important;
 }
 
 .frontend-theme .map-search-input,
 .frontend-theme .map-search-input::placeholder {
-    color: #b4b4b8 !important;
+    color: var(--store-body-text) !important;
 }
 
 .frontend-theme .map-location-button,
 .frontend-theme .address-confirm-button {
     color: var(--store-button-text) !important;
-    background: #d1ae64 !important;
+    background: var(--store-primary) !important;
 }
 
 .frontend-theme .map-location-button i,
 .frontend-theme .address-confirm-button i { color: var(--store-button-text) !important; }
 
 .frontend-theme .address-label-option {
-    color: #f2f2f2;
-    background: #171717 !important;
-    border-color: #45391f !important;
+    color: var(--store-heading);
+    background: var(--store-muted-surface) !important;
+    border-color: var(--store-border) !important;
     transition: color 180ms ease, background-color 180ms ease, border-color 180ms ease;
 }
 
 .frontend-theme .address-label-option:hover {
     color: var(--store-primary-hover);
-    border-color: #806735 !important;
+    border-color: var(--store-primary) !important;
 }
 
 .frontend-theme .address-label-option.active {
-    color: #ffffff !important;
-    background: #2b2418 !important;
+    color: var(--store-heading) !important;
+    background: var(--store-primary-soft) !important;
     border-color: var(--store-primary) !important;
-    box-shadow: inset 0 0 0 1px rgb(198 161 91 / 24%);
+    box-shadow: inset 0 0 0 1px var(--store-primary-border);
 }
 
 .frontend-theme .address-label-option.active i,

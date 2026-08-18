@@ -5,6 +5,7 @@ namespace App\Http\Requests;
 use App\Enums\Activity;
 use App\Enums\OrderType;
 use App\Rules\ValidJsonOrder;
+use App\Models\Item;
 use Illuminate\Validation\Rule;
 use Smartisan\Settings\Facades\Settings;
 use Illuminate\Foundation\Http\FormRequest;
@@ -83,6 +84,18 @@ class OrderRequest extends FormRequest
                 $codGateway = \App\Models\PaymentGateway::where('slug', 'cash-on-delivery')->first();
                 if ($codGateway && $codGateway->status == Activity::DISABLE) {
                     $validator->errors()->add('payment_method', 'Pay on Delivery option is currently disabled.');
+                }
+            }
+
+            $requestItems = json_decode((string) request('items'));
+            foreach (is_array($requestItems) ? $requestItems : [] as $requestItem) {
+                $item = Item::find($requestItem->item_id ?? null);
+                if ($item && !$item->isVisibleToday()) {
+                    $days = implode(', ', array_map('ucfirst', $item->visible_days ?? []));
+                    $validator->errors()->add(
+                        'items',
+                        sprintf('%s is only available on %s.', $item->name, $days ?: 'its scheduled days')
+                    );
                 }
             }
         });

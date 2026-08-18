@@ -39,6 +39,10 @@ class ThemeRequest extends FormRequest
             'theme_heading_color'       => $color,
             'theme_body_text_color'     => $color,
             'theme_border_color'        => $color,
+            'theme_font_family'         => ['nullable', 'string', 'max:120'],
+            'theme_heading_font_family' => ['nullable', 'string', 'max:120'],
+            'theme_color_mode'          => ['nullable', 'in:light,dark'],
+            'theme_border_radius'       => ['nullable', 'in:0px,6px,12px,18px,24px'],
         ];
     }
 }

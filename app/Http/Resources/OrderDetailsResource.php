@@ -22,7 +22,7 @@ class OrderDetailsResource extends JsonResource
             'payment_url'                         => URL::temporarySignedRoute('payment.index', now()->addMinutes(30), ['order' => $this->resource]),
             'order_serial_no'                     => $this->order_serial_no,
             'token'                               => $this->token,
-            'email'                               => $this->user?->email ?? $this->email ?? 'bwibomarketing@gmail.com',
+            'email'                               => $this->user?->email ?? $this->email ?? config('mail.from.address'),
             "subtotal_currency_price"             => AppLibrary::currencyAmountFormat($this->subtotal),
             "subtotal_without_tax_currency_price" => AppLibrary::currencyAmountFormat($this->subtotal - $this->total_tax),
             "discount_currency_price"             => AppLibrary::currencyAmountFormat($this->discount),

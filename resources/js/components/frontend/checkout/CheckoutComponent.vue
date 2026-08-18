@@ -1341,7 +1341,7 @@ export default {
                             if (this.setting.paystack_status == 5 && this.setting.paystack_public_key) {
                                 let handler = PaystackPop.setup({
                                     key: this.setting.paystack_public_key,
-                                    email: orderResponse.data.data.email || 'bwibomarketing@gmail.com',
+                                    email: orderResponse.data.data.email || this.setting.company_email || '',
                                     amount: Math.ceil(parseFloat(orderResponse.data.data.total) * 100),
                                     currency: 'KES',
                                     callback: function (response) {

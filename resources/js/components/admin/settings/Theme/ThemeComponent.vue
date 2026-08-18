@@ -51,6 +51,32 @@
                             v-if="theme_footer_logo_reader" :src="theme_footer_logo_reader" />
                     </div>
 
+                    <div class="form-col-12 sm:form-col-6">
+                        <label for="theme_font_family" class="db-field-title">Body font</label>
+                        <select id="theme_font_family" v-model="design.theme_font_family" class="db-field-control">
+                            <option v-for="font in fontOptions" :key="font.value" :value="font.value">{{ font.label }}</option>
+                        </select>
+                    </div>
+                    <div class="form-col-12 sm:form-col-6">
+                        <label for="theme_heading_font_family" class="db-field-title">Heading font</label>
+                        <select id="theme_heading_font_family" v-model="design.theme_heading_font_family" class="db-field-control">
+                            <option v-for="font in fontOptions" :key="font.value" :value="font.value">{{ font.label }}</option>
+                        </select>
+                    </div>
+                    <div class="form-col-12 sm:form-col-6">
+                        <label for="theme_color_mode" class="db-field-title">Color mode</label>
+                        <select id="theme_color_mode" v-model="design.theme_color_mode" class="db-field-control">
+                            <option value="light">Light</option>
+                            <option value="dark">Dark</option>
+                        </select>
+                    </div>
+                    <div class="form-col-12 sm:form-col-6">
+                        <label for="theme_border_radius" class="db-field-title">Corner radius</label>
+                        <select id="theme_border_radius" v-model="design.theme_border_radius" class="db-field-control">
+                            <option v-for="radius in radiusOptions" :key="radius" :value="radius">{{ radius }}</option>
+                        </select>
+                    </div>
+
                     <div class="form-col-12">
                         <div class="theme-color-heading">
                             <div>
@@ -124,18 +150,40 @@ export default {
             theme_footer_logo: "",
             theme_footer_logo_reader: "",
             colors: {},
+            design: {},
             errors: {},
         };
     },
     computed: {
         colorDefaults() {
             return {
-                theme_primary_color: "#c6a15b", theme_primary_hover_color: "#e2c986",
-                theme_button_text_color: "#080808", theme_page_background: "#080808",
-                theme_surface_color: "#111111", theme_header_background: "#0b0b0b",
-                theme_footer_background: "#050505", theme_heading_color: "#ffffff",
-                theme_body_text_color: "#a8a8ad", theme_border_color: "#332b1e",
+                theme_primary_color: "#0f766e", theme_primary_hover_color: "#115e59",
+                theme_button_text_color: "#ffffff", theme_page_background: "#f7f7fc",
+                theme_surface_color: "#ffffff", theme_header_background: "#ffffff",
+                theme_footer_background: "#0f172a", theme_heading_color: "#1f1f39",
+                theme_body_text_color: "#6e7191", theme_border_color: "#d9dbe9",
             };
+        },
+        designDefaults() {
+            return {
+                theme_font_family: "Inter, sans-serif",
+                theme_heading_font_family: "Inter, sans-serif",
+                theme_color_mode: "light",
+                theme_border_radius: "12px",
+            };
+        },
+        fontOptions() {
+            return [
+                { label: "Inter", value: "Inter, sans-serif" },
+                { label: "Rubik", value: "Rubik, sans-serif" },
+                { label: "Poppins", value: "Poppins, sans-serif" },
+                { label: "Open Sans", value: "'Open Sans', sans-serif" },
+                { label: "Lato", value: "Lato, sans-serif" },
+                { label: "System default", value: "system-ui, sans-serif" },
+            ];
+        },
+        radiusOptions() {
+            return ["0px", "6px", "12px", "18px", "24px"];
         },
         colorFields() {
             return [
@@ -158,6 +206,7 @@ export default {
     },
     created() {
         this.colors = { ...this.colorDefaults };
+        this.design = { ...this.designDefaults };
     },
     mounted() {
         this.list();
@@ -183,6 +232,9 @@ export default {
                     Object.keys(this.colorDefaults).forEach((key) => {
                         this.colors[key] = res.data.data[key] || this.colorDefaults[key];
                     });
+                    Object.keys(this.designDefaults).forEach((key) => {
+                        this.design[key] = res.data.data[key] || this.designDefaults[key];
+                    });
                     this.loading.isActive = false;
                 })
                 .catch((err) => {
@@ -202,6 +254,7 @@ export default {
                     fd.append("theme_footer_logo", this.theme_footer_logo);
                 }
                 Object.keys(this.colorDefaults).forEach((key) => fd.append(key, this.colors[key]));
+                Object.keys(this.designDefaults).forEach((key) => fd.append(key, this.design[key]));
                 this.loading.isActive = true;
                 this.$store
                     .dispatch("theme/save", {
@@ -231,6 +284,7 @@ export default {
         },
         resetColors: function () {
             this.colors = { ...this.colorDefaults };
+            this.design = { ...this.designDefaults };
         },
     },
 };

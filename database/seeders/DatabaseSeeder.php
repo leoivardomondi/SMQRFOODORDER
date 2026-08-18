@@ -50,7 +50,6 @@ class DatabaseSeeder extends Seeder
         $this->call(ItemExtraTableSeeder::class);
         $this->call(ItemAddonTableSeeder::class);
         $this->call(OfferTableSeeder::class);
-        $this->call(BwiboWeekdayOfferSeeder::class);
         $this->call(OfferItemTableSeeder::class);
         $this->call(CouponTableSeeder::class);
         $this->call(OrderTableSeeder::class);

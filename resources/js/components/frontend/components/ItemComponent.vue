@@ -242,6 +242,7 @@
 <script>
 import itemDesignEnum from "../../../enums/modules/itemDesignEnum";
 import appService from "../../../services/appService";
+import alertService from "../../../services/alertService";
 import _ from 'lodash';
 import { Swiper, SwiperSlide } from 'swiper/vue';
 import 'swiper/css';
@@ -394,6 +395,11 @@ export default {
                 (item.addons && item.addons.length > 0);
         },
         handleAddItem: function (selectedItem) {
+            if (!this.isAvailableToday(selectedItem)) {
+                this.showUnavailableMessage(selectedItem);
+                return;
+            }
+
             if (selectedItem.itemAttributes && selectedItem.extras && selectedItem.addons) {
                 if (this.requiresConfiguration(selectedItem)) {
                     this.variationModalShow(selectedItem);
@@ -413,6 +419,11 @@ export default {
             }).catch(() => {});
         },
         addSimpleItemToCart: function (item) {
+            if (!this.isAvailableToday(item)) {
+                this.showUnavailableMessage(item);
+                return;
+            }
+
             const price = item.offer.length > 0 ? item.offer[0] : item;
             this.$store.dispatch("frontendCart/lists", [{
                 name: item.name,
@@ -441,7 +452,21 @@ export default {
             const index = this.simpleCartIndex(item);
             return index === -1 ? 0 : this.carts[index].quantity;
         },
+        isAvailableToday: function (item) {
+            const days = Array.isArray(item?.visible_days) ? item.visible_days.map(day => String(day).toLowerCase()) : [];
+            const today = new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(new Date()).toLowerCase();
+            return days.length === 0 || days.includes(today);
+        },
+        showUnavailableMessage: function (item) {
+            const days = Array.isArray(item?.visible_days) ? item.visible_days.map(day => String(day).charAt(0).toUpperCase() + String(day).slice(1)).join(', ') : '';
+            alertService.error(`${item.name} is only available on ${days || 'its scheduled days'}.`);
+        },
         incrementCartItem: function (item) {
+            if (!this.isAvailableToday(item)) {
+                this.showUnavailableMessage(item);
+                return;
+            }
+
             const index = this.simpleCartIndex(item);
             if (index !== -1) {
                 this.$store.dispatch('frontendCart/quantity', { id: index, status: 'increment' });
@@ -758,6 +783,12 @@ export default {
             this.totalPriceSetup();
         },
         addToCart: function () {
+            if (!this.isAvailableToday(this.item)) {
+                this.showUnavailableMessage(this.item);
+                this.variationModalHide();
+                return;
+            }
+
             this.itemArrays = [
                 {
                     name: this.temp.name,

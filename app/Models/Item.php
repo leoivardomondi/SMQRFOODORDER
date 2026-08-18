@@ -85,6 +85,13 @@ class Item extends Model implements HasMedia
         });
     }
 
+    public function isVisibleToday(?Carbon $date = null): bool
+    {
+        $days = array_map('strtolower', $this->visible_days ?? []);
+
+        return empty($days) || in_array(strtolower(($date ?? Carbon::now())->format('l')), $days, true);
+    }
+
     public function getPreviewAttribute(): string
     {
         if (!empty($this->getFirstMediaUrl('item'))) {

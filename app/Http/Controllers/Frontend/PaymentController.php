@@ -167,6 +167,7 @@ class PaymentController extends Controller
     ): \Illuminate\Contracts\View\Factory | \Illuminate\Contracts\View\View | \Illuminate\Contracts\Foundation\Application | \Illuminate\Http\RedirectResponse {
         $this->authorizePaymentPage($request, $order);
         $company     = Settings::group('company')->all();
+        $theme       = Settings::group('theme')->all();
         $logo        = ThemeSetting::where(['key' => 'theme_logo'])->first();
         $faviconLogo = ThemeSetting::where(['key' => 'theme_favicon_logo'])->first();
 
@@ -179,6 +180,7 @@ class PaymentController extends Controller
             $whatsappData = $this->paidOrderWhatsappData($order, $receiptPreviewUrl);
             return view('paymentSuccess', [
                 'company'     => $company,
+                'theme'       => $theme,
                 'logo'        => $logo,
                 'faviconLogo' => $faviconLogo,
                 'order'       => $order,
@@ -217,6 +219,8 @@ class PaymentController extends Controller
 
         return view('paymentReceiptPreview', [
             'order' => $order,
+            'company' => Settings::group('company')->all(),
+            'theme' => Settings::group('theme')->all(),
             'imageUrl' => URL::temporarySignedRoute(
                 'payment.receipt.image',
                 now()->addMinutes(10),
@@ -262,7 +266,7 @@ class PaymentController extends Controller
         $providerName = $order->transaction?->provider_name;
 
         $lines = [
-            'PAID ORDER - ' . ($order->branch?->name ?? Settings::group('company')->get('company_name') ?? 'Bwibo Restaurant'),
+            'PAID ORDER - ' . ($order->branch?->name ?? Settings::group('company')->get('company_name') ?? 'Restaurant'),
             '****************************************************',
             'Order: #' . $order->order_serial_no,
             'Payment status: PAID',
@@ -329,7 +333,7 @@ class PaymentController extends Controller
         return [
             'phone' => $phone,
             'message_lines' => [
-                'PAID ORDER ALERT - ' . ($order->branch?->name ?? 'Bwibo Restaurant'),
+                'PAID ORDER ALERT - ' . ($order->branch?->name ?? Settings::group('company')->get('company_name') ?? 'Restaurant'),
                 '',
                 'Payment has been confirmed for order #' . $order->order_serial_no . '.',
                 'Please open the secure receipt below to review and process the order:',

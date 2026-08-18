@@ -1,6 +1,6 @@
 <template>
   <div :dir="direction">
-    <div v-if="theme === 'frontend'" class="frontend-theme min-h-screen" :style="frontendThemeStyle">
+    <div v-if="theme === 'frontend' && frontendReady" class="frontend-theme min-h-screen" :style="frontendThemeStyle">
       <FrontendNavbarComponent v-if="!focusedLayout" />
       <FrontendCartComponent />
       <router-view></router-view>
@@ -9,6 +9,8 @@
       <FrontendCookiesComponent />
       <FrontendFooterComponent v-if="!focusedLayout" />
     </div>
+
+    <div v-else-if="theme === 'frontend'" class="min-h-screen bg-[#080808]" aria-hidden="true"></div>
 
     <div v-if="theme === 'backend'">
       <main class="db-main" v-if="logged">
@@ -53,22 +55,27 @@ export default {
   data() {
     return {
       theme: "frontend",
+      frontendReady: false,
     };
   },
   computed: {
     frontendThemeStyle: function () {
       const settings = this.$store.getters['frontendSetting/lists'] || {};
       return {
-        '--store-primary': settings.theme_primary_color || '#c6a15b',
-        '--store-primary-hover': settings.theme_primary_hover_color || '#e2c986',
-        '--store-button-text': settings.theme_button_text_color || '#080808',
-        '--store-page-bg': settings.theme_page_background || '#080808',
-        '--store-surface': settings.theme_surface_color || '#111111',
-        '--store-header-bg': settings.theme_header_background || '#0b0b0b',
-        '--store-footer-bg': settings.theme_footer_background && settings.theme_footer_background !== '#050505' && settings.theme_footer_background !== '#000000' ? settings.theme_footer_background : '#1c1712',
-        '--store-heading': settings.theme_heading_color || '#ffffff',
-        '--store-body-text': settings.theme_body_text_color || '#a8a8ad',
-        '--store-border': settings.theme_border_color || '#332b1e',
+        '--store-primary': settings.theme_primary_color || '#0f766e',
+        '--store-primary-hover': settings.theme_primary_hover_color || '#115e59',
+        '--store-button-text': settings.theme_button_text_color || '#ffffff',
+        '--store-page-bg': settings.theme_page_background || '#f7f7fc',
+        '--store-surface': settings.theme_surface_color || '#ffffff',
+        '--store-header-bg': settings.theme_header_background || '#ffffff',
+        '--store-footer-bg': settings.theme_footer_background || '#0f172a',
+        '--store-heading': settings.theme_heading_color || '#1f1f39',
+        '--store-body-text': settings.theme_body_text_color || '#6e7191',
+        '--store-border': settings.theme_border_color || '#d9dbe9',
+        '--store-font': settings.theme_font_family || 'Inter, sans-serif',
+        '--store-heading-font': settings.theme_heading_font_family || 'Inter, sans-serif',
+        '--store-color-scheme': settings.theme_color_mode || 'light',
+        '--store-radius': settings.theme_border_radius || '12px',
       };
     },
     focusedLayout: function () {
@@ -90,7 +97,12 @@ export default {
           language_id: res.data.data.site_default_language,
         });
       })
-      .catch();
+      .catch()
+      .finally(() => {
+        // Do not render the storefront until its theme settings are available.
+        // This prevents the default installer theme from flashing on first load.
+        this.frontendReady = true;
+      });
 
     if (env.DEMO === "true" || env.DEMO === true || env.DEMO === "1" || env.DEMO === 1) {
       this.$store.dispatch("authcheck").then(res => {
