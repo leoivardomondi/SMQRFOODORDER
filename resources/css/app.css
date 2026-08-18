@@ -647,7 +647,11 @@ body.product-page-open .pwa-install-modal {
 }
 
 .frontend-theme .ff-header nav a:not(.text-primary) {
-    color: var(--store-heading) !important;
+    color: var(--store-nav-text) !important;
+}
+
+.frontend-theme .ff-header nav a.text-primary {
+    color: var(--store-nav-active) !important;
 }
 
 .frontend-theme .mobile-search-btn-icon,
@@ -893,11 +897,24 @@ body.product-page-open .pwa-install-modal {
 
 .frontend-theme nav.fixed.bottom-0 a:not(.text-primary) i,
 .frontend-theme nav.fixed.bottom-0 button.user-profile-dropdown-box i {
-    color: #ffffff !important;
+    color: var(--store-nav-text) !important;
 }
 
 .frontend-theme nav.fixed.bottom-0 a.text-primary i {
-    color: var(--store-primary-hover) !important;
+    color: var(--store-nav-active) !important;
+}
+
+.frontend-theme nav.fixed.bottom-0 {
+    background: var(--store-nav-bg) !important;
+}
+
+.frontend-theme nav.fixed.bottom-0 a:not(.text-primary),
+.frontend-theme nav.fixed.bottom-0 button.user-profile-dropdown-box {
+    color: var(--store-nav-text) !important;
+}
+
+.frontend-theme nav.fixed.bottom-0 a.text-primary {
+    color: var(--store-nav-active) !important;
 }
 
 .frontend-theme .footer-part {
