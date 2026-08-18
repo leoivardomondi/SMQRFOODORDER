@@ -1,9 +1,9 @@
 <template>
     <!--========ITEM PART START=========-->
     <div v-if="design === itemDesignEnum.LIST" class="flex flex-col gap-6">
-        <div v-for="item in items" :key="item.id" v-show="type === null || type === item.item_type" class="flex gap-4 relative">
-            <img class="w-24 h-24 sm:w-28 sm:h-28 rounded-xl object-contain bg-slate-950" :src="item.thumb" alt="thumbnail">
-            <div class="flex-1 flex flex-col justify-start">
+        <div v-for="item in items" :key="item.id" v-show="type === null || type === item.item_type" class="product-card-list-item flex gap-3 sm:gap-4 relative">
+            <img class="product-card-list-image w-20 h-20 sm:w-24 sm:h-24 rounded-xl object-cover" :src="item.thumb" alt="thumbnail">
+            <div class="product-card-list-content flex-1 min-w-0 flex flex-col justify-start">
                 <div class="flex justify-between items-start mb-1">
                     <h3 class="product-card-list-title text-base sm:text-lg font-semibold text-heading">{{ item.name }}</h3>
                     <div class="text-right">
