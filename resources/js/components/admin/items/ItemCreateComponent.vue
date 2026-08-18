@@ -26,6 +26,15 @@
                     </div>
 
                     <div class="form-col-12 sm:form-col-6">
+                        <label for="compare_at_price" class="db-field-title">Compared to Glovo</label>
+                        <input v-on:keypress="floatNumber($event)" v-model="props.form.compare_at_price"
+                            v-bind:class="errors.compare_at_price ? 'invalid' : ''" type="text" id="compare_at_price"
+                            class="db-field-control" placeholder="Optional reference price">
+                        <small class="db-field-alert" v-if="errors.compare_at_price">{{ errors.compare_at_price[0] }}</small>
+                        <small class="text-paragraph">Shown as the old price only when higher than the app price.</small>
+                    </div>
+
+                    <div class="form-col-12 sm:form-col-6">
                         <label for="item_category_id" class="db-field-title required">{{ $t("label.category") }}</label>
                         <vue-select class="db-field-control f-b-custom-select" id="item_category_id"
                             v-bind:class="errors.item_category_id ? 'invalid' : ''"
@@ -253,6 +262,7 @@ export default {
             this.$props.props.form = {
                 name: "",
                 price: "",
+                compare_at_price: "",
                 description: "",
                 caution: "",
                 is_featured: askEnum.YES,
@@ -273,6 +283,7 @@ export default {
             this.$props.props.form = {
                 name: "",
                 price: "",
+                compare_at_price: "",
                 description: "",
                 caution: "",
                 is_featured: askEnum.YES,
@@ -292,6 +303,7 @@ export default {
                 const fd = new FormData();
                 fd.append('name', this.props.form.name);
                 fd.append('price', this.props.form.price);
+                fd.append('compare_at_price', this.props.form.compare_at_price || '');
                 fd.append('item_category_id', this.props.form.item_category_id == null ? '' : this.props.form.item_category_id);
                 fd.append('tax_id', this.props.form.tax_id == null ? '' : this.props.form.tax_id);
                 fd.append('item_type', this.props.form.item_type);
@@ -319,6 +331,7 @@ export default {
                     this.props.form = {
                         name: "",
                         price: "",
+                        compare_at_price: "",
                         description: "",
                         caution: "",
                         is_featured: askEnum.YES,

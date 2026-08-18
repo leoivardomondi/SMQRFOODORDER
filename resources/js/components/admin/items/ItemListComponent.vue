@@ -262,6 +262,7 @@ export default {
                 form: {
                     name: "",
                     price: "",
+                    compare_at_price: "",
                     description: "",
                     caution: "",
                     is_featured: askEnum.YES,
@@ -373,6 +374,7 @@ export default {
             this.props.form = {
                 name: item.name,
                 price: item.flat_price,
+                compare_at_price: item.compare_at_price || "",
                 description: item.description,
                 caution: item.caution,
                 is_featured: item.is_featured,

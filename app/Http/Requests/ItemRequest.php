@@ -36,6 +36,7 @@ class ItemRequest extends FormRequest
             'tax_id'           => ['nullable', 'numeric', 'not_in:0'],
             'item_type'        => ['required', 'numeric', 'not_in:0'],
             'price'            => ['required', new IniAmount()],
+            'compare_at_price' => ['nullable', new IniAmount()],
             'is_featured'      => ['required', 'numeric', 'not_in:0'],
             'description'      => ['nullable', 'string', 'max:5000'],
             'visible_days'     => ['nullable', 'array'],

@@ -19,6 +19,8 @@ class ItemResource extends JsonResource
     public function toArray($request): array
     {
         $price = $this->price;
+        $compareAtPrice = (float) ($this->compare_at_price ?? 0);
+        $hasGlovoComparison = $compareAtPrice > (float) $price;
         return [
             "id"               => $this->id,
             "name"             => $this->name,
@@ -29,6 +31,10 @@ class ItemResource extends JsonResource
             "convert_price"    => AppLibrary::convertAmountFormat($this->price),
             "currency_price"   => AppLibrary::currencyAmountFormat($this->price),
             "price"            => $this->price,
+            "compare_at_price" => $hasGlovoComparison ? $compareAtPrice : null,
+            "compare_at_currency_price" => $hasGlovoComparison ? AppLibrary::currencyAmountFormat($compareAtPrice) : null,
+            "has_glovo_comparison" => $hasGlovoComparison,
+            "glovo_comparison_discount_percentage" => $hasGlovoComparison ? (int) round((($compareAtPrice - (float) $price) / $compareAtPrice) * 100) : 0,
             "item_type"        => $this->item_type,
             "is_featured"      => $this->is_featured,
             "status"           => $this->status,

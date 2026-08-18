@@ -702,6 +702,14 @@ body.product-page-open .pwa-install-modal {
     color: var(--store-item-old-price) !important;
 }
 
+.frontend-theme .glovo-comparison-label {
+    display: block;
+    color: var(--store-item-description);
+    font-size: 9px;
+    line-height: 1.15;
+    white-space: normal;
+}
+
 .frontend-theme .menu-swiper a:not(.text-primary) {
     color: var(--store-category) !important;
 }
