@@ -6,7 +6,7 @@
             <div class="product-card-list-content flex-1 min-w-0 flex flex-col justify-start">
                 <div class="flex justify-between items-start mb-1">
                     <h3 class="product-card-list-title text-base sm:text-lg font-semibold text-heading">{{ item.name }}</h3>
-                    <div class="product-card-list-price-group text-right whitespace-nowrap shrink-0 ml-2">
+                    <div class="product-card-list-price-group flex flex-col items-end gap-0.5 text-right whitespace-nowrap shrink-0 ml-2">
                         <h4 class="product-card-list-price-current text-base font-bold text-primary whitespace-nowrap">
                             {{ item.offer.length > 0 ? item.offer[0].currency_price : item.currency_price }}
                         </h4>

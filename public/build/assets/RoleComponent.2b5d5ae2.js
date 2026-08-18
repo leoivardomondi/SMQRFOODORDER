@@ -1,1 +1,0 @@
-import{_ as e,f as n,o as t,l as r}from"./app.8bb17d06.js";const s={name:"RoleComponent"};function c(a,p,_,m,f,l){const o=n("router-view");return t(),r(o)}const u=e(s,[["render",c]]);export{u as default};
