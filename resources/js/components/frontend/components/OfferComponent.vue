@@ -17,9 +17,9 @@
   </div>
   <section class="mb-6 sm:mb-12" v-if="offers.length > 0">
     <div class="container">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8">
+    <div class="offers-carousel flex gap-3 sm:gap-4 overflow-x-auto">
       <article v-for="offer in offers" :key="offer.id"
-        class="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg">
+        class="offer-carousel-card flex-shrink-0 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-lg">
         <router-link :to="{ name: 'frontend.offers.item', params: { slug: offer.slug } }" class="block bg-black">
           <img class="block w-full h-auto" :src="offer.image" :alt="offer.name" />
         </router-link>

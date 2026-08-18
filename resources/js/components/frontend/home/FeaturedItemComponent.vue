@@ -3,7 +3,9 @@
     <section class="mb-6 sm:mb-12">
         <div class="container" v-if="featuredItems.length > 0">
             <h2 class="text-lg sm:text-2xl font-semibold capitalize mb-3 sm:mb-6">{{ $t('label.featured_items') }}</h2>
-            <ItemComponent :items="featuredItems" :type="itemProps.type" :design="itemProps.design" />
+            <div class="featured-item-carousel">
+                <ItemComponent :items="featuredItems" :type="itemProps.type" :design="itemProps.design" />
+            </div>
         </div>
     </section>
 </template>

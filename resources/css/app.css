@@ -723,6 +723,93 @@ body.product-page-open .pwa-install-modal {
     box-shadow: none;
 }
 
+/* Compact horizontal carousels used by featured items and offers. */
+.featured-item-carousel > .grid {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scrollbar-width: none;
+}
+
+.featured-item-carousel > .grid::-webkit-scrollbar,
+.offers-carousel::-webkit-scrollbar {
+    display: none;
+}
+
+.featured-item-carousel .product-card-grid {
+    flex: 0 0 132px;
+    width: 132px;
+}
+
+.featured-item-carousel .product-card-grid-content-group {
+    padding: 8px;
+}
+
+.featured-item-carousel .product-card-grid-header-group {
+    margin-bottom: 5px;
+}
+
+.featured-item-carousel .product-card-grid-title {
+    max-width: 105px;
+    font-size: 11px;
+}
+
+.featured-item-carousel .product-card-grid-describe {
+    display: none;
+}
+
+.featured-item-carousel .product-card-grid-price-current {
+    font-size: 11px;
+}
+
+.featured-item-carousel .product-card-grid-cart-btn {
+    height: 22px;
+    padding: 0 7px;
+    font-size: 10px;
+}
+
+.offers-carousel {
+    padding-bottom: 8px;
+    scrollbar-width: none;
+}
+
+.offer-carousel-card {
+    flex: 0 0 190px;
+    width: 190px;
+}
+
+.offer-carousel-card > div {
+    padding: 10px;
+}
+
+.offer-carousel-card h3 {
+    font-size: 13px;
+}
+
+.offer-carousel-card p {
+    display: none;
+}
+
+.offer-carousel-card a:not(:first-child) {
+    margin-top: 8px;
+    padding: 6px 10px;
+    font-size: 10px;
+}
+
+@media (min-width: 640px) {
+    .featured-item-carousel .product-card-grid {
+        flex-basis: 160px;
+        width: 160px;
+    }
+
+    .offer-carousel-card {
+        flex-basis: 230px;
+        width: 230px;
+    }
+}
+
 .frontend-theme .product-card-grid:hover {
     border-color: var(--store-primary) !important;
     box-shadow: 0 14px 34px rgb(0 0 0 / 35%);
