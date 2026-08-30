@@ -135,8 +135,14 @@ const router = createRouter({
     mode: 'history',
     history: createWebHistory(),
     routes,
-    scrollBehavior() {
-        return { left: 0, top: 0 }
+    scrollBehavior(to, from, savedPosition) {
+        if (savedPosition) {
+            return savedPosition;
+        }
+        if (to.path === from.path) {
+            return false;
+        }
+        return { left: 0, top: 0 };
     }
 });
 
@@ -165,15 +171,17 @@ router.onError((error, to) => {
     }
 });
 
-router.afterEach(() => {
+router.afterEach((to, from) => {
     sessionStorage.removeItem('bwibo-stale-chunk-reload');
     const dbMain = document.querySelector('.db-main');
     if (dbMain) {
         dbMain.scrollTop = 0;
     }
-    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-    document.documentElement.scrollTop = 0;
-    document.body.scrollTop = 0;
+    if (to.path !== from.path) {
+        window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+        document.documentElement.scrollTop = 0;
+        document.body.scrollTop = 0;
+    }
 });
 
 router.beforeEach((to, from, next) => {

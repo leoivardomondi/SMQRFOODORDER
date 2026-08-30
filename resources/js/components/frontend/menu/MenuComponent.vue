@@ -83,7 +83,9 @@ export default {
                 design: itemDesignEnum.LIST,
                 type: null
             },
-            observer: null
+            observer: null,
+            isClickScrolling: false,
+            clickScrollTimeout: null
         }
     },
     computed: {
@@ -97,6 +99,9 @@ export default {
     beforeUnmount() {
         if (this.observer) {
             this.observer.disconnect();
+        }
+        if (this.clickScrollTimeout) {
+            clearTimeout(this.clickScrollTimeout);
         }
     },
     methods: {
@@ -113,7 +118,10 @@ export default {
 
                 const querySlug = (this.$route.query.s || "").trim();
                 const matchedCategory = categoriesList.find(c => c.slug === querySlug);
-                this.activeCategorySlug = matchedCategory ? matchedCategory.slug : categoriesList[0].slug;
+                const initialCategorySlug = matchedCategory ? matchedCategory.slug : categoriesList[0].slug;
+                
+                this.activeCategorySlug = initialCategorySlug;
+                this.isClickScrolling = true;
 
                 const sectionPromises = categoriesList.map(cat => {
                     return this.$store.dispatch("frontendItemCategory/show", {
@@ -128,25 +136,39 @@ export default {
 
                 this.$nextTick(() => {
                     this.setupScrollSpy();
-                    if (querySlug) {
-                        this.scrollToCategory(this.activeCategorySlug, false);
+                    if (querySlug && querySlug !== categoriesList[0].slug) {
+                        this.scrollToCategory(initialCategorySlug, false);
+                    } else {
+                        this.isClickScrolling = false;
                     }
                 });
             } catch (err) {
                 this.loading.isActive = false;
+                this.isClickScrolling = false;
             }
         },
         scrollToCategory(slug, smooth = true) {
             this.activeCategorySlug = slug;
+            this.isClickScrolling = true;
+
+            if (this.clickScrollTimeout) {
+                clearTimeout(this.clickScrollTimeout);
+            }
+
             const element = document.getElementById('category-section-' + slug);
             if (element) {
-                const yOffset = -130;
+                const yOffset = -140;
                 const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
-                window.scrollTo({ top: y, behavior: smooth ? 'smooth' : 'auto' });
+                window.scrollTo({ top: Math.max(0, y), behavior: smooth ? 'smooth' : 'auto' });
             }
+
             if (this.$route.query.s !== slug) {
                 this.$router.replace({ query: { ...this.$route.query, s: slug } }).catch(() => {});
             }
+
+            this.clickScrollTimeout = setTimeout(() => {
+                this.isClickScrolling = false;
+            }, smooth ? 800 : 150);
         },
         setupScrollSpy() {
             if (this.observer) {
@@ -154,10 +176,12 @@ export default {
             }
             const options = {
                 root: null,
-                rootMargin: '-120px 0px -50% 0px',
+                rootMargin: '-140px 0px -55% 0px',
                 threshold: 0
             };
             this.observer = new IntersectionObserver((entries) => {
+                if (this.isClickScrolling) return;
+
                 entries.forEach((entry) => {
                     if (entry.isIntersecting) {
                         const slug = entry.target.id.replace('category-section-', '');
