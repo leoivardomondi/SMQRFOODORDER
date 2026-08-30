@@ -148,12 +148,12 @@
         }
     </style>
 </head>
-<body class="payment-success-page dark-mode" id="page-body">
+<body class="payment-success-page light-mode" id="page-body">
 
 <div class="fixed top-4 right-4 z-50">
     <button id="theme-toggle-btn" type="button" class="theme-btn px-3.5 py-2 rounded-full text-xs font-bold flex items-center gap-2 transition cursor-pointer">
-        <span id="theme-icon">🌙</span>
-        <span id="theme-text">Dark</span>
+        <span id="theme-icon">☀️</span>
+        <span id="theme-text">Light</span>
     </button>
 </div>
 
@@ -216,7 +216,7 @@
         }
     }
 
-    const savedTheme = localStorage.getItem('payment_theme_mode') || 'dark';
+    const savedTheme = localStorage.getItem('payment_theme_mode') || 'light';
     applyTheme(savedTheme);
 
     if (themeToggleBtn) {
