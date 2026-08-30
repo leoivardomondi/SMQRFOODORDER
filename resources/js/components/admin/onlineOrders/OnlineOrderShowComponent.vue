@@ -154,9 +154,8 @@
                             <div class="mb-3 pb-3 border-b last:mb-0 last:pb-0 last:border-b-0 border-gray-2"
                                 v-if="orderItems.length > 0" v-for="item in orderItems" :key="item">
                                 <div class="flex items-center gap-3 relative">
-                                    <h3
-                                        class="absolute top-5 -left-3 text-sm w-[26px] h-[26px] leading-[26px] text-center rounded-full text-white bg-heading">
-                                        {{ item.quantity }}</h3>
+                                    <b class="absolute top-5 -left-3 text-xs font-extrabold w-[24px] h-[24px] leading-[24px] text-center rounded-full shadow-xs flex items-center justify-center" style="background-color: #111827 !important; color: #ffffff !important; border: 2px solid #ffffff !important;">
+                                        {{ item.quantity }}</b>
                                     <img class="w-16 h-16 rounded-lg flex-shrink-0" :src="item.item_image"
                                         alt="thumbnail">
 
