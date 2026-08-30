@@ -1,22 +1,22 @@
 <template>
     <aside @click="closeBackdrop($event)" id="cart"
         class="w-screen h-full fixed top-[58px] lg:top-[74px] left-0 z-60 opacity-0 invisible bg-black/60 transition">
-        <div class="max-w-sm w-full h-screen absolute top-0 right-0 translate-x-full bg-white transition">
+        <div class="max-w-sm w-full h-screen absolute top-0 right-0 translate-x-full cart-drawer-content transition shadow-2xl">
             <div :class="carts.length === 0 || orderType === null ? 'flex items-center justify-center flex-col text-center overflow-y-auto' : 'thin-scrolling'"
                 class="h-[calc(96vh-200px)] lg:h-[calc(100vh-220px)] p-4 relative">
                 <h3 :class="carts.length === 0 || orderType === null ? 'mb-16' : 'mb-5'"
-                    class="text-xl font-semibold capitalize text-center">
+                    class="text-xl font-bold capitalize text-center cart-item-title">
                     {{ $t('label.my_cart') }}
                 </h3>
                 <button @click.prevent="closeCanvas('cart')"
                     class="fa-solid fa-xmark absolute top-2 rtl:left-3 ltr:right-3 text-white bg-[#FB4E4E] xmark-btn"></button>
 
                 <div v-if="(carts.length === 0 || orderType === null) || (setting.order_setup_delivery === activityEnum.DISABLE && setting.order_setup_takeaway === activityEnum.DISABLE)"
-                    class="flex items-center justify-center flex-col text-center flex-col text-center overflow-y-auto">
+                    class="flex items-center justify-center flex-col text-center overflow-y-auto">
                     <img class="w-40 mb-12" :src="setting.image_cart" alt="gif">
                     <p v-if="orderType === null || (setting.order_setup_delivery === activityEnum.DISABLE && setting.order_setup_takeaway === activityEnum.DISABLE)"
-                        class="text-sm max-w-xs">{{ $t('message.delivery_and_takeaway') }}</p>
-                    <p v-else class="text-sm max-w-xs">{{ $t('message.empty_cart') }}</p>
+                        class="text-sm max-w-xs cart-item-meta">{{ $t('message.delivery_and_takeaway') }}</p>
+                    <p v-else class="text-sm max-w-xs cart-item-meta">{{ $t('message.empty_cart') }}</p>
                 </div>
 
                 <div v-if="carts.length > 0 && orderType !== null && (setting.order_setup_delivery === activityEnum.ENABLE || setting.order_setup_takeaway === activityEnum.ENABLE)"
@@ -44,54 +44,54 @@
                 </div>
                 <div v-if="carts.length > 0 && orderType !== null && (setting.order_setup_delivery === activityEnum.ENABLE || setting.order_setup_takeaway === activityEnum.ENABLE)"
                     class="mb-5">
-                    <div v-for="(cart, index) in carts"
-                        class="mb-4 pb-4 border-b last:mb-0 last:pb-0 last:border-b-0 border-gray-100">
+                    <div v-for="(cart, index) in carts" :key="index"
+                        class="mb-4 pb-4 border-b last:mb-0 last:pb-0 last:border-b-0 border-gray-200 dark:border-gray-800">
                         <div class="flex items-start gap-4">
                             <img class="w-20 h-20 rounded-xl object-cover flex-shrink-0" :src="cart.image" alt="thumbnail">
-                            <div class="flex-1">
-                                <a href="#" class="text-base font-bold text-gray-900 capitalize hover:underline mb-1 block">
+                            <div class="flex-1 min-w-0">
+                                <a href="#" class="cart-item-title text-base font-bold capitalize hover:underline mb-1 block truncate">
                                     {{ cart.name }}
                                 </a>
                                 <p v-if="Object.keys(cart.item_variations.variations).length !== 0"
-                                    class="capitalize text-xs text-gray-500 mb-1">
-                                    <span v-for="(variation, variationName) in cart.item_variations.names">
+                                    class="cart-item-meta capitalize text-xs mb-1">
+                                    <span v-for="(variation, variationName) in cart.item_variations.names" :key="variationName">
                                         {{ variationName }}: {{ variation }}, &nbsp;
                                     </span>
                                 </p>
-                                <h3 class="text-sm font-bold text-gray-900 mb-2">{{
+                                <h3 class="cart-item-price text-sm font-bold mb-2">{{
                                     currencyFormat(cart.total, setting.site_digit_after_decimal_point,
                                         setting.site_default_currency_symbol, setting.site_currency_position)
                                 }}</h3>
                                 
-                                <div class="flex items-center gap-4 px-3 py-1.5 w-fit rounded-full bg-gray-100">
+                                <div class="flex items-center gap-4 px-3 py-1.5 w-fit rounded-full bg-gray-100 dark:bg-gray-800">
                                     <button @click.prevent="quantityDecrement(index)"
-                                        :class="cart.quantity === 1 ? 'fa-trash-can text-red-500' : 'fa-minus text-gray-500'"
-                                        class="fa-solid text-sm hover:text-black transition"></button>
+                                        :class="cart.quantity === 1 ? 'fa-trash-can text-red-500' : 'fa-minus text-gray-500 dark:text-gray-400'"
+                                        class="fa-solid text-sm hover:text-black dark:hover:text-white transition"></button>
                                     <input v-on:keypress="onlyNumber($event)" v-on:keyup="quantityUp(index, $event)"
                                         type="number" :value="cart.quantity"
-                                        class="text-center w-6 text-sm font-bold bg-transparent text-gray-900 outline-none select-none pointer-events-none">
+                                        class="text-center w-6 text-sm font-bold bg-transparent outline-none select-none pointer-events-none cart-item-title">
                                     <button @click.prevent="quantityIncrement(index)"
-                                        class="fa-solid fa-plus text-sm text-gray-500 hover:text-black transition"></button>
+                                        class="fa-solid fa-plus text-sm text-gray-500 dark:text-gray-400 hover:text-black dark:hover:text-white transition"></button>
                                 </div>
                             </div>
                         </div>
 
                         <ul v-if="cart.item_extras.extras.length > 0 || cart.instruction !== ''"
-                            class="flex flex-col gap-1.5">
+                            class="flex flex-col gap-1.5 mt-2">
                             <li v-if="cart.item_extras.extras.length > 0" class="flex gap-1">
-                                <h3 class="capitalize text-xs w-fit whitespace-nowrap">{{ $t('label.extras') }}:</h3>
-                                <p class="text-xs">
-                                    <span v-for="extra in cart.item_extras.names">
+                                <h3 class="capitalize text-xs w-fit whitespace-nowrap cart-item-title">{{ $t('label.extras') }}:</h3>
+                                <p class="text-xs cart-item-meta">
+                                    <span v-for="extra in cart.item_extras.names" :key="extra">
                                         {{ extra }}, &nbsp;
                                     </span>
                                 </p>
                             </li>
 
                             <li v-if="cart.instruction !== ''" class="flex gap-1">
-                                <h3 class="capitalize text-xs w-fit whitespace-nowrap">
+                                <h3 class="capitalize text-xs w-fit whitespace-nowrap cart-item-title">
                                     {{ $t('label.instruction') }}:
                                 </h3>
-                                <p class="text-xs">{{ cart.instruction }}</p>
+                                <p class="text-xs cart-item-meta">{{ cart.instruction }}</p>
                             </li>
                         </ul>
                     </div>
@@ -99,10 +99,10 @@
             </div>
 
             <div v-if="carts.length > 0 && orderType !== null && (setting.order_setup_delivery === activityEnum.ENABLE || setting.order_setup_takeaway === activityEnum.ENABLE)"
-                class="cart-summary-footer p-4 bg-white border-t border-gray-100">
+                class="cart-summary-footer p-4 border-t border-gray-200 dark:border-gray-800">
                 <div class="flex items-center justify-between mb-4">
-                    <h3 class="capitalize text-lg font-bold text-gray-900">{{ $t('label.subtotal') }}</h3>
-                    <h4 class="text-lg font-bold text-gray-900">
+                    <h3 class="capitalize text-lg font-bold cart-item-title">{{ $t('label.subtotal') }}</h3>
+                    <h4 class="text-lg font-bold cart-item-price">
                         {{
                             currencyFormat(subtotal, setting.site_digit_after_decimal_point,
                                 setting.site_default_currency_symbol, setting.site_currency_position)

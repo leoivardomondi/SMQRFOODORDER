@@ -458,22 +458,39 @@
 }
 
 /* Universal High Contrast Dark Theme Overrides */
-.frontend-theme {
+.frontend-theme[data-theme-mode="dark"] {
     --store-body-text: #e2e8f0 !important;
     --store-heading: #ffffff !important;
 }
 
-.product-card-grid-title,
-.product-card-grid h3,
-.product-card-grid-header-group h3,
-.frontend-theme h1, 
-.frontend-theme h2, 
-.frontend-theme h3, 
-.frontend-theme h4 {
+.frontend-theme[data-theme-mode="dark"] .product-card-grid-title,
+.frontend-theme[data-theme-mode="dark"] .product-card-grid h3,
+.frontend-theme[data-theme-mode="dark"] .product-card-grid-header-group h3,
+.frontend-theme[data-theme-mode="dark"] h1, 
+.frontend-theme[data-theme-mode="dark"] h2, 
+.frontend-theme[data-theme-mode="dark"] h3, 
+.frontend-theme[data-theme-mode="dark"] h4 {
     color: #ffffff !important;
 }
 
-.product-card-grid-describe {
-    color: #cbd5e1 !important;
+/* Cart Drawer Styling - High Contrast in Light and Dark modes */
+.cart-drawer-content {
+    background-color: var(--store-surface, #ffffff) !important;
+    color: var(--store-body-text, #1f2937) !important;
 }
-*/
+
+.cart-drawer-content h3,
+.cart-drawer-content h4,
+.cart-drawer-content .cart-item-title,
+.cart-drawer-content a {
+    color: var(--store-heading, #111827) !important;
+}
+
+.cart-drawer-content .cart-item-price {
+    color: var(--store-primary, #008BBA) !important;
+}
+
+.cart-drawer-content .cart-item-meta {
+    color: var(--store-muted-text, #64748b) !important;
+}
+
