@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $company['company_name']  }}</title>
+    <title>{{ $company['company_name'] }} - Payment Successful</title>
     <link rel="icon" href="{{ $faviconLogo->faviconLogo }}">
     <link rel="stylesheet" href="{{ asset('themes/default/css/style.css') }}">
     <link rel="stylesheet"
@@ -13,103 +13,221 @@
     <link rel="stylesheet" href="{{ asset('themes/default/css/custom.css') }}">
     <style>
         :root {
-            --payment-page-bg: {{ $theme['theme_page_background'] ?? '#ffffff' }};
-            --payment-surface: {{ $theme['theme_surface_color'] ?? '#ffffff' }};
-            --payment-heading: {{ $theme['theme_heading_color'] ?? '#1f1f39' }};
-            --payment-body: {{ $theme['theme_body_text_color'] ?? '#334155' }};
-            --payment-primary: {{ $theme['theme_primary_color'] ?? '#0f766e' }};
+            --payment-primary: {{ $theme['theme_primary_color'] ?? '#008BBA' }};
             --payment-button-text: {{ $theme['theme_button_text_color'] ?? '#ffffff' }};
-            --payment-border: {{ $theme['theme_border_color'] ?? '#e2e8f0' }};
         }
+
         body.payment-success-page {
             margin: 0;
-            background: var(--payment-page-bg);
-            color: var(--payment-body);
+            min-height: 100vh;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .payment-success-page .payment-success-card {
-            color: var(--payment-body);
+
+        /* Light Theme Styles */
+        body.payment-success-page.light-mode {
+            background-color: #f8fafc;
+            color: #334155;
         }
-        .payment-success-page .payment-transaction-label {
-            color: var(--payment-heading);
-            background: color-mix(in srgb, var(--payment-surface) 88%, var(--payment-heading));
+        body.payment-success-page.light-mode .payment-card-bg {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
         }
-        .payment-success-page .payment-transaction-value {
-            color: var(--payment-heading);
-            background: var(--payment-surface);
-            border: 1px solid var(--payment-border);
+        body.payment-success-page.light-mode .payment-heading-text {
+            color: #0f172a;
+        }
+        body.payment-success-page.light-mode .payment-subtext {
+            color: #64748b;
+        }
+        body.payment-success-page.light-mode .payment-tx-label {
+            background-color: #f1f5f9;
+            color: #475569;
+        }
+        body.payment-success-page.light-mode .payment-tx-val {
+            background-color: #ffffff;
+            color: #0f172a;
+            border: 1px solid #e2e8f0;
             border-top: 0;
         }
-        .payment-success-page .payment-success-heading {
-            color: var(--payment-primary);
+        body.payment-success-page.light-mode .theme-btn {
+            background-color: #ffffff;
+            color: #0f172a;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
         }
-        .payment-success-page .payment-order-link {
-            color: var(--payment-button-text);
-            background: var(--payment-primary);
+
+        /* Dark Theme Styles */
+        body.payment-success-page.dark-mode {
+            background-color: #080b11;
+            color: #cbd5e1;
         }
-        .payment-success-page .payment-order-link:hover,
-        .payment-success-page .payment-order-link:focus {
-            color: var(--payment-button-text);
+        body.payment-success-page.dark-mode .payment-card-bg {
+            background-color: #111827;
+            border: 1px solid #1e293b;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
         }
+        body.payment-success-page.dark-mode .payment-heading-text {
+            color: #f8fafc;
+        }
+        body.payment-success-page.dark-mode .payment-subtext {
+            color: #94a3b8;
+        }
+        body.payment-success-page.dark-mode .payment-tx-label {
+            background-color: #1e293b;
+            color: #94a3b8;
+        }
+        body.payment-success-page.dark-mode .payment-tx-val {
+            background-color: #0f172a;
+            color: #f8fafc;
+            border: 1px solid #1e293b;
+            border-top: 0;
+        }
+        body.payment-success-page.dark-mode .theme-btn {
+            background-color: #1e293b;
+            color: #f8fafc;
+            border: 1px solid #334155;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+        }
+
         .whatsapp-paid-order-btn {
-            display: block;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
             width: 100%;
-            margin-bottom: 12px;
-            padding: 12px 18px;
+            margin-bottom: 14px;
+            padding: 14px 20px;
             border-radius: 9999px;
             background: #25D366;
             color: #ffffff;
             text-align: center;
-            font-size: 16px;
-            font-weight: 600;
+            font-size: 15px;
+            font-weight: 700;
             text-decoration: none;
-            box-shadow: 0 6px 18px rgba(37, 211, 102, 0.24);
+            box-shadow: 0 6px 20px rgba(37, 211, 102, 0.3);
             border: 0;
             cursor: pointer;
+            transition: all 0.2s ease;
         }
-        .whatsapp-paid-order-btn:focus,
-        .whatsapp-paid-order-btn:hover {
+        .whatsapp-paid-order-btn:hover,
+        .whatsapp-paid-order-btn:focus {
             background: #1ebe5d;
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(37, 211, 102, 0.4);
             color: #ffffff;
         }
+
+        .my-orders-icon-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 52px;
+            height: 52px;
+            border-radius: 9999px;
+            background: var(--payment-primary);
+            color: var(--payment-button-text);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+            transition: all 0.2s ease;
+            text-decoration: none;
+        }
+        .my-orders-icon-btn:hover,
+        .my-orders-icon-btn:focus {
+            transform: scale(1.08);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.28);
+            color: var(--payment-button-text);
+        }
+
         .share-status {
             min-height: 20px;
             margin: -4px 0 12px;
-            color: #6b7280;
             font-size: 13px;
             text-align: center;
         }
     </style>
 </head>
-<body class="payment-success-page">
+<body class="payment-success-page dark-mode" id="page-body">
 
-<div class="payment-success-card py-14 px-4 w-full max-w-2xl mx-auto flex flex-col items-center justify-center">
-    <a href="{{ route('home') }}" class="w-36 mb-8">
-        <img class="w-full" src="{{ $logo->logo }}" alt="logo">
-    </a>
+<div class="fixed top-4 right-4 z-50">
+    <button id="theme-toggle-btn" type="button" class="theme-btn px-3.5 py-2 rounded-full text-xs font-bold flex items-center gap-2 transition cursor-pointer">
+        <span id="theme-icon">🌙</span>
+        <span id="theme-text">Dark</span>
+    </button>
+</div>
 
-    <img class="w-full max-w-[120px] mb-3" src="{{ asset('images/default/payment-success.gif') }}" alt="success">
+<div class="py-12 px-4 w-full flex items-center justify-center">
+    <div class="payment-card-bg p-8 sm:p-10 rounded-3xl w-full max-w-md flex flex-col items-center justify-center text-center">
+        <a href="{{ route('home') }}" class="w-32 mb-6">
+            <img class="w-full h-auto object-contain" src="{{ $logo->logo }}" alt="logo">
+        </a>
 
-    <h3 class="payment-success-heading text-[22px] font-medium leading-[34px] text-center mb-12">
-        <span class="block">{{ __('all.label.congratulations') }}</span>
-        {{ __('all.message.payment_successful') }}
-    </h3>
-    <div class="w-full max-w-[360px]">
-        <dl class="text-center shadow-xs w-full mb-8">
-            <dt class="payment-transaction-label uppercase py-2.5 rounded-tl-lg rounded-tr-lg">{{ __('all.label.transaction_id')  }}</dt>
-            <dd class="payment-transaction-value uppercase py-3 rounded-bl-lg rounded-br-lg payment-font-size font-medium leading-10">{{ $order?->transaction?->transaction_no }}</dd>
-        </dl>
+        <img class="w-24 h-24 mb-4 object-contain" src="{{ asset('images/default/payment-success.gif') }}" alt="success">
+
+        <h3 class="text-2xl font-bold mb-6 payment-heading-text">
+            <span class="block text-xl font-medium text-amber-500 mb-1">{{ __('all.label.congratulations') }}</span>
+            {{ __('all.message.payment_successful') }}
+        </h3>
+
+        <div class="w-full mb-6">
+            <dl class="text-center w-full">
+                <dt class="payment-tx-label uppercase py-2.5 px-4 rounded-t-xl text-xs font-bold tracking-wider">{{ __('all.label.transaction_id') }}</dt>
+                <dd class="payment-tx-val uppercase py-3 px-4 rounded-b-xl text-sm font-bold tracking-widest">{{ $order?->transaction?->transaction_no }}</dd>
+            </dl>
+        </div>
+
         @if($whatsappUrl)
-            <p class="text-center text-heading mb-4">Send the detailed paid order with a receipt preview to the restaurant.</p>
+            <p class="payment-subtext text-sm font-medium mb-3">Send your order details to WhatsApp to get direct updates on your order.</p>
             <button id="whatsapp-route" type="button" class="whatsapp-paid-order-btn">
-                <span aria-hidden="true">&#128172;</span> Send Paid Order via WhatsApp
+                <span aria-hidden="true" class="text-lg">&#128172;</span> Send to WhatsApp for Direct Updates
             </button>
-            <p id="share-status" class="share-status" role="status" aria-live="polite"></p>
+            <p id="share-status" class="share-status payment-subtext" role="status" aria-live="polite"></p>
         @endif
-        <a id="my-orders-route" href="{{ url('/my-orders') }}" class="payment-order-link block py-3 w-full rounded-3xl text-center text-base font-medium">My Orders</a>
+
+        <div class="mt-3 flex flex-col items-center gap-1.5">
+            <a id="my-orders-route" href="{{ url('/#/my-orders') }}" title="My Orders" aria-label="My Orders" class="my-orders-icon-btn">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                </svg>
+            </a>
+            <span class="text-[11px] font-semibold uppercase tracking-wider payment-subtext">My Orders</span>
+        </div>
     </div>
 </div>
 
 <script>
+    const pageBody = document.getElementById('page-body');
+    const themeToggleBtn = document.getElementById('theme-toggle-btn');
+    const themeIcon = document.getElementById('theme-icon');
+    const themeText = document.getElementById('theme-text');
+
+    function applyTheme(mode) {
+        if (mode === 'light') {
+            pageBody.classList.remove('dark-mode');
+            pageBody.classList.add('light-mode');
+            if (themeIcon) themeIcon.textContent = '☀️';
+            if (themeText) themeText.textContent = 'Light';
+        } else {
+            pageBody.classList.remove('light-mode');
+            pageBody.classList.add('dark-mode');
+            if (themeIcon) themeIcon.textContent = '🌙';
+            if (themeText) themeText.textContent = 'Dark';
+        }
+    }
+
+    const savedTheme = localStorage.getItem('payment_theme_mode') || 'dark';
+    applyTheme(savedTheme);
+
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener('click', () => {
+            const isDark = pageBody.classList.contains('dark-mode');
+            const nextTheme = isDark ? 'light' : 'dark';
+            localStorage.setItem('payment_theme_mode', nextTheme);
+            applyTheme(nextTheme);
+        });
+    }
+
     // The order is confirmed, so a retained checkout from the payment attempt
     // must not appear as a new basket when the customer returns to the app.
     sessionStorage.removeItem('pendingCheckoutDraft');
