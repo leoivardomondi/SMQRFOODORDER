@@ -61,16 +61,14 @@ export default {
   },
   computed: {
     themeMode: function () {
-      const settings = this.$store.getters['frontendSetting/lists'] || {};
-      if (this.themeOverride === 'light' || this.themeOverride === 'dark') return this.themeOverride;
-      const luminance = (hex) => {
-        const value = String(hex || '').replace('#', '');
-        if (value.length !== 6) return 1;
-        const channels = [0, 2, 4].map((index) => parseInt(value.slice(index, index + 2), 16) / 255);
-        return channels.reduce((sum, channel, channelIndex) => sum + (channel <= 0.03928 ? channel / 12.92 : Math.pow((channel + 0.055) / 1.055, 2.4)) * [0.2126, 0.7152, 0.0722][channelIndex], 0);
-      };
-      const looksDark = (color) => typeof color === 'string' && color.startsWith('#') && luminance(color) < 0.25;
-      return settings.theme_color_mode === 'dark' || looksDark(settings.theme_page_background) || looksDark(settings.theme_surface_color) ? 'dark' : 'light';
+      const globalState = this.$store.getters['globalState/lists'] || {};
+      if (globalState.theme_mode === 'light' || globalState.theme_mode === 'dark') {
+        return globalState.theme_mode;
+      }
+      if (this.themeOverride === 'light' || this.themeOverride === 'dark') {
+        return this.themeOverride;
+      }
+      return 'light';
     },
     frontendThemeStyle: function () {
       const settings = this.$store.getters['frontendSetting/lists'] || {};

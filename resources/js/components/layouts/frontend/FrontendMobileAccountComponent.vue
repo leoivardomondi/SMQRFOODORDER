@@ -85,6 +85,17 @@
                 <i class="lab lab-languages lab-font-size-17"></i>
                 <span class="text-sm leading-6 capitalize">{{ $t('button.change_language') }}</span>
             </button>
+            <button @click="toggleThemeMode()" type="button"
+                class="paper-link transition w-full flex items-center justify-between py-3 border-b last:border-none border-[#EFF0F6]">
+                <div class="flex items-center gap-3.5">
+                    <i :class="activeTheme === 'dark' ? 'fa-solid fa-moon text-indigo-400' : 'fa-solid fa-sun text-amber-500'" class="lab-font-size-17"></i>
+                    <span class="text-sm leading-6 capitalize">Theme Mode</span>
+                </div>
+                <span class="text-xs px-2.5 py-0.5 rounded-full font-bold uppercase"
+                    :class="activeTheme === 'dark' ? 'bg-indigo-900 text-indigo-100' : 'bg-amber-100 text-amber-800'">
+                    {{ activeTheme }}
+                </span>
+            </button>
             <button @click="logout()"
                 class="paper-link transition w-full flex items-center gap-3.5 py-3 border-b last:border-none border-[#EFF0F6]">
                 <i class="lab lab-logout lab-font-size-17"></i>
@@ -125,9 +136,18 @@ export default {
         },
         authDefaultMenu: function () {
             return this.$store.getters.authDefaultMenu;
+        },
+        activeTheme: function () {
+            const globalState = this.$store.getters['globalState/lists'] || {};
+            return globalState.theme_mode || window.localStorage.getItem('store_theme_mode') || 'light';
         }
     },
     methods: {
+        toggleThemeMode: function () {
+            const nextTheme = this.activeTheme === 'dark' ? 'light' : 'dark';
+            window.localStorage.setItem('store_theme_mode', nextTheme);
+            this.$store.dispatch('globalState/set', { theme_mode: nextTheme });
+        },
         textShortener: function (text, number = 30) {
             return appService.textShortener(text, number);
         },

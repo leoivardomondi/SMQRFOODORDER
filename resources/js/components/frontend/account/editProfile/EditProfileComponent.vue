@@ -81,6 +81,34 @@
                         </div>
                     </div>
                 </form>
+
+                <div class="mt-8 pt-6 border-t border-[#EFF0F6]">
+                    <h3 class="capitalize mb-3 text-base font-semibold text-heading flex items-center gap-2">
+                        <i class="fa-solid fa-palette text-primary"></i>
+                        <span>Appearance / Theme</span>
+                    </h3>
+                    <p class="text-xs text-paragraph mb-4">Choose your preferred display theme for Bwibo Restaurant.</p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <button type="button" @click="setThemeMode('light')"
+                            :class="activeTheme === 'light' ? 'border-primary bg-amber-50/60 text-primary shadow-xs' : 'border-gray-200 bg-white text-heading hover:bg-gray-50'"
+                            class="p-4 rounded-xl border-2 transition-all flex flex-col items-center justify-center gap-2 font-semibold text-sm">
+                            <i class="fa-solid fa-sun text-2xl text-amber-500"></i>
+                            <span>Light Theme</span>
+                            <span v-if="activeTheme === 'light'" class="text-[11px] font-bold text-primary flex items-center gap-1">
+                                <i class="fa-solid fa-circle-check"></i> Active
+                            </span>
+                        </button>
+                        <button type="button" @click="setThemeMode('dark')"
+                            :class="activeTheme === 'dark' ? 'border-primary bg-indigo-950/40 text-primary shadow-xs' : 'border-gray-200 bg-white text-heading hover:bg-gray-50'"
+                            class="p-4 rounded-xl border-2 transition-all flex flex-col items-center justify-center gap-2 font-semibold text-sm">
+                            <i class="fa-solid fa-moon text-2xl text-indigo-400"></i>
+                            <span>Dark Theme</span>
+                            <span v-if="activeTheme === 'dark'" class="text-[11px] font-bold text-primary flex items-center gap-1">
+                                <i class="fa-solid fa-circle-check"></i> Active
+                            </span>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -135,9 +163,18 @@ export default {
         },
         countryCode: function () {
             return this.$store.getters['frontendCountryCode/show'];
+        },
+        activeTheme: function () {
+            const globalState = this.$store.getters['globalState/lists'] || {};
+            return globalState.theme_mode || window.localStorage.getItem('store_theme_mode') || 'light';
         }
     },
     methods: {
+        setThemeMode(mode) {
+            window.localStorage.setItem('store_theme_mode', mode);
+            this.$store.dispatch('globalState/set', { theme_mode: mode });
+            alertService.success("Theme updated to " + mode + " mode.");
+        },
         phoneNumber(e) {
             return appService.phoneNumber(e);
         },

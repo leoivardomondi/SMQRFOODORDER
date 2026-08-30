@@ -14,7 +14,7 @@
         </router-link>
 
         <button @click.prevent="openCanvas('cart')" type="button" class="mobcart fa-solid fa-bag-shopping text-base w-12 h-12 leading-[48px] text-center rounded-full -mt-12 text-white bg-primary relative">
-            <span v-if="carts.length > 0" class="absolute top-2 ltr:right-2 rtl:left-2 w-4 h-4 text-[10px] leading-4 font-bold text-center text-primary bg-[#FFDB1F] rounded-full shadow font-sans">{{ carts.length }}</span>
+            <b v-if="carts.length > 0" class="absolute -top-1 ltr:-right-1 rtl:-left-1 min-w-[20px] h-[20px] px-1 text-[11px] leading-[20px] font-extrabold text-center text-white rounded-full shadow font-sans flex items-center justify-center" style="background-color: #E53E3E !important; color: #ffffff !important; border: 2px solid #ffffff !important;">{{ carts.length }}</b>
         </button>
 
         <router-link :class="isDeliveryBoy ? (currentRoute.startsWith('/rider/deliveries') ? 'text-primary' : '') : (checkIsPathAndRoutePathSame('/my-orders') ? 'text-primary' : '')"
