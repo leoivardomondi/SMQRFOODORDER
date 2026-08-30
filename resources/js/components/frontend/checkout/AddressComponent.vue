@@ -157,7 +157,21 @@ export default {
                     this.errors = {};
                 }).catch((err) => {
                     this.loading.isActive = false;
-                    this.errors = err.response.data.errors;
+                    if (err.response && err.response.data && err.response.data.errors) {
+                        this.errors = err.response.data.errors;
+                    } else {
+                        if (this.props.form.address) {
+                            this.getLocation({
+                                id: null,
+                                address: this.props.form.address,
+                                apartment: this.props.form.apartment,
+                                latitude: this.props.form.latitude,
+                                longitude: this.props.form.longitude,
+                                label: this.props.form.label || 'Delivery Location'
+                            });
+                            appService.modalHide('.address-modal');
+                        }
+                    }
                 });
             } catch (err) {
                 this.loading.isActive = false;

@@ -24,60 +24,45 @@ class OrderGotPushNotificationBuilder
 
     public function send(): void
     {
-        if (!blank($this->order)) {
-            $fcmWebDeviceTokenAllAdmins         = User::role(Role::ADMIN)->where(['branch_id' => 0])->whereNotNull('web_token')->get();
-            $fcmWebDeviceTokenBranchAdmins      = User::role(Role::ADMIN)->where(['branch_id' => $this->order->branch_id])->whereNotNull('web_token')->get();
-            $fcmWebDeviceTokenBranchManagers    = User::role(Role::BRANCH_MANAGER)->where(['branch_id' => $this->order->branch_id])->whereNotNull('web_token')->get();
-            $fcmMobileDeviceTokenAllAdmins      = User::role(Role::ADMIN)->where(['branch_id' => 0])->whereNotNull('device_token')->get();
-            $fcmMobileDeviceTokenBranchAdmins   = User::role(Role::ADMIN)->where(['branch_id' => $this->order->branch_id])->whereNotNull('device_token')->get();
-            $fcmMobileDeviceTokenBranchManagers = User::role(Role::BRANCH_MANAGER)->where(['branch_id' => $this->order->branch_id])->whereNotNull('device_token')->get();
+        try {
+            if (!blank($this->order)) {
+                $superAdmins = $this->getUsersByRole(Role::SUPER_ADMIN)
+                    ->where(function ($q) {
+                        $q->whereNotNull('web_token')->orWhereNotNull('device_token');
+                    })
+                    ->get();
 
-            $i             = 0;
-            $fcmTokenArray = [];
-            if (!blank($fcmWebDeviceTokenAllAdmins)) {
-                foreach ($fcmWebDeviceTokenAllAdmins as $fcmWebDeviceTokenAllAdmin) {
-                    $fcmTokenArray[$i] = $fcmWebDeviceTokenAllAdmin->web_token;
-                    $i++;
+                $branchManagers = $this->getUsersByRole(Role::BRANCH_MANAGER)
+                    ->where(['branch_id' => $this->order->branch_id])
+                    ->where(function ($q) {
+                        $q->whereNotNull('web_token')->orWhereNotNull('device_token');
+                    })
+                    ->get();
+
+                $waiters = $this->getUsersByRole(Role::WAITER)
+                    ->where(['branch_id' => $this->order->branch_id])
+                    ->where(function ($q) {
+                        $q->whereNotNull('web_token')->orWhereNotNull('device_token');
+                    })
+                    ->get();
+
+                $fcmTokenArray = [];
+                foreach ([$superAdmins, $branchManagers, $waiters] as $userGroup) {
+                    if (!blank($userGroup)) {
+                        foreach ($userGroup as $user) {
+                            if (!blank($user->web_token)) {
+                                $fcmTokenArray[] = $user->web_token;
+                            }
+                            if (!blank($user->device_token)) {
+                                $fcmTokenArray[] = $user->device_token;
+                            }
+                        }
+                    }
                 }
-            }
 
-            if (!blank($fcmWebDeviceTokenBranchAdmins)) {
-                foreach ($fcmWebDeviceTokenBranchAdmins as $fcmWebDeviceTokenBranchAdmin) {
-                    $fcmTokenArray[$i] = $fcmWebDeviceTokenBranchAdmin->web_token;
-                    $i++;
-                }
-            }
+                $fcmTokenArray = array_values(array_unique(array_filter($fcmTokenArray)));
 
-            if (!blank($fcmWebDeviceTokenBranchManagers)) {
-                foreach ($fcmWebDeviceTokenBranchManagers as $fcmWebDeviceTokenBranchManager) {
-                    $fcmTokenArray[$i] = $fcmWebDeviceTokenBranchManager->web_token;
-                    $i++;
-                }
-            }
-
-            if (!blank($fcmMobileDeviceTokenAllAdmins)) {
-                foreach ($fcmMobileDeviceTokenAllAdmins as $fcmMobileDeviceTokenAllAdmin) {
-                    $fcmTokenArray[$i] = $fcmMobileDeviceTokenAllAdmin->device_token;
-                    $i++;
-                }
-            }
-
-            if (!blank($fcmMobileDeviceTokenBranchAdmins)) {
-                foreach ($fcmMobileDeviceTokenBranchAdmins as $fcmMobileDeviceTokenBranchAdmin) {
-                    $fcmTokenArray[$i] = $fcmMobileDeviceTokenBranchAdmin->device_token;
-                    $i++;
-                }
-            }
-
-            if (!blank($fcmMobileDeviceTokenBranchManagers)) {
-                foreach ($fcmMobileDeviceTokenBranchManagers as $fcmMobileDeviceTokenBranchManager) {
-                    $fcmTokenArray[$i] = $fcmMobileDeviceTokenBranchManager->device_token;
-                    $i++;
-                }
-            }
-
-            if (count($fcmTokenArray) > 0) {
-                try {
+                if (count($fcmTokenArray) > 0) {
                     $notificationAlert = NotificationAlert::where(['language' => 'admin_and_branch_manager_new_order_message'])->first();
                     if ($notificationAlert && $notificationAlert->push_notification == SwitchBox::ON) {
                         $pushNotification = (object)[
@@ -88,11 +73,21 @@ class OrderGotPushNotificationBuilder
                         $firebase         = new FirebaseService();
                         $firebase->sendNotification($pushNotification, $fcmTokenArray,  "new-order-found");
                     }
-                } catch (Exception $e) {
-                    Log::info($e->getMessage());
                 }
             }
+        } catch (Exception $e) {
+            Log::error('OrderGotPushNotificationBuilder Exception: ' . $e->getMessage());
+        }
+    }
 
+    private function getUsersByRole($role)
+    {
+        try {
+            return User::role($role);
+        } catch (Exception $e) {
+            return User::whereHas('roles', function ($query) use ($role) {
+                $query->where('name', $role)->orWhere('id', $role);
+            });
         }
     }
 }

@@ -24,45 +24,26 @@ class OrderGotSmsNotificationBuilder
 
     public function send()
     {
-        if (!blank($this->order)) {
-            $smsAllAdmins = User::role(Role::ADMIN)->where(['branch_id' => 0])->whereNotNull('phone')->get();
-            $smsBranchAdmins = User::role(Role::ADMIN)->where(['branch_id' => $this->order->branch_id])->whereNotNull('phone')->get();
-            $smsBranchManagers = User::role(Role::BRANCH_MANAGER)->where(['branch_id' => $this->order->branch_id])->whereNotNull('phone')->get();
+        try {
+            if (!blank($this->order)) {
+                $superAdmins    = $this->getUsersByRole(Role::SUPER_ADMIN)->whereNotNull('phone')->get();
+                $branchManagers = $this->getUsersByRole(Role::BRANCH_MANAGER)->where(['branch_id' => $this->order->branch_id])->whereNotNull('phone')->get();
+                $waiters        = $this->getUsersByRole(Role::WAITER)->where(['branch_id' => $this->order->branch_id])->whereNotNull('phone')->get();
 
-            $i = 0;
-            $smsArrays = [];
-            if (!blank($smsAllAdmins)) {
-                foreach ($smsAllAdmins as $smsAllAdmin) {
-                    $smsArrays[$i] = [
-                        'code' => $smsAllAdmin->country_code,
-                        'phone' => $smsAllAdmin->phone,
-                    ];
-                    $i++;
+                $smsArrays = [];
+                foreach ([$superAdmins, $branchManagers, $waiters] as $userGroup) {
+                    if (!blank($userGroup)) {
+                        foreach ($userGroup as $user) {
+                            $smsArrays[$user->phone] = [
+                                'code'  => $user->country_code,
+                                'phone' => $user->phone,
+                            ];
+                        }
+                    }
                 }
-            }
+                $smsArrays = array_values($smsArrays);
 
-            if (!blank($smsBranchAdmins)) {
-                foreach ($smsBranchAdmins as $smsBranchAdmin) {
-                    $smsArrays[$i] = [
-                        'code' => $smsBranchAdmin->country_code,
-                        'phone' => $smsBranchAdmin->phone,
-                    ];
-                    $i++;
-                }
-            }
-
-            if (!blank($smsBranchManagers)) {
-                foreach ($smsBranchManagers as $smsBranchManager) {
-                    $smsArrays[$i] = [
-                        'code' => $smsBranchManager->country_code,
-                        'phone' => $smsBranchManager->phone,
-                    ];
-                    $i++;
-                }
-            }
-
-            if (count($smsArrays) > 0) {
-                try {
+                if (count($smsArrays) > 0) {
                     $notificationAlert = NotificationAlert::where(['language' => 'admin_and_branch_manager_new_order_message'])->first();
                     if ($notificationAlert && $notificationAlert->sms == SwitchBox::ON) {
                         $message = 'Order ID : '.$this->order->order_serial_no . ' '.$notificationAlert->sms_message;
@@ -70,10 +51,21 @@ class OrderGotSmsNotificationBuilder
                             $this->sms($smsArray['code'], $smsArray['phone'], $message);
                         }
                     }
-                } catch (Exception $e) {
-                    Log::info($e->getMessage());
                 }
             }
+        } catch (Exception $e) {
+            Log::error('OrderGotSmsNotificationBuilder Exception: ' . $e->getMessage());
+        }
+    }
+
+    private function getUsersByRole($role)
+    {
+        try {
+            return User::role($role);
+        } catch (Exception $e) {
+            return User::whereHas('roles', function ($query) use ($role) {
+                $query->where('name', $role)->orWhere('id', $role);
+            });
         }
     }
 

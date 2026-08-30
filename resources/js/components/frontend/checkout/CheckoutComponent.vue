@@ -25,7 +25,7 @@
                             <div>
                                 <label for="checkout-customer-phone" class="block text-xs font-medium mb-1 text-heading">Phone number</label>
                                 <input id="checkout-customer-phone" type="tel" inputmode="tel" autocomplete="tel"
-                                    v-model.trim="checkoutProps.form.customer_phone" @blur="ensureGuestSession"
+                                    v-model.trim="checkoutProps.form.customer_phone" @input="onPhoneInput" @blur="ensureGuestSession"
                                     placeholder="Example: 0712 345 678"
                                     class="w-full h-12 px-4 rounded-lg border border-[#EFF0F6] bg-gray-50 focus:border-primary focus:bg-white text-gray-900 transition" />
                             </div>
@@ -111,23 +111,20 @@
                             <div class="flex flex-wrap justify-between gap-5 mb-2.5">
                                 <h4 class="capitalize font-medium"> {{ $t('label.delivery_address') }} </h4>
                                 <div class="flex gap-3">
-                                    <button v-if="authStatus && Object.keys(localAddress).length !== 0" @click="editAddress"
+                                    <button v-if="Object.keys(localAddress).length !== 0" @click="editAddress"
                                         type="button"
                                         class="group text-xs capitalize font-medium flex items-center rounded-3xl py-1.5 px-3 gap-1 text-[#00749B] bg-[#D6F5FF] transition hover:text-white hover:bg-[#00749B]">
                                         <i class="lab lab-edit-2 lab-font-size-13"></i>
                                         <span>{{ $t('button.edit') }}</span>
                                     </button>
-                                    <AddressComponent v-if="authStatus" :getLocation="updateAddress" :props="addressProps" />
+                                    <AddressComponent :getLocation="updateAddress" :props="addressProps" />
                                 </div>
                             </div>
-                            <div v-if="!authStatus" class="p-3 rounded-xl border border-amber-200 bg-amber-50 text-amber-800 text-xs">
-                                Enter your name and phone number above to load or add a delivery address.
-                            </div>
-                            <div v-if="authStatus && addresses.length > 0" class="grid grid-cols-2 sm:grid-cols-3 gap-3 active-group">
+                            <div v-if="addresses.length > 0" class="grid grid-cols-2 sm:grid-cols-3 gap-3 active-group">
                                 <label @click="changeAddress($event, address)"
                                     :class="checkoutProps.form.address_id === address.id ? 'active' : ''"
-                                    v-for="address in addresses" :key="address" :for="address.label"
-                                    class="checkout-address-card p-3 rounded-lg w-full border">
+                                    v-for="address in addresses" :key="address.id" :for="address.label"
+                                    class="checkout-address-card p-3 rounded-lg w-full border cursor-pointer">
                                     <div class="flex items-center justify-between mb-2">
                                         <div class="checkout-address-title flex items-center gap-2 text-xs">
                                             <i class="icon-home"></i>
@@ -714,6 +711,16 @@ export default {
         countryCode: function () {
             return this.$store.getters['frontendCountryCode/show'];
         },
+        callingCode: function () {
+            const cc = this.$store.getters['frontendCountryCode/show'];
+            if (cc && cc.calling_code) {
+                return cc.calling_code;
+            }
+            if (this.setting && this.setting.company_country_code) {
+                return this.setting.company_country_code;
+            }
+            return '+254';
+        },
         timeSlot: function () {
             return this.$store.getters['frontendCart/timeSlot'];
         },
@@ -771,6 +778,9 @@ export default {
             this.loading.isActive = false;
         });
         this.$store.dispatch("frontendSetting/lists").then(res => {
+            if (res.data && res.data.data && res.data.data.company_country_code) {
+                this.$store.dispatch("frontendCountryCode/show", res.data.data.company_country_code).catch(() => {});
+            }
             if ((res.data.data.order_setup_delivery === activityEnum.DISABLE && res.data.data.order_setup_takeaway === activityEnum.DISABLE) || this.$store.getters['frontendCart/lists'].length === 0) {
                 this.$router.push({ name: 'frontend.home' });
             }
@@ -851,7 +861,20 @@ export default {
                 customer_email: this.checkoutProps.form.customer_email || ''
             }));
         },
+        onPhoneInput: function () {
+            this.saveCustomerPreferences();
+            if (this.phoneDebounceTimer) {
+                clearTimeout(this.phoneDebounceTimer);
+            }
+            this.phoneDebounceTimer = setTimeout(() => {
+                const phone = (this.checkoutProps.form.customer_phone || '').replace(/\D/g, '');
+                if (phone.length >= 9) {
+                    this.ensureGuestSession();
+                }
+            }, 400);
+        },
         loadCustomerAddresses: function () {
+            if (!this.authStatus) return Promise.resolve();
             this.loading.isActive = true;
             return this.$store.dispatch("frontendAddress/lists", this.addressProps).then((res) => {
                 let saved = {};
@@ -861,9 +884,11 @@ export default {
                     saved = {};
                 }
                 const available = res.data.data || [];
-                const selected = available.find(address => address.id === saved.address_id) || available[0];
-                if (selected) {
-                    this.updateAddress(selected);
+                if (available.length > 0) {
+                    const selected = available.find(address => address.id === saved.address_id) || available[0];
+                    if (selected) {
+                        this.updateAddress(selected);
+                    }
                 }
                 return res;
             }).finally(() => {
@@ -872,13 +897,18 @@ export default {
         },
         ensureGuestSession: function () {
             this.saveCustomerPreferences();
-            if (this.authStatus || this.guestLoginInProgress) return Promise.resolve();
+            if (this.guestLoginInProgress) return Promise.resolve();
 
-            const name = (this.checkoutProps.form.customer_name || '').trim();
             const phone = (this.checkoutProps.form.customer_phone || '').trim();
-            if (!name || phone.replace(/\D/g, '').length < 9 || this.guestLoginAttemptedPhone === phone) {
+            if (phone.replace(/\D/g, '').length < 9) {
                 return Promise.resolve();
             }
+
+            if (this.guestLoginAttemptedPhone === phone && this.authStatus) {
+                return this.loadCustomerAddresses();
+            }
+
+            const name = (this.checkoutProps.form.customer_name || '').trim() || 'Guest Customer';
 
             this.guestLoginInProgress = true;
             this.guestLoginAttemptedPhone = phone;
@@ -886,9 +916,11 @@ export default {
                 name,
                 phone,
                 email: this.checkoutProps.form.customer_email || null,
-                code: this.countryCode.calling_code,
+                code: this.callingCode,
                 token: 'guest'
-            }).then(() => this.loadCustomerAddresses()).catch(() => {
+            }).then(() => {
+                return this.loadCustomerAddresses();
+            }).catch(() => {
                 this.guestLoginAttemptedPhone = null;
             }).finally(() => {
                 this.guestLoginInProgress = false;
@@ -1228,7 +1260,7 @@ export default {
                     name: this.checkoutProps.form.customer_name,
                     phone: this.checkoutProps.form.customer_phone,
                     email: this.checkoutProps.form.customer_email || null,
-                    code: this.countryCode.calling_code,
+                    code: this.callingCode,
                     token: "guest"
                 };
                 this.$store.dispatch('GuestLoginVerify', payload).then((res) => {

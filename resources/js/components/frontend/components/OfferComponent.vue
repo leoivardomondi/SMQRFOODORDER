@@ -1,15 +1,15 @@
 <template>
-  <div v-if="showOfferPopup && featuredOffer" class="fixed inset-0 z-[120] flex items-center justify-center bg-black/80 p-4" @click.self="closeOfferPopup">
-    <div class="relative max-h-[92vh] w-full max-w-xl overflow-y-auto rounded-2xl bg-white shadow-2xl">
-      <button type="button" aria-label="Close offer" class="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/70 text-xl text-white" @click="closeOfferPopup">
+  <div v-if="showOfferPopup && featuredOffer" class="offer-popup-backdrop fixed inset-0 z-[120] flex items-center justify-center bg-black/80 p-2 sm:p-3" @click.self="closeOfferPopup">
+    <div class="relative max-h-[75vh] w-full max-w-md overflow-y-auto rounded-xl bg-white shadow-2xl">
+      <button type="button" aria-label="Close offer" class="absolute right-2 top-2 z-10 flex h-7 w-7 items-center justify-center rounded-full bg-black/70 text-base text-white" @click="closeOfferPopup">
         <i class="fa-solid fa-xmark"></i>
       </button>
-      <img class="block max-h-[68vh] w-full object-contain bg-black" :src="featuredOffer.image" :alt="featuredOffer.name">
-      <div class="offer-popup-content p-5 sm:p-6">
+      <img class="block max-h-[42vh] w-full object-contain bg-black" :src="featuredOffer.image" :alt="featuredOffer.name">
+      <div class="offer-popup-content p-3 sm:p-4">
         <p class="mb-1 text-xs font-semibold uppercase tracking-[0.2em] text-primary">Today’s offer</p>
-        <h2 class="offer-title text-2xl font-bold">{{ featuredOffer.name }}</h2>
-        <p v-if="featuredOffer.description" class="offer-description mt-2 leading-6">{{ featuredOffer.description }}</p>
-        <router-link :to="{ name: 'frontend.offers.item', params: { slug: featuredOffer.slug } }" class="mt-5 inline-flex w-full items-center justify-center rounded-full bg-primary px-5 py-3 font-semibold text-black" @click="closeOfferPopup">
+        <h2 class="offer-title text-xl font-bold">{{ featuredOffer.name }}</h2>
+        <p v-if="featuredOffer.description" class="offer-description mt-1 leading-5">{{ featuredOffer.description }}</p>
+        <router-link :to="{ name: 'frontend.offers.item', params: { slug: featuredOffer.slug } }" class="mt-3 inline-flex w-full items-center justify-center rounded-full bg-primary px-4 py-2 text-sm font-semibold text-black" @click="closeOfferPopup">
           View offer
         </router-link>
       </div>

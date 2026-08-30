@@ -14,7 +14,7 @@
     <section v-if="categories.length > 0" class="mb-6 sm:mb-12">
         <div class="container">
             <div class="flex items-center justify-between gap-2 mb-3 sm:mb-6 sm:mt-4">
-                <h2 class="text-lg sm:text-2xl font-semibold capitalize">{{ $t("label.our_menu") }}</h2>
+                <h2 class="store-section-title text-lg sm:text-2xl font-semibold capitalize">{{ $t("label.our_menu") }}</h2>
                 <router-link :to="{ name: 'frontend.menu', query: { s: categoryProps.slug } }"
                     class="rounded-3xl capitalize text-xs sm:text-sm leading-6 font-medium py-0 sm:py-1 px-2 sm:px-3 transition text-primary bg-[#D8FFFC] hover:text-white hover:bg-primary">
                     {{ $t("button.view_all") }}

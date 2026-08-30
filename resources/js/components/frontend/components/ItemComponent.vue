@@ -10,7 +10,7 @@
                         <h4 class="product-card-list-price-current text-sm sm:text-base font-semibold text-primary whitespace-nowrap">
                             {{ item.offer.length > 0 ? item.offer[0].currency_price : item.currency_price }}
                         </h4>
-                        <del v-if="item.offer.length > 0 || item.has_glovo_comparison" class="product-card-list-price-previous text-xs text-gray-400 block">
+                        <del v-if="item.offer.length > 0 || item.has_glovo_comparison" :class="item.has_glovo_comparison ? 'glovo-comparison-price' : ''" class="product-card-list-price-previous text-xs text-gray-400 block">
                             {{ item.offer.length > 0 ? item.currency_price : item.compare_at_currency_price }}
                         </del>
                         <span v-if="item.has_glovo_comparison" class="glovo-comparison-label">Compared to Glovo</span>
@@ -53,7 +53,7 @@
                 <p class="product-card-grid-describe char-limit">{{ textShortener(item.description, 50) }}</p>
                 <div class="product-card-grid-footer-group">
                     <div class="product-card-grid-price-group">
-                        <del v-if="item.offer.length > 0 || item.has_glovo_comparison" class="product-card-grid-price-previous">
+                        <del v-if="item.offer.length > 0 || item.has_glovo_comparison" :class="item.has_glovo_comparison ? 'glovo-comparison-price' : ''" class="product-card-grid-price-previous">
                             {{ item.offer.length > 0 ? item.currency_price : item.compare_at_currency_price }}
                         </del>
                         <h4 class="product-card-grid-price-current">
@@ -133,7 +133,7 @@
                 <!-- Product Details & Addons Area -->
                 <div class="px-4 py-5 mb-28">
                     <h2 class="text-2xl font-bold text-white mb-1 capitalize">{{ item.name }}</h2>
-                    <del v-if="item.offer.length > 0 || item.has_glovo_comparison" class="block text-sm text-gray-400 mb-1">
+                    <del v-if="item.offer.length > 0 || item.has_glovo_comparison" :class="item.has_glovo_comparison ? 'glovo-comparison-price' : ''" class="block text-sm text-gray-400 mb-1">
                         {{ item.offer.length > 0 ? item.currency_price : item.compare_at_currency_price }}
                     </del>
                     <span v-if="item.has_glovo_comparison" class="block text-xs text-gray-400 mb-2">Compared to Glovo</span>

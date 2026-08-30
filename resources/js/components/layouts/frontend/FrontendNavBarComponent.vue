@@ -1,6 +1,6 @@
 <template>
     <!-- Removed preloader per user request -->
-    <header class="shadow-xs bg-white ff-header" ref="ffHeader" style="background-color: #ffffff !important;">
+    <header class="shadow-xs bg-white ff-header" ref="ffHeader">
         <div class="container flex flex-col lg:flex-row items-center justify-between">
             <div class="w-full flex items-center justify-between gap-5 xl:gap-8 lg:justify-start lg:w-fit">
                 <router-link :to="{ name: 'frontend.home' }">
@@ -53,6 +53,10 @@
             </nav>
 
             <div class="flex flex-col items-center justify-end sm:gap-3 w-full mt-3 lg:mt-0 lg:flex-row lg:w-fit">
+                <button type="button" class="frontend-theme-switch" :aria-label="themeMode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'" :title="themeMode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'" @click="$emit('toggle-theme')">
+                    <i :class="themeMode === 'dark' ? 'fa-solid fa-sun' : 'fa-solid fa-moon'"></i>
+                    <span class="hidden sm:inline">{{ themeMode === 'dark' ? 'Light' : 'Dark' }}</span>
+                </button>
                 <form @submit.prevent="search"
                     class="header-search-group group hidden lg:flex items-center justify-center border border-solid gap-2 px-2 w-52 h-8 rounded-3xl transition border-[#EFF0F6] bg-[#EFF0F6] focus-within:bg-white focus-within:border-primary">
                     <button type="submit" class="header-search-submit">
@@ -258,6 +262,13 @@ import _ from "lodash";
 
 export default {
     name: "FrontendNavbarComponent",
+    emits: ['toggle-theme'],
+    props: {
+        themeMode: {
+            type: String,
+            default: 'light'
+        }
+    },
     components: { LoadingComponent },
     data() {
         return {

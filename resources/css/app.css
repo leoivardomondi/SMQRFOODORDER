@@ -560,6 +560,21 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
     font-family: var(--store-font);
 }
 
+/* The storefront palette is mode-aware: text and controls remain readable
+   when the same component is rendered on light or dark surfaces. */
+.frontend-theme,
+.frontend-theme * {
+    border-color: var(--store-border);
+}
+
+.frontend-theme p,
+.frontend-theme li,
+.frontend-theme label,
+.frontend-theme small,
+.frontend-theme a:not(.bg-primary) {
+    color: var(--store-body-text);
+}
+
 .frontend-theme h1,
 .frontend-theme h2,
 .frontend-theme h3,
@@ -567,6 +582,17 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
 .frontend-theme h5,
 .frontend-theme h6 {
     color: var(--store-heading);
+}
+
+/* Legacy views used text-white on section headings. Keep headings readable
+   on the light page surface; dark image/button contexts have their own rules. */
+.frontend-theme h1.text-white,
+.frontend-theme h2.text-white,
+.frontend-theme h3.text-white,
+.frontend-theme h4.text-white,
+.frontend-theme h5.text-white,
+.frontend-theme h6.text-white {
+    color: var(--store-heading) !important;
 }
 
 .frontend-theme h1,
@@ -590,6 +616,37 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
 .frontend-theme .text-gray-500 { color: var(--store-body-text) !important; }
 .frontend-theme .text-gray-400 { color: var(--store-muted-text) !important; }
 .frontend-theme .text-black { color: var(--store-heading) !important; }
+.frontend-theme .font-fill-black,
+.frontend-theme .font-fill-paragraph,
+.frontend-theme .font-fill-paragraph-toggle { color: var(--store-icon-muted) !important; }
+
+/* Legacy frontend views use text-white for content that was originally
+   rendered over a dark storefront. In light mode that text disappears on
+   cards and other light surfaces, so remap it to black while preserving
+   intentionally high-contrast action and dark-panel text. */
+.frontend-theme[data-theme-mode="light"] .text-white {
+    color: #000000 !important;
+}
+.frontend-theme[data-theme-mode="light"] .bg-primary .text-white,
+.frontend-theme[data-theme-mode="light"] .bg-primary.text-white,
+.frontend-theme[data-theme-mode="light"] .bg-heading .text-white,
+.frontend-theme[data-theme-mode="light"] .bg-heading.text-white,
+.frontend-theme[data-theme-mode="light"] .bg-black .text-white,
+.frontend-theme[data-theme-mode="light"] .bg-black.text-white,
+.frontend-theme[data-theme-mode="light"] [class~="bg-black/70"] .text-white,
+.frontend-theme[data-theme-mode="light"] [class~="bg-black/70"].text-white,
+.frontend-theme[data-theme-mode="light"] [class*="bg-red-"] .text-white,
+.frontend-theme[data-theme-mode="light"] [class*="bg-red-"].text-white,
+.frontend-theme[data-theme-mode="light"] [class*="bg-green-"] .text-white,
+.frontend-theme[data-theme-mode="light"] [class*="bg-green-"].text-white,
+.frontend-theme[data-theme-mode="light"] [class*="bg-[#"] .text-white,
+.frontend-theme[data-theme-mode="light"] [class*="bg-[#"].text-white,
+.frontend-theme[data-theme-mode="light"] [class*="bg-gray-9"] .text-white,
+.frontend-theme[data-theme-mode="light"] [class*="bg-gray-9"].text-white,
+.frontend-theme[data-theme-mode="light"] .footer-part .text-white,
+.frontend-theme[data-theme-mode="light"] .footer-part.text-white {
+    color: var(--store-button-text) !important;
+}
 .frontend-theme .border-gray-100,
 .frontend-theme .border-gray-200,
 .frontend-theme .border-gray-300,
@@ -632,6 +689,42 @@ input[type="search"]::-webkit-search-results-decoration { display: none; }
     background: var(--store-header-bg) !important;
     border-bottom: 1px solid var(--store-border);
     box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+}
+
+.frontend-theme .frontend-theme-switch {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    min-width: 2.25rem;
+    height: 2rem;
+    padding: 0 0.7rem;
+    border: 1px solid var(--store-border) !important;
+    border-radius: 9999px;
+    color: var(--store-nav-text) !important;
+    background: var(--store-muted-surface) !important;
+    font-size: 0.75rem;
+    font-weight: 600;
+    transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+}
+
+.frontend-theme .frontend-theme-switch:hover,
+.frontend-theme .frontend-theme-switch:focus-visible {
+    color: var(--store-nav-active) !important;
+    border-color: var(--store-primary) !important;
+    outline: none;
+}
+
+/* Auth cards historically inherit white text from the dark storefront
+   customization. Keep light-mode form content readable on white cards. */
+.frontend-theme[data-theme-mode="light"] .container h2.text-heading,
+.frontend-theme[data-theme-mode="light"] .container label.text-heading,
+.frontend-theme[data-theme-mode="light"] .container input.text-heading {
+    color: #111827 !important;
+}
+
+.frontend-theme[data-theme-mode="light"] .container .text-[#6E7191] {
+    color: #475569 !important;
 }
 
 /* Hide top navbar, mobile navbar, and PWA prompts when product page modal is open */
@@ -710,6 +803,13 @@ body.product-page-open .pwa-install-modal {
     white-space: normal;
 }
 
+.frontend-theme .glovo-comparison-price {
+    color: #dc2626 !important;
+}
+.frontend-theme[data-theme-mode="light"] #item-variation-modal del.glovo-comparison-price {
+    color: #dc2626 !important;
+}
+
 .frontend-theme .menu-swiper a:not(.text-primary) {
     color: var(--store-category) !important;
 }
@@ -718,6 +818,10 @@ body.product-page-open .pwa-install-modal {
 .frontend-theme .offer-carousel-card > div {
     color: var(--store-offer-description);
     background: var(--store-surface);
+}
+
+.frontend-theme .offer-popup-backdrop {
+    background: var(--store-modal-overlay) !important;
 }
 
 .frontend-theme .offer-title { color: var(--store-offer-title) !important; }
@@ -733,6 +837,21 @@ body.product-page-open .pwa-install-modal {
     color: var(--store-heading);
     background: var(--store-surface) !important;
     border-color: var(--store-border) !important;
+}
+
+.frontend-theme .frontend-search-bar {
+    color: var(--store-heading);
+    background: var(--store-surface) !important;
+    border-color: var(--store-border) !important;
+}
+
+.frontend-theme .frontend-search-bar input,
+.frontend-theme .frontend-search-bar input::placeholder {
+    color: var(--store-heading) !important;
+}
+
+.frontend-theme .frontend-search-bar input::placeholder {
+    color: var(--store-body-text) !important;
 }
 
 .frontend-theme .product-card-grid {
@@ -930,13 +1049,14 @@ body.product-page-open .pwa-install-modal {
 
 .frontend-theme input::placeholder,
 .frontend-theme textarea::placeholder {
-    color: var(--store-heading) !important;
+    color: var(--store-body-text) !important;
     opacity: 0.78 !important;
 }
 
 .frontend-theme .modal,
-.frontend-theme .drawer,
-.frontend-theme #item-variation-modal { background-color: var(--store-page-bg) !important; }
+.frontend-theme #item-variation-modal { background-color: var(--store-modal-overlay) !important; }
+
+.frontend-theme .drawer { background-color: var(--store-surface) !important; }
 
 .frontend-theme .modal-dialog,
 .frontend-theme .payment-label {
@@ -944,6 +1064,26 @@ body.product-page-open .pwa-install-modal {
     background-color: var(--store-surface) !important;
     border-color: var(--store-border) !important;
     border-radius: var(--store-radius);
+}
+
+.frontend-theme .checkout-payment-option {
+    color: var(--store-heading) !important;
+    background: var(--store-muted-surface) !important;
+    border-color: var(--store-border) !important;
+}
+
+.frontend-theme .checkout-payment-option .text-white,
+.frontend-theme .checkout-page > .text-white,
+.frontend-theme .checkout-page h3.text-white {
+    color: var(--store-heading) !important;
+}
+
+.frontend-theme .checkout-page input,
+.frontend-theme .checkout-page select,
+.frontend-theme .checkout-page textarea {
+    color: var(--store-heading) !important;
+    background-color: var(--store-input-bg) !important;
+    border-color: var(--store-border) !important;
 }
 
 .frontend-theme .checkout-address-card {
@@ -966,7 +1106,7 @@ body.product-page-open .pwa-install-modal {
 }
 
 .frontend-theme .checkout-address-card.active .checkout-address-title { color: var(--store-primary-hover); }
-.frontend-theme .checkout-address-card.active .checkout-address-detail { color: #ffffff; }
+.frontend-theme .checkout-address-card.active .checkout-address-detail { color: var(--store-heading); }
 
 .frontend-theme .checkout-time-card {
     color: var(--store-heading);
@@ -1049,7 +1189,7 @@ body.product-page-open .pwa-install-modal {
 .frontend-theme .address-label-option.active i,
 .frontend-theme .address-label-option.active span { color: var(--store-primary-hover) !important; }
 
-/* Neutral icons must stay crisp on the black frontend surfaces. */
+/* Neutral icons must stay visible on both storefront surfaces. */
 .frontend-theme i.text-gray-400,
 .frontend-theme i.text-gray-500,
 .frontend-theme i.text-gray-600,
@@ -1063,7 +1203,7 @@ body.product-page-open .pwa-install-modal {
 .frontend-theme .font-fill-paragraph,
 .frontend-theme .font-fill-paragraph-toggle,
 .frontend-theme .font-fill-black {
-    color: #ffffff !important;
+    color: var(--store-icon-muted) !important;
 }
 
 .frontend-theme nav.fixed.bottom-0 a:not(.text-primary) i,
@@ -1102,7 +1242,7 @@ body.product-page-open .pwa-install-modal {
     color: var(--store-body-text);
     /* Keep the storefront visible behind the install prompt. The generic
        themed modal rule uses an opaque page background, which hides it. */
-    background: rgb(0 0 0 / 42%) !important;
+    background: var(--store-modal-overlay) !important;
     backdrop-filter: blur(1px);
 }
 
@@ -1153,7 +1293,7 @@ body.product-page-open .pwa-install-modal {
    storefront palette so product details remain readable in every theme. */
 .frontend-theme #item-variation-modal {
     color: var(--store-body-text) !important;
-    background: var(--store-page-bg) !important;
+    background: var(--store-modal-overlay) !important;
 }
 
 .frontend-theme #item-variation-modal .bg-black,
@@ -1265,9 +1405,36 @@ body.product-page-open .pwa-install-modal {
     background: var(--store-primary-hover) !important;
 }
 
+/* Product details use legacy white/gray utility classes. On a light product
+   surface all informational text must remain visible in solid black. */
+.frontend-theme[data-theme-mode="light"] #item-variation-modal h2,
+.frontend-theme[data-theme-mode="light"] #item-variation-modal h3,
+.frontend-theme[data-theme-mode="light"] #item-variation-modal h4,
+.frontend-theme[data-theme-mode="light"] #item-variation-modal p,
+.frontend-theme[data-theme-mode="light"] #item-variation-modal label,
+.frontend-theme[data-theme-mode="light"] #item-variation-modal del,
+.frontend-theme[data-theme-mode="light"] #item-variation-modal .text-white,
+.frontend-theme[data-theme-mode="light"] #item-variation-modal .text-gray-200,
+.frontend-theme[data-theme-mode="light"] #item-variation-modal .text-gray-300,
+.frontend-theme[data-theme-mode="light"] #item-variation-modal .text-gray-400,
+.frontend-theme[data-theme-mode="light"] #item-variation-modal .text-gray-500 {
+    color: #000000 !important;
+}
+.frontend-theme[data-theme-mode="light"] #item-variation-modal .product-variation-footer button,
+.frontend-theme[data-theme-mode="light"] #item-variation-modal .product-variation-footer button * {
+    color: var(--store-button-text) !important;
+}
+
+/* Keep every displayed comparison-to-Glovo price red, including the price
+   shown inside the product-detail view where the light-mode text rule above
+   also targets <del> elements. */
+.frontend-theme .glovo-comparison-price {
+    color: #dc2626 !important;
+}
+
 /* Cart drawer and checkout surfaces ------------------------------------- */
 .frontend-theme #cart {
-    background: rgb(0 0 0 / 42%) !important;
+    background: var(--store-modal-overlay) !important;
 }
 
 .frontend-theme #cart > div {
@@ -1475,4 +1642,24 @@ body.product-page-open .pwa-install-modal {
 .frontend-theme ::selection {
     color: var(--store-button-text);
     background: var(--store-primary-hover);
+}
+
+.frontend-theme .store-section-title {
+    color: var(--store-heading) !important;
+}
+.frontend-theme[data-theme-mode="light"] .store-section-title {
+    color: #000000 !important;
+}
+
+/* Auth and other compact light cards may inherit legacy pale text from the
+   saved storefront palette. Keep their content visibly black in light mode;
+   action buttons retain their contrasting label color below. */
+.frontend-theme[data-theme-mode="light"] .shadow-xs.rounded-2xl.bg-white,
+.frontend-theme[data-theme-mode="light"] .shadow-xs.rounded-2xl.bg-white :not(button):not(button *) {
+    color: #000000 !important;
+}
+.frontend-theme[data-theme-mode="light"] .shadow-xs.rounded-2xl.bg-white button.bg-primary,
+.frontend-theme[data-theme-mode="light"] .shadow-xs.rounded-2xl.bg-white button[class~="bg-primary"],
+.frontend-theme[data-theme-mode="light"] .shadow-xs.rounded-2xl.bg-white button.bg-primary * {
+    color: var(--store-button-text) !important;
 }

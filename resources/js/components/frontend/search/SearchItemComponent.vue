@@ -4,11 +4,11 @@
         <div class="container">
             <!-- Dedicated Search Bar on Search Page -->
             <div class="mb-6">
-                <div class="flex items-center gap-3 border border-gray-700 bg-gray-900/90 px-4 py-3 rounded-2xl shadow-lg focus-within:border-primary transition-all">
+                <div class="frontend-search-bar flex items-center gap-3 border px-4 py-3 rounded-2xl shadow-lg focus-within:border-primary transition-all">
                     <i class="lab lab-search-normal text-primary text-xl"></i>
                     <input type="search" v-model="props.search.name" @input="onSearchInput"
                         placeholder="Search food, drinks, loaded fries..."
-                        class="w-full bg-transparent text-white placeholder-gray-400 text-base focus:outline-none" style="color: #ffffff !important;" />
+                        class="w-full bg-transparent text-base focus:outline-none" />
                     <button v-if="props.search.name" @click.prevent="clearSearch" type="button" class="text-gray-400 hover:text-white">
                         <i class="lab lab-close-circle-line text-xl text-red-400"></i>
                     </button>
@@ -16,7 +16,7 @@
             </div>
 
             <div class="flex gap-2 sm:gap-4 items-center justify-between mb-4 sm:mb-6">
-                <h2 class="capitalize text-lg sm:text-2xl font-semibold text-white">
+                <h2 class="capitalize text-lg sm:text-2xl font-semibold text-heading">
                     {{ props.search.name ? 'Search Results' : 'All Items' }}
                 </h2>
                 <div class="flex items-center gap-3">

@@ -48,30 +48,26 @@ class CartAbandonmentController extends Controller
             $branch = Branch::find($branchId);
             $recipients = [];
 
-            // A. Super Admin Emails (users with branch_id = 0, ID = 1, username = 'admin', or Role::ADMIN with branch_id 0)
-            $superAdminEmails = User::where(function($query) {
-                $query->where('branch_id', 0)
-                      ->orWhere('id', 1)
-                      ->orWhere('username', 'admin');
-            })->whereNotNull('email')->pluck('email')->toArray();
+            // A. Super Admin Emails
+            $superAdminEmails = $this->getUsersByRole(Role::SUPER_ADMIN)->whereNotNull('email')->pluck('email')->toArray();
 
-            try {
-                $roleAdmins = User::role(Role::ADMIN)->where(['branch_id' => 0])->whereNotNull('email')->pluck('email')->toArray();
-                $superAdminEmails = array_merge($superAdminEmails, $roleAdmins);
-            } catch (\Exception $e) {
-                Log::info('Error fetching Spatie Role::ADMIN emails: ' . $e->getMessage());
-            }
-
-            $superAdminEmails = array_values(array_unique(array_filter($superAdminEmails)));
-
-            // B. Branch Emails (Branch model email + Users assigned to branch)
+            // B. Branch Emails (Branch model email + Branch Managers and Waiters assigned to branch)
             $branchEmails = [];
             if (!empty($branch?->email)) {
                 $branchEmails[] = trim($branch->email);
             }
             if ($branchId) {
-                $branchUserEmails = User::where('branch_id', $branchId)->whereNotNull('email')->pluck('email')->toArray();
-                $branchEmails = array_merge($branchEmails, $branchUserEmails);
+                $branchStaffEmails = User::where('branch_id', $branchId)
+                    ->where(function ($q) {
+                        $q->whereHas('roles', function ($rq) {
+                            $rq->whereIn('name', [Role::BRANCH_MANAGER, Role::WAITER])
+                              ->orWhereIn('id', [Role::BRANCH_MANAGER, Role::WAITER]);
+                        });
+                    })
+                    ->whereNotNull('email')
+                    ->pluck('email')
+                    ->toArray();
+                $branchEmails = array_merge($branchEmails, $branchStaffEmails);
             }
             $branchEmails = array_values(array_unique(array_filter($branchEmails)));
 
@@ -81,8 +77,8 @@ class CartAbandonmentController extends Controller
 
             // Combine all into recipients list
             $recipients = array_values(array_unique(array_filter(array_merge(
-                $branchEmails,
                 $superAdminEmails,
+                $branchEmails,
                 $companyEmail
             ))));
 
@@ -130,6 +126,17 @@ class CartAbandonmentController extends Controller
                 'status' => false,
                 'message' => $e->getMessage()
             ], 500);
+        }
+    }
+
+    private function getUsersByRole($role)
+    {
+        try {
+            return User::role($role);
+        } catch (\Exception $e) {
+            return User::whereHas('roles', function ($query) use ($role) {
+                $query->where('name', $role)->orWhere('id', $role);
+            });
         }
     }
 }

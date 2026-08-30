@@ -25,28 +25,19 @@ class OrderGotMailNotificationBuilder
 
     public function send()
     {
-        if (!blank($this->order)) {
-            $emailSuperAdmins = User::role(Role::SUPER_ADMIN)->whereNotNull('email')->get();
-            $emailBranchAdmins = User::role(Role::ADMIN)->where(['branch_id' => $this->order->branch_id])->whereNotNull('email')->get();
+        try {
+            if (!blank($this->order)) {
+                $superAdminEmails     = $this->getUsersByRole(Role::SUPER_ADMIN)->whereNotNull('email')->pluck('email')->toArray();
+                $branchManagerEmails  = $this->getUsersByRole(Role::BRANCH_MANAGER)->where(['branch_id' => $this->order->branch_id])->whereNotNull('email')->pluck('email')->toArray();
+                $waiterEmails         = $this->getUsersByRole(Role::WAITER)->where(['branch_id' => $this->order->branch_id])->whereNotNull('email')->pluck('email')->toArray();
 
-            $i = 0;
-            $emailArray = [];
-            if (!blank($emailSuperAdmins)) {
-                foreach ($emailSuperAdmins as $emailSuperAdmin) {
-                    $emailArray[$i] = $emailSuperAdmin->email;
-                    $i++;
-                }
-            }
+                $emailArray = array_values(array_unique(array_filter(array_merge(
+                    $superAdminEmails,
+                    $branchManagerEmails,
+                    $waiterEmails
+                ))));
 
-            if (!blank($emailBranchAdmins)) {
-                foreach ($emailBranchAdmins as $emailBranchAdmin) {
-                    $emailArray[$i] = $emailBranchAdmin->email;
-                    $i++;
-                }
-            }
-
-            if (count($emailArray) > 0) {
-                try {
+                if (count($emailArray) > 0) {
                     $notificationAlert = NotificationAlert::where(['language' => 'admin_and_branch_manager_new_order_message'])->first();
                     $message = $notificationAlert?->mail_message ?? 'You have received a new order.';
 
@@ -64,11 +55,21 @@ class OrderGotMailNotificationBuilder
                     Mail::to($emailArray[0])
                         ->cc(array_slice($emailArray, 1))
                         ->send(new OrderGotMail($this->order, $message));
-                } catch (Exception $e) {
-                    Log::info($e->getMessage());
                 }
             }
+        } catch (Exception $e) {
+            Log::error('OrderGotMailNotificationBuilder Exception: ' . $e->getMessage());
+        }
+    }
 
+    private function getUsersByRole($role)
+    {
+        try {
+            return User::role($role);
+        } catch (Exception $e) {
+            return User::whereHas('roles', function ($query) use ($role) {
+                $query->where('name', $role)->orWhere('id', $role);
+            });
         }
     }
 }
