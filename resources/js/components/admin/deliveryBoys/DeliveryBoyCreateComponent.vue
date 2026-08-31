@@ -13,12 +13,12 @@
                     <div class="form-col-12" v-if="!isEditing">
                         <label class="db-field-title font-bold text-xs uppercase tracking-wider mb-1">User Source</label>
                         <div class="flex items-center gap-6 p-3 rounded-xl border border-gray-200 bg-gray-50/80 mb-3">
-                            <label class="flex items-center gap-2 cursor-pointer text-sm font-semibold text-heading">
-                                <input type="radio" value="new" v-model="userMode" class="custom-radio-field" @change="onUserModeChange">
+                            <label class="flex items-center gap-2 cursor-pointer text-sm font-semibold text-heading select-none" @click.prevent="setUserMode('new')">
+                                <input type="radio" value="new" :checked="userMode === 'new'" class="w-4 h-4 text-primary accent-primary cursor-pointer">
                                 <span>Create New User</span>
                             </label>
-                            <label class="flex items-center gap-2 cursor-pointer text-sm font-semibold text-heading">
-                                <input type="radio" value="existing" v-model="userMode" class="custom-radio-field" @change="onUserModeChange">
+                            <label class="flex items-center gap-2 cursor-pointer text-sm font-semibold text-heading select-none" @click.prevent="setUserMode('existing')">
+                                <input type="radio" value="existing" :checked="userMode === 'existing'" class="w-4 h-4 text-primary accent-primary cursor-pointer">
                                 <span>Assign Existing Registered User</span>
                             </label>
                         </div>
@@ -258,6 +258,10 @@ export default {
             }).catch(() => {
                 this.loading.isActive = false;
             });
+        },
+        setUserMode: function (mode) {
+            this.userMode = mode;
+            this.onUserModeChange();
         },
         onUserModeChange: function () {
             if (this.userMode === 'existing') {

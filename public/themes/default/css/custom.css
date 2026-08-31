@@ -523,14 +523,20 @@
     z-index: 60 !important;
 }
 
-.vue-select,
-.vue-select-header,
-.vue-dropdown,
-.vue-select-menu,
-.vue-dropdown-menu,
-.vue-select-dropdown-menu {
+.f-b-custom-select .vue-select-header,
+.f-b-custom-select .vue-input,
+.f-b-custom-select input {
+    cursor: pointer !important;
+}
+
+.f-b-custom-select .vue-dropdown,
+.f-b-custom-select .vue-select-menu,
+.f-b-custom-select .vue-dropdown-menu,
+.f-b-custom-select .vue-options,
+.vue-select-dropdown {
     z-index: 9999 !important;
 }
+
 
 
 
