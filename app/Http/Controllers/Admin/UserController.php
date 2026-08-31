@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Models\User;
+use App\Enums\Role as EnumRole;
 use App\Http\Resources\UserResource;
 use Illuminate\Http\Request;
 
@@ -18,6 +19,17 @@ class UserController extends AdminController
     {
         try {
             $query = User::with('roles');
+
+            if ($request->has('except_role')) {
+                $exceptRole = $request->except_role;
+                $query->whereDoesntHave('roles', function ($q) use ($exceptRole) {
+                    $q->where('id', $exceptRole)->orWhere('name', $exceptRole);
+                });
+            } else if ($request->get('exclude_customers', 1) == 1) {
+                $query->whereDoesntHave('roles', function ($q) {
+                    $q->where('id', EnumRole::CUSTOMER)->orWhere('name', 'Customer');
+                });
+            }
 
             if ($request->search) {
                 $search = $request->search;
@@ -40,3 +52,4 @@ class UserController extends AdminController
         }
     }
 }
+

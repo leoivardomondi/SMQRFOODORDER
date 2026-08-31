@@ -1,1 +1,0 @@
-import{_ as o,f as n,o as t,l as r}from"./app.2a60995c.js";const s={name:"SliderComponent"};function c(a,p,_,i,m,f){const e=n("router-view");return t(),r(e)}const d=o(s,[["render",c]]);export{d as default};

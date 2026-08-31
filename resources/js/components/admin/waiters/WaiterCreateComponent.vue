@@ -256,7 +256,7 @@ export default {
     methods: {
         fetchSystemUsers: function () {
             this.loading.isActive = true;
-            axios.get('admin/users').then((res) => {
+            axios.get('admin/users?exclude_customers=1').then((res) => {
                 this.loading.isActive = false;
                 this.allSystemUsers = (res.data.data || []).map((u) => {
                     const roleBadge = u.role_name ? ` [${u.role_name}]` : '';
