@@ -17,7 +17,7 @@ class UserController extends AdminController
     public function index(Request $request)
     {
         try {
-            $query = User::query();
+            $query = User::with('roles');
 
             if ($request->search) {
                 $search = $request->search;
@@ -32,7 +32,7 @@ class UserController extends AdminController
                 $users = $query->paginate($request->get('per_page', 10));
                 return UserResource::collection($users);
             } else {
-                $users = $query->orderBy('name', 'asc')->limit(500)->get();
+                $users = $query->orderBy('name', 'asc')->limit(1000)->get();
                 return UserResource::collection($users);
             }
         } catch (\Exception $exception) {

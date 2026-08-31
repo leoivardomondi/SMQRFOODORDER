@@ -1,0 +1,1 @@
+import{_ as o,f as t,o as n,l as r}from"./app.a0a9a0d4.js";const s={name:"ItemCategoryComponent"};function a(c,p,_,m,f,i){const e=t("router-view");return n(),r(e)}const l=o(s,[["render",a]]);export{l as default};

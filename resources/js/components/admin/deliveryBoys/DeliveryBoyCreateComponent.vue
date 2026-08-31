@@ -241,14 +241,20 @@ export default {
             this.loading.isActive = true;
             axios.get('admin/users').then((res) => {
                 this.loading.isActive = false;
-                this.allSystemUsers = (res.data.data || []).map((u) => ({
-                    id: u.id,
-                    name: `${u.name}${u.email ? ' (' + u.email + ')' : (u.phone ? ' (' + u.phone + ')' : '')}`,
-                    rawName: u.name,
-                    email: u.email || '',
-                    phone: u.phone || '',
-                    country_code: u.country_code || '',
-                }));
+                this.allSystemUsers = (res.data.data || []).map((u) => {
+                    const roleBadge = u.role_name ? ` [${u.role_name}]` : '';
+                    const contact = u.email ? u.email : (u.phone ? u.phone : '');
+                    const contactStr = contact ? ` (${contact})` : '';
+                    return {
+                        id: u.id,
+                        name: `${u.name}${roleBadge}${contactStr}`,
+                        rawName: u.name,
+                        email: u.email || '',
+                        phone: u.phone || '',
+                        country_code: u.country_code || '',
+                        role_name: u.role_name || '',
+                    };
+                });
             }).catch(() => {
                 this.loading.isActive = false;
             });

@@ -1,1 +1,0 @@
-import{_ as t,f as o,o as n,l as r}from"./app.d34f18ec.js";const s={name:"ItemAttributeComponent"};function c(a,p,_,m,i,u){const e=o("router-view");return n(),r(e)}const l=t(s,[["render",c]]);export{l as default};

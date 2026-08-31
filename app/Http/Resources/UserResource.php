@@ -28,6 +28,7 @@ class UserResource extends JsonResource
             "currency_balance" => AppLibrary::currencyAmountFormat($this->balance),
             "image"            => $this->image,
             "role_id"          => $this->myRole,
+            "role_name"        => $this->roles->first()?->name ?? 'Customer',
             "country_code"     => $this->country_code,
             "order"            => $this->orders->count(),
             "trust_metrics"    => app(\App\Services\TrustScoreService::class)->getUserMetrics($this->resource),
