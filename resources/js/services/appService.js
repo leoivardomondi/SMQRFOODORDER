@@ -23,12 +23,10 @@ export default {
     sideDrawerHide: function (id = 'sideDrawer') {
         const drawerDivs = document?.querySelectorAll(".drawer");
         const drawerSets = document?.querySelectorAll("[data-drawer]");
-        document?.querySelectorAll("#sidebar")?.forEach((closeBtn) => {
-            drawerSets?.forEach(drawerBtn => drawerBtn?.classList?.remove("active"));
-            drawerDivs?.forEach(drawerDiv => drawerDiv?.classList?.remove("active"));
-            document?.querySelector(".backdrop")?.classList?.remove("active");
-            document.body.style.overflowY = "auto"
-        });
+        drawerSets?.forEach(drawerBtn => drawerBtn?.classList?.remove("active"));
+        drawerDivs?.forEach(drawerDiv => drawerDiv?.classList?.remove("active"));
+        document?.querySelector(".backdrop")?.classList?.remove("active");
+        document.body.style.overflowY = "auto";
     },
 
     modalShow: function (id = '.modal') {

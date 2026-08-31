@@ -517,5 +517,21 @@
     }
 }
 
+/* Ensure vue-select dropdown menu in side drawers floats above all drawer elements */
+.drawer .f-b-custom-select {
+    position: relative !important;
+    z-index: 60 !important;
+}
+
+.vue-select,
+.vue-select-header,
+.vue-dropdown,
+.vue-select-menu,
+.vue-dropdown-menu,
+.vue-select-dropdown-menu {
+    z-index: 9999 !important;
+}
+
+
 
 

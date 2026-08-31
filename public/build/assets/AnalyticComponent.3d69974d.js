@@ -1,1 +1,0 @@
-import{_ as e,f as n,o as t,l as r}from"./app.a0a9a0d4.js";const c={name:"AnalyticComponent"};function s(a,p,_,i,m,f){const o=n("router-view");return t(),r(o)}const u=e(c,[["render",s]]);export{u as default};
