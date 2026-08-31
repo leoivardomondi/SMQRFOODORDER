@@ -494,3 +494,16 @@
     color: var(--store-muted-text, #64748b) !important;
 }
 
+/* Order Type Switch (Delivery / Takeaway Toggle) High Contrast Fix */
+.cart-switch + label {
+    color: #374151 !important;
+    font-weight: 600 !important;
+}
+
+.cart-switch:checked + label {
+    background-color: #000000 !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+}
+
+

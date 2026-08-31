@@ -27,7 +27,8 @@
                             id="delivery"
                             class="cart-switch w-full h-full absolute top-0 left-0 opacity-0 cursor-pointer">
                         <label for="delivery"
-                            class="py-1.5 px-3.5 rounded-2xl text-xs font-medium capitalize transition cursor-pointer">{{
+                            class="py-1.5 px-3.5 rounded-2xl text-xs font-medium capitalize transition cursor-pointer block"
+                            :style="orderType === orderTypeEnum.DELIVERY ? 'background-color: #000000 !important; color: #ffffff !important; font-weight: 700 !important;' : 'color: #374151 !important; font-weight: 600 !important;'">{{
                                 $t('label.delivery')
                             }}</label>
                     </div>
@@ -37,7 +38,8 @@
                             id="takeaway"
                             class="cart-switch w-full h-full absolute top-0 left-0 opacity-0 cursor-pointer">
                         <label for="takeaway"
-                            class="py-1.5 px-3.5 rounded-2xl text-xs font-medium capitalize transition cursor-pointer">{{
+                            class="py-1.5 px-3.5 rounded-2xl text-xs font-medium capitalize transition cursor-pointer block"
+                            :style="orderType === orderTypeEnum.TAKEAWAY ? 'background-color: #000000 !important; color: #ffffff !important; font-weight: 700 !important;' : 'color: #374151 !important; font-weight: 600 !important;'">{{
                                 $t('label.takeaway')
                             }}</label>
                     </div>
