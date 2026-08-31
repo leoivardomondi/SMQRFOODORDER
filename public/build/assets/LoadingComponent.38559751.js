@@ -1,0 +1,1 @@
+import{_ as o,V as e,o as n,g as t}from"./app.d34f18ec.js";const s={name:"LoadingComponent",components:{VueElementLoading:e},props:["props"],data(){return{isActive:!1}}},a={style:{display:"none"}};function p(r,c,i,_,d,m){return n(),t("div",a)}const f=o(s,[["render",p]]);export{f as L};

@@ -29,11 +29,13 @@
                         <vue-select class="db-field-control f-b-custom-select"
                             v-model="selectedExistingUserId"
                             :options="allSystemUsers"
-                            label-by="name_email"
+                            label-by="name"
                             value-by="id"
                             :closeOnSelect="true"
                             :searchable="true"
+                            :clearOnClose="true"
                             placeholder="-- Search by name or email --"
+                            search-placeholder="--"
                             @update:modelValue="onExistingUserSelected"
                         />
                     </div>
@@ -281,16 +283,20 @@ export default {
     },
     methods: {
         fetchSystemUsers: function () {
-            axios.get('/admin/users').then((res) => {
+            this.loading.isActive = true;
+            axios.get('admin/users').then((res) => {
+                this.loading.isActive = false;
                 this.allSystemUsers = (res.data.data || []).map((u) => ({
                     id: u.id,
-                    name_email: `${u.name} (${u.email || u.phone || 'No contact'})`,
-                    name: u.name,
+                    name: `${u.name}${u.email ? ' (' + u.email + ')' : (u.phone ? ' (' + u.phone + ')' : '')}`,
+                    rawName: u.name,
                     email: u.email || '',
                     phone: u.phone || '',
                     country_code: u.country_code || '',
                 }));
-            }).catch(() => {});
+            }).catch(() => {
+                this.loading.isActive = false;
+            });
         },
         onUserModeChange: function () {
             if (this.userMode === 'existing') {
@@ -301,10 +307,13 @@ export default {
             }
         },
         onExistingUserSelected: function (val) {
-            const user = this.allSystemUsers.find((u) => u.id === val);
+            if (!val) return;
+            const userId = typeof val === 'object' ? val.id : val;
+            const user = this.allSystemUsers.find((u) => u.id === userId);
             if (user) {
+                this.selectedExistingUserId = user.id;
                 this.props.form.existing_user_id = user.id;
-                this.props.form.name = user.name;
+                this.props.form.name = user.rawName;
                 this.props.form.email = user.email;
                 this.props.form.phone = user.phone;
                 if (user.country_code) this.props.form.country_code = user.country_code;
