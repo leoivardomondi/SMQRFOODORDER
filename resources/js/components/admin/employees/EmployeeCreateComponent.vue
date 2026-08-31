@@ -4,8 +4,8 @@
 
     <div id="sidebar" class="drawer">
         <div class="drawer-header">
-            <h3 class="drawer-title">{{ $t("menu.employees") }}</h3>
-            <button class="fa-solid fa-xmark close-btn" @click="reset"></button>
+            <h3 class="drawer-title">{{ employeeTitle }}</h3>
+            <button type="button" class="xmark-btn" @click.prevent="reset"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <div class="drawer-body">
             <form @submit.prevent="save">

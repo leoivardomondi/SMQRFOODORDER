@@ -330,6 +330,7 @@ export default {
             }
         },
         closeSidebar: function () {
+            appService.sideDrawerHide();
             document?.querySelector(".db-main")?.classList?.remove("expand");
             document?.querySelector(".db-sidebar")?.classList?.remove("active");
             document?.querySelector(".db-sidebar-backdrop")?.classList?.remove("active");

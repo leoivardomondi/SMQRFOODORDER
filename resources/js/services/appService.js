@@ -21,12 +21,13 @@ export default {
         });
     },
     sideDrawerHide: function (id = 'sideDrawer') {
-        const drawerDivs = document?.querySelectorAll(".drawer");
+        const drawerDivs = document?.querySelectorAll(".drawer, #sidebar, [id='sidebar']");
         const drawerSets = document?.querySelectorAll("[data-drawer]");
         drawerSets?.forEach(drawerBtn => drawerBtn?.classList?.remove("active"));
         drawerDivs?.forEach(drawerDiv => drawerDiv?.classList?.remove("active"));
-        document?.querySelector(".backdrop")?.classList?.remove("active");
+        document?.querySelectorAll(".backdrop, .db-sidebar-backdrop")?.forEach(b => b?.classList?.remove("active"));
         document.body.style.overflowY = "auto";
+        document.body.style.overflow = "auto";
     },
 
     modalShow: function (id = '.modal') {
