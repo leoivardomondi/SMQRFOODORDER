@@ -10,12 +10,40 @@
         <div class="drawer-body">
             <form @submit.prevent="save">
                 <div class="form-row">
+                    <div class="form-col-12" v-if="!isEditing">
+                        <label class="db-field-title font-bold text-xs uppercase tracking-wider mb-1">User Source</label>
+                        <div class="flex items-center gap-6 p-3 rounded-xl border border-gray-200 bg-gray-50/80 mb-3">
+                            <label class="flex items-center gap-2 cursor-pointer text-sm font-semibold text-heading">
+                                <input type="radio" value="new" v-model="userMode" class="custom-radio-field" @change="onUserModeChange">
+                                <span>Create New User</span>
+                            </label>
+                            <label class="flex items-center gap-2 cursor-pointer text-sm font-semibold text-heading">
+                                <input type="radio" value="existing" v-model="userMode" class="custom-radio-field" @change="onUserModeChange">
+                                <span>Assign Existing Registered User</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-col-12" v-if="!isEditing && userMode === 'existing'">
+                        <label class="db-field-title required">Select Existing User</label>
+                        <vue-select class="db-field-control f-b-custom-select"
+                            v-model="selectedExistingUserId"
+                            :options="allSystemUsers"
+                            label-by="name_email"
+                            value-by="id"
+                            :closeOnSelect="true"
+                            :searchable="true"
+                            placeholder="-- Search by name or email --"
+                            @update:modelValue="onExistingUserSelected"
+                        />
+                    </div>
+
                     <div class="form-col-12 sm:form-col-6">
                         <label for="name" class="db-field-title required">{{
                             $t("label.name")
                         }}</label>
                         <input v-model="props.form.name" v-bind:class="errors.name ? 'invalid' : ''" type="text"
-                            id="name" class="db-field-control" />
+                            id="name" class="db-field-control" :readonly="userMode === 'existing'" />
                         <small class="db-field-alert" v-if="errors.name">{{ errors.name[0] }}</small>
                     </div>
 
@@ -24,7 +52,7 @@
                             $t("label.email")
                         }}</label>
                         <input v-model="props.form.email" v-bind:class="errors.email ? 'invalid' : ''" type="text"
-                            id="email" class="db-field-control" />
+                            id="email" class="db-field-control" :readonly="userMode === 'existing'" />
                         <small class="db-field-alert" v-if="errors.email">{{
                             errors.email[0]
                         }}</small>
@@ -174,6 +202,7 @@ import LoadingComponent from "../components/LoadingComponent";
 import statusEnum from "../../../enums/modules/statusEnum";
 import alertService from "../../../services/alertService";
 import appService from "../../../services/appService";
+import axios from "axios";
 
 export default {
     name: "EmployeeCreateComponent",
@@ -194,6 +223,9 @@ export default {
             errors: {},
             flag: "",
             country_code: "",
+            userMode: "new",
+            selectedExistingUserId: null,
+            allSystemUsers: [],
         };
     },
     computed: {
@@ -212,6 +244,9 @@ export default {
         roles: function () {
             return this.$store.getters["role/lists"];
         },
+        isEditing: function () {
+            return !!this.$store.getters["employee/temp"]?.temp_id;
+        },
     },
     mounted() {
         this.loading.isActive = true;
@@ -225,6 +260,7 @@ export default {
             order_column: "id",
             order_type: "asc",
         });
+        this.fetchSystemUsers();
         this.$store.dispatch('company/lists').then(companyRes => {
             this.$store.dispatch('countryCode/show', companyRes.data.data.company_country_code).then(res => {
 
@@ -244,6 +280,36 @@ export default {
         });
     },
     methods: {
+        fetchSystemUsers: function () {
+            axios.get('/admin/users').then((res) => {
+                this.allSystemUsers = (res.data.data || []).map((u) => ({
+                    id: u.id,
+                    name_email: `${u.name} (${u.email || u.phone || 'No contact'})`,
+                    name: u.name,
+                    email: u.email || '',
+                    phone: u.phone || '',
+                    country_code: u.country_code || '',
+                }));
+            }).catch(() => {});
+        },
+        onUserModeChange: function () {
+            if (this.userMode === 'existing') {
+                this.fetchSystemUsers();
+            } else {
+                this.selectedExistingUserId = null;
+                delete this.props.form.existing_user_id;
+            }
+        },
+        onExistingUserSelected: function (val) {
+            const user = this.allSystemUsers.find((u) => u.id === val);
+            if (user) {
+                this.props.form.existing_user_id = user.id;
+                this.props.form.name = user.name;
+                this.props.form.email = user.email;
+                this.props.form.phone = user.phone;
+                if (user.country_code) this.props.form.country_code = user.country_code;
+            }
+        },
         phoneNumber(e) {
             return appService.phoneNumber(e);
         },
@@ -251,6 +317,8 @@ export default {
             appService.sideDrawerHide();
             this.$store.dispatch("employee/reset");
             this.errors = {};
+            this.userMode = "new";
+            this.selectedExistingUserId = null;
             this.$props.props.form = {
                 name: "",
                 email: "",
@@ -266,6 +334,8 @@ export default {
         addReset: function () {
             this.$store.dispatch("employee/reset");
             this.errors = {};
+            this.userMode = "new";
+            this.selectedExistingUserId = null;
             this.$props.props.form = {
                 name: "",
                 email: "",
@@ -288,6 +358,8 @@ export default {
                         appService.sideDrawerHide();
                         this.loading.isActive = false;
                         alertService.successFlip(tempId === null ? 0 : 1, this.$t("menu.employees"));
+                        this.userMode = "new";
+                        this.selectedExistingUserId = null;
                         this.props.form = {
                             name: "",
                             email: "",

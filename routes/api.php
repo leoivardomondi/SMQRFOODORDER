@@ -29,6 +29,7 @@ use App\Http\Controllers\Admin\AnalyticController;
 use App\Http\Controllers\Admin\CurrencyController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\EmployeeController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\LanguageController;
 use App\Http\Controllers\Admin\PosOrderController;
 use App\Http\Controllers\Admin\TimeSlotController;
@@ -607,6 +608,8 @@ Route::prefix('admin')->name('admin.')->middleware(['installed', 'apiKey', 'auth
         );
         Route::delete('/address/{administrator}/{address}', [AdministratorAddressController::class, 'destroy']);
     });
+
+    Route::get('users', [UserController::class, 'index']);
 
     Route::prefix('timezone')->name('timezone.')->group(function () {
         Route::get('/', [TimezoneController::class, 'index']);

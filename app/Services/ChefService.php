@@ -58,18 +58,29 @@ class ChefService
     {
         try {
             DB::transaction(function () use ($request) {
-                $this->chef = User::create([
-                    'name'              => $request->name,
-                    'email'             => $request->email,
-                    'phone'             => $request->phone,
-                    'username'          => $this->username($request->email),
-                    'password'          => bcrypt($request->password),
-                    'branch_id'         => $request->branch_id,
-                    'email_verified_at' => now(),
-                    'status'            => $request->status,
-                    'country_code'      => $request->country_code,
-                    'is_guest'          => Ask::NO,
-                ]);
+                if ($request->existing_user_id) {
+                    $this->chef = User::findOrFail($request->existing_user_id);
+                    if ($request->branch_id !== null && $request->branch_id !== '') {
+                        $this->chef->branch_id = $request->branch_id;
+                    }
+                    if ($request->status !== null) {
+                        $this->chef->status = $request->status;
+                    }
+                    $this->chef->save();
+                } else {
+                    $this->chef = User::create([
+                        'name'              => $request->name,
+                        'email'             => $request->email,
+                        'phone'             => $request->phone,
+                        'username'          => $this->username($request->email),
+                        'password'          => bcrypt($request->password),
+                        'branch_id'         => $request->branch_id,
+                        'email_verified_at' => now(),
+                        'status'            => $request->status,
+                        'country_code'      => $request->country_code,
+                        'is_guest'          => Ask::NO,
+                    ]);
+                }
                 $this->chef->assignRole(EnumRole::CHEF);
             });
             return $this->chef;

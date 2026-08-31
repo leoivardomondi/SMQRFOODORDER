@@ -25,25 +25,28 @@ class DeliveryBoyRequest extends FormRequest
      */
     public function rules()
     {
+        $isExistingUser = !empty($this->existing_user_id);
+
         return [
-            'name'                  => ['required', 'string', 'max:190'],
+            'existing_user_id'      => ['nullable', 'numeric', 'exists:users,id'],
+            'name'                  => [$isExistingUser ? 'nullable' : 'required', 'string', 'max:190'],
             'email'                 => [
-                'required',
+                $isExistingUser ? 'nullable' : 'required',
                 'email',
                 'max:190',
-                Rule::unique("users", "email")->ignore($this->route('deliveryBoy.id'))
+                Rule::unique("users", "email")->ignore($this->existing_user_id ?: $this->route('deliveryBoy.id'))
             ],
             'password'              => [
-                $this->route('deliveryBoy.id') ? 'nullable' : 'required',
+                ($isExistingUser || $this->route('deliveryBoy.id')) ? 'nullable' : 'required',
                 'string',
                 'min:6',
                 'confirmed'
             ],
-            'password_confirmation' => [$this->route('deliveryBoy.id') ? 'nullable' : 'required', 'string', 'min:6'],
+            'password_confirmation' => [($isExistingUser || $this->route('deliveryBoy.id')) ? 'nullable' : 'required', 'string', 'min:6'],
             'username'              => [
                 'nullable',
                 'max:190',
-                Rule::unique("users", "username")->ignore($this->route('deliveryBoy.id'))
+                Rule::unique("users", "username")->ignore($this->existing_user_id ?: $this->route('deliveryBoy.id'))
             ],
             'device_token'          => ['nullable', 'string'],
             'web_token'             => ['nullable', 'string'],
@@ -52,11 +55,11 @@ class DeliveryBoyRequest extends FormRequest
                 'string',
                 'max:20',
                 new ValidPhone(),
-                Rule::unique("users", "phone")->ignore($this->route('deliveryBoy.id'))
+                Rule::unique("users", "phone")->ignore($this->existing_user_id ?: $this->route('deliveryBoy.id'))
             ],
             'branch_id'             => ['nullable', 'numeric'],
             'status'                => ['required', 'numeric', 'max:24'],
-            'country_code'          => ['required', 'string', 'max:20'],
+            'country_code'          => [$isExistingUser ? 'nullable' : 'required', 'string', 'max:20'],
         ];
     }
 }

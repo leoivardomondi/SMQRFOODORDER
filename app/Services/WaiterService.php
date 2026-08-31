@@ -59,18 +59,29 @@ class WaiterService
     {
         try {
             DB::transaction(function () use ($request) {
-                $this->waiter = User::create([
-                    'name'              => $request->name,
-                    'email'             => $request->email,
-                    'phone'             => $request->phone,
-                    'username'          => $this->username($request->email),
-                    'password'          => bcrypt($request->password),
-                    'branch_id'         => $request->branch_id,
-                    'email_verified_at' => now(),
-                    'status'            => $request->status,
-                    'country_code'      => $request->country_code,
-                    'is_guest'          => Ask::NO,
-                ]);
+                if ($request->existing_user_id) {
+                    $this->waiter = User::findOrFail($request->existing_user_id);
+                    if ($request->branch_id !== null && $request->branch_id !== '') {
+                        $this->waiter->branch_id = $request->branch_id;
+                    }
+                    if ($request->status !== null) {
+                        $this->waiter->status = $request->status;
+                    }
+                    $this->waiter->save();
+                } else {
+                    $this->waiter = User::create([
+                        'name'              => $request->name,
+                        'email'             => $request->email,
+                        'phone'             => $request->phone,
+                        'username'          => $this->username($request->email),
+                        'password'          => bcrypt($request->password),
+                        'branch_id'         => $request->branch_id,
+                        'email_verified_at' => now(),
+                        'status'            => $request->status,
+                        'country_code'      => $request->country_code,
+                        'is_guest'          => Ask::NO,
+                    ]);
+                }
                 $this->waiter->assignRole(EnumRole::WAITER);
             });
             return $this->waiter;

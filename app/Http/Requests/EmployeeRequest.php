@@ -25,25 +25,28 @@ class EmployeeRequest extends FormRequest
      */
     public function rules()
     {
+        $isExistingUser = !empty($this->existing_user_id);
+
         return [
-            'name'                  => ['required', 'string', 'max:190'],
+            'existing_user_id'      => ['nullable', 'numeric', 'exists:users,id'],
+            'name'                  => [$isExistingUser ? 'nullable' : 'required', 'string', 'max:190'],
             'email'                 => [
-                'required',
+                $isExistingUser ? 'nullable' : 'required',
                 'email',
                 'max:190',
-                Rule::unique("users", "email")->ignore($this->route('employee.id'))
+                Rule::unique("users", "email")->ignore($this->existing_user_id ?: $this->route('employee.id'))
             ],
             'password'              => [
-                $this->route('employee.id') ? 'nullable' : 'required',
+                ($isExistingUser || $this->route('employee.id')) ? 'nullable' : 'required',
                 'string',
                 'min:6',
                 'confirmed'
             ],
-            'password_confirmation' => [$this->route('employee.id') ? 'nullable' : 'required', 'string', 'min:6'],
+            'password_confirmation' => [($isExistingUser || $this->route('employee.id')) ? 'nullable' : 'required', 'string', 'min:6'],
             'username'              => [
                 'nullable',
                 'max:190',
-                Rule::unique("users", "username")->ignore($this->route('employee.id'))
+                Rule::unique("users", "username")->ignore($this->existing_user_id ?: $this->route('employee.id'))
             ],
             'device_token'          => ['nullable', 'string'],
             'web_token'             => ['nullable', 'string'],
@@ -52,12 +55,12 @@ class EmployeeRequest extends FormRequest
                 'string',
                 'max:20',
                 new ValidPhone(),
-                Rule::unique("users", "phone")->ignore($this->route('employee.id'))
+                Rule::unique("users", "phone")->ignore($this->existing_user_id ?: $this->route('employee.id'))
             ],
             'branch_id'             => ['nullable', 'numeric'],
             'status'                => ['required', 'numeric', 'max:24'],
             'role_id'               => ['required', 'numeric'],
-            'country_code'          => ['required', 'string', 'max:20'],
+            'country_code'          => [$isExistingUser ? 'nullable' : 'required', 'string', 'max:20'],
         ];
     }
 }

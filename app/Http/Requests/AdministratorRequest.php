@@ -25,31 +25,34 @@ class AdministratorRequest extends FormRequest
      */
     public function rules()
     {
+        $isExistingUser = !empty($this->existing_user_id);
+
         return [
-            'name'                  => ['required', 'string', 'max:190'],
+            'existing_user_id'      => ['nullable', 'numeric', 'exists:users,id'],
+            'name'                  => [$isExistingUser ? 'nullable' : 'required', 'string', 'max:190'],
             'email'                 => [
-                'required',
+                $isExistingUser ? 'nullable' : 'required',
                 'email',
                 'max:190',
-                Rule::unique("users", "email")->ignore($this->route('administrator.id'))
+                Rule::unique("users", "email")->ignore($this->existing_user_id ?: $this->route('administrator.id'))
             ],
             'password'              => [
-                $this->route('administrator.id') ? 'nullable' : 'required',
+                ($isExistingUser || $this->route('administrator.id')) ? 'nullable' : 'required',
                 'string',
                 'min:6',
                 'confirmed'
             ],
-            'password_confirmation' => [$this->route('administrator.id') ? 'nullable' : 'required', 'string', 'min:6'],
+            'password_confirmation' => [($isExistingUser || $this->route('administrator.id')) ? 'nullable' : 'required', 'string', 'min:6'],
             'phone'                 => [
                 'nullable',
                 'string',
                 'max:20',
                 new ValidPhone(),
-                Rule::unique("users", "phone")->ignore($this->route('administrator.id'))
+                Rule::unique("users", "phone")->ignore($this->existing_user_id ?: $this->route('administrator.id'))
             ],
             'branch_id'             => ['nullable', 'numeric'],
             'status'                => ['required', 'numeric', 'max:24'],
-            'country_code'          => ['required', 'string', 'max:20'],
+            'country_code'          => [$isExistingUser ? 'nullable' : 'required', 'string', 'max:20'],
         ];
     }
 }

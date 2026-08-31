@@ -55,18 +55,29 @@ class AdministratorService
     {
         try {
             DB::transaction(function () use ($request) {
-                $this->user = User::create([
-                    'name'              => $request->name,
-                    'email'             => $request->email,
-                    'phone'             => $request->phone,
-                    'username'          => AppLibrary::username($request->name),
-                    'password'          => Hash::make($request->password),
-                    'status'            => $request->status,
-                    'email_verified_at' => now(),
-                    'branch_id'         => $request->branch_id,
-                    'country_code'      => $request->country_code,
-                    'is_guest'          => Ask::NO,
-                ]);
+                if ($request->existing_user_id) {
+                    $this->user = User::findOrFail($request->existing_user_id);
+                    if ($request->branch_id !== null && $request->branch_id !== '') {
+                        $this->user->branch_id = $request->branch_id;
+                    }
+                    if ($request->status !== null) {
+                        $this->user->status = $request->status;
+                    }
+                    $this->user->save();
+                } else {
+                    $this->user = User::create([
+                        'name'              => $request->name,
+                        'email'             => $request->email,
+                        'phone'             => $request->phone,
+                        'username'          => AppLibrary::username($request->name),
+                        'password'          => Hash::make($request->password),
+                        'status'            => $request->status,
+                        'email_verified_at' => now(),
+                        'branch_id'         => $request->branch_id,
+                        'country_code'      => $request->country_code,
+                        'is_guest'          => Ask::NO,
+                    ]);
+                }
                 $this->user->assignRole(EnumRole::ADMIN);
             });
             return $this->user;
