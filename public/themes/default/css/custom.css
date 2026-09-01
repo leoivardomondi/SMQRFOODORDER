@@ -506,14 +506,27 @@
     font-weight: 700 !important;
 }
 
-/* Fix Admin Main Content Top Padding to match green navbar height */
+/* Compact Admin Navbar: Eliminate top and bottom empty white space around green navbar elements */
+.db-header {
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+    min-height: 52px !important;
+}
+
+@media (min-width: 1024px) {
+    .db-sidebar {
+        top: 52px !important;
+        height: calc(100vh - 52px) !important;
+    }
+}
+
 .db-main {
-    padding-top: 76px !important;
+    padding-top: 60px !important;
 }
 
 @media (min-width: 1024px) {
     .db-main {
-        padding-top: 80px !important;
+        padding-top: 64px !important;
     }
 }
 
