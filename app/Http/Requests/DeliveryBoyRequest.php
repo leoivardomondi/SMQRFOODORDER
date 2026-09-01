@@ -36,13 +36,17 @@ class DeliveryBoyRequest extends FormRequest
                 'max:190',
                 Rule::unique("users", "email")->ignore($this->existing_user_id ?: $this->route('deliveryBoy.id'))
             ],
-            'password'              => [
-                ($isExistingUser || $this->route('deliveryBoy.id')) ? 'nullable' : 'required',
+            'password'              => $isExistingUser ? ['nullable'] : [
+                $this->route('deliveryBoy.id') ? 'nullable' : 'required',
                 'string',
                 'min:6',
                 'confirmed'
             ],
-            'password_confirmation' => [($isExistingUser || $this->route('deliveryBoy.id')) ? 'nullable' : 'required', 'string', 'min:6'],
+            'password_confirmation' => $isExistingUser ? ['nullable'] : [
+                $this->route('deliveryBoy.id') ? 'nullable' : 'required',
+                'string',
+                'min:6'
+            ],
             'username'              => [
                 'nullable',
                 'max:190',

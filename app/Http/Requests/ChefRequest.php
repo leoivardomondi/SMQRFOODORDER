@@ -36,8 +36,8 @@ class ChefRequest extends FormRequest
                 'max:190',
                 Rule::unique("users", "email")->ignore($this->existing_user_id ?: $this->route('chef.id'))
             ],
-            'password'              => [
-                ($isExistingUser || $this->route('chef.id')) ? 'nullable' : 'required',
+            'password'              => $isExistingUser ? ['nullable'] : [
+                $this->route('chef.id') ? 'nullable' : 'required',
                 'string',
                 'min:6',
                 'confirmed'
@@ -49,7 +49,11 @@ class ChefRequest extends FormRequest
             ],
             'device_token'          => ['nullable', 'string'],
             'web_token'             => ['nullable', 'string'],
-            'password_confirmation' => [($isExistingUser || $this->route('chef.id')) ? 'nullable' : 'required', 'string', 'min:6'],
+            'password_confirmation' => $isExistingUser ? ['nullable'] : [
+                $this->route('chef.id') ? 'nullable' : 'required',
+                'string',
+                'min:6'
+            ],
             'phone'                 => [
                 'nullable',
                 'string',

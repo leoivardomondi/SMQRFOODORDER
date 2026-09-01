@@ -36,13 +36,17 @@ class EmployeeRequest extends FormRequest
                 'max:190',
                 Rule::unique("users", "email")->ignore($this->existing_user_id ?: $this->route('employee.id'))
             ],
-            'password'              => [
-                ($isExistingUser || $this->route('employee.id')) ? 'nullable' : 'required',
+            'password'              => $isExistingUser ? ['nullable'] : [
+                $this->route('employee.id') ? 'nullable' : 'required',
                 'string',
                 'min:6',
                 'confirmed'
             ],
-            'password_confirmation' => [($isExistingUser || $this->route('employee.id')) ? 'nullable' : 'required', 'string', 'min:6'],
+            'password_confirmation' => $isExistingUser ? ['nullable'] : [
+                $this->route('employee.id') ? 'nullable' : 'required',
+                'string',
+                'min:6'
+            ],
             'username'              => [
                 'nullable',
                 'max:190',
