@@ -511,6 +511,13 @@
     padding-top: 8px !important;
     padding-bottom: 8px !important;
     min-height: 52px !important;
+    max-height: 52px !important;
+}
+
+.db-header img {
+    max-height: 36px !important;
+    width: auto !important;
+    object-fit: contain !important;
 }
 
 @media (min-width: 1024px) {

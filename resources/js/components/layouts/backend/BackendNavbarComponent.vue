@@ -1,8 +1,8 @@
 <template>
     <div class="backdrop db-sidebar-backdrop" @click="closeSidebar" aria-hidden="true"></div>
     <header class="db-header">
-        <router-link class="w-32 flex-shrink-0" :to="{ name: 'frontend.home' }" @click="closeFullScreen">
-            <img class="w-full" :src="setting.theme_logo" alt="logo">
+        <router-link class="w-28 h-9 flex-shrink-0 flex items-center" :to="{ name: 'frontend.home' }" @click="closeFullScreen">
+            <img class="max-h-9 w-auto object-contain" :src="setting.theme_logo" alt="logo">
         </router-link>
         <div class="flex items-center justify-end w-full gap-4">
             <div
