@@ -506,14 +506,14 @@
     font-weight: 700 !important;
 }
 
-/* Fix Admin Main Content Top Padding so header card & add buttons are never covered by top navbar */
+/* Fix Admin Main Content Top Padding to match green navbar height */
 .db-main {
-    padding-top: 96px !important;
+    padding-top: 76px !important;
 }
 
 @media (min-width: 1024px) {
     .db-main {
-        padding-top: 100px !important;
+        padding-top: 80px !important;
     }
 }
 
