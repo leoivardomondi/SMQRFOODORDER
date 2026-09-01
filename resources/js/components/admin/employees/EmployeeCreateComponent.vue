@@ -111,7 +111,7 @@
                         }}</small>
                     </div>
 
-                    <div class="form-col-12 sm:form-col-6">
+                    <div class="form-col-12 sm:form-col-6" v-if="userMode === 'new'">
                         <label for="password" class="db-field-title required">{{
                             $t("label.password")
                         }}</label>
@@ -122,7 +122,7 @@
                         }}</small>
                     </div>
 
-                    <div class="form-col-12 sm:form-col-6">
+                    <div class="form-col-12 sm:form-col-6" v-if="userMode === 'new'">
                         <label for="password_confirmation" class="db-field-title required">{{
                             $t("label.password_confirmation")
                         }}</label>
@@ -132,6 +132,13 @@
                         <small class="db-field-alert" v-if="errors.password_confirmation">{{
                             errors.password_confirmation[0]
                         }}</small>
+                    </div>
+
+                    <div class="form-col-12" v-if="userMode === 'existing'">
+                        <div class="p-3 rounded-xl bg-blue-50 border border-blue-200 text-blue-800 text-xs flex items-center gap-2">
+                            <i class="fa-solid fa-shield-halved text-sm text-blue-600"></i>
+                            <span><strong>Password Kept Secure:</strong> Existing user password is preserved. No password entry required.</span>
+                        </div>
                     </div>
 
                     <div class="form-col-12 sm:form-col-6">
@@ -298,6 +305,8 @@ export default {
                         phone: u.phone || '',
                         country_code: u.country_code || '',
                         role_name: u.role_name || '',
+                        role_id: u.role_id || null,
+                        branch_id: u.branch_id || null,
                     };
                 });
             }).catch(() => {
@@ -327,6 +336,11 @@ export default {
                 this.props.form.email = user.email;
                 this.props.form.phone = user.phone;
                 if (user.country_code) this.props.form.country_code = user.country_code;
+                if (user.branch_id) this.props.form.branch_id = user.branch_id;
+                if (!this.props.form.role_id && this.roles.length > 0) {
+                    const bmRole = this.roles.find(r => r.id === 6 || (r.name && r.name.toLowerCase().includes('branch manager')));
+                    this.props.form.role_id = bmRole ? bmRole.id : (user.role_id || this.roles[0].id);
+                }
             }
         },
         phoneNumber(e) {

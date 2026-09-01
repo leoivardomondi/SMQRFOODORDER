@@ -97,14 +97,14 @@
                         <small class="db-field-alert" v-if="errors.status">{{ errors.status[0] }}</small>
                     </div>
 
-                    <div class="form-col-12 sm:form-col-6">
+                    <div class="form-col-12 sm:form-col-6" v-if="userMode === 'new'">
                         <label for="password" class="db-field-title required">{{ $t("label.password") }}</label>
                         <input v-model="props.form.password" v-bind:class="errors.password ? 'invalid' : ''"
                             type="password" id="password" class="db-field-control" autocomplete="off" />
                         <small class="db-field-alert" v-if="errors.password">{{ errors.password[0] }}</small>
                     </div>
 
-                    <div class="form-col-12 sm:form-col-6">
+                    <div class="form-col-12 sm:form-col-6" v-if="userMode === 'new'">
                         <label for="password_confirmation" class="db-field-title required">{{
                             $t("label.password_confirmation")
                         }}</label>
@@ -114,6 +114,13 @@
                         <small class="db-field-alert" v-if="errors.password_confirmation">{{
                             errors.password_confirmation[0]
                         }}</small>
+                    </div>
+
+                    <div class="form-col-12" v-if="userMode === 'existing'">
+                        <div class="p-3 rounded-xl bg-blue-50 border border-blue-200 text-blue-800 text-xs flex items-center gap-2">
+                            <i class="fa-solid fa-shield-halved text-sm text-blue-600"></i>
+                            <span><strong>Password Kept Secure:</strong> Existing user password is preserved. No password entry required.</span>
+                        </div>
                     </div>
 
                     <div class="form-col-12 sm:form-col-6" v-if="branches.length > 1 && authBranch === 0">
@@ -253,6 +260,8 @@ export default {
                         phone: u.phone || '',
                         country_code: u.country_code || '',
                         role_name: u.role_name || '',
+                        role_id: u.role_id || null,
+                        branch_id: u.branch_id || null,
                     };
                 });
             }).catch(() => {
@@ -282,6 +291,7 @@ export default {
                 this.props.form.email = user.email;
                 this.props.form.phone = user.phone;
                 if (user.country_code) this.props.form.country_code = user.country_code;
+                if (user.branch_id) this.props.form.branch_id = user.branch_id;
             }
         },
         phoneNumber(e) {

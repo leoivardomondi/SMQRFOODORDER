@@ -29,6 +29,7 @@ class UserResource extends JsonResource
             "image"            => $this->image,
             "role_id"          => $this->myRole,
             "role_name"        => $this->roles->first()?->name ?? 'Customer',
+            "branch_id"        => $this->branch_id,
             "country_code"     => $this->country_code,
             "order"            => $this->orders->count(),
             "trust_metrics"    => app(\App\Services\TrustScoreService::class)->getUserMetrics($this->resource),
