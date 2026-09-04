@@ -218,7 +218,8 @@ export default {
         },
         showBranchDropdown: function () {
             const b = this.authBranch;
-            return b == 0 || b === "0" || b === null || b === undefined || b === "" || parseInt(b) === 0;
+            const isSuperAdminOrGlobal = b == 0 || b === "0" || b === null || b === undefined || b === "" || parseInt(b) === 0;
+            return isSuperAdminOrGlobal || (this.branches && this.branches.length > 0);
         },
         branches: function () {
             return this.$store.getters['backendGlobalState/branches'];
