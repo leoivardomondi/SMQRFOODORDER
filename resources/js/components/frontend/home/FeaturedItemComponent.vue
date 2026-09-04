@@ -55,6 +55,23 @@ export default {
         featuredItems: function () {
             return this.$store.getters["frontendItem/featured"];
         },
+        branchId: function () {
+            return this.$store.getters['globalState/lists'].branch_id;
+        }
+    },
+    watch: {
+        branchId(newBranchId) {
+            if (newBranchId) {
+                this.loading.isActive = true;
+                this.$store.dispatch("frontendItem/featured", {
+                    order_column: "id",
+                    order_type: "desc",
+                    branch_id: newBranchId
+                }).finally(() => {
+                    this.loading.isActive = false;
+                });
+            }
+        }
     },
     methods: {},
 };

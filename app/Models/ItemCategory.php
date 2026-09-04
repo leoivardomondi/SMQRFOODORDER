@@ -14,14 +14,20 @@ class ItemCategory extends Model implements HasMedia
     use InteractsWithMedia;
 
     protected $table = "item_categories";
-    protected $fillable = ['name', 'slug', 'description', 'status'];
+    protected $fillable = ['name', 'slug', 'branch_id', 'description', 'status'];
     protected $casts = [
         'id'          => 'integer',
         'name'        => 'string',
         'slug'        => 'string',
+        'branch_id'   => 'integer',
         'description' => 'string',
         'status'      => 'integer',
     ];
+
+    public function branch(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Branch::class, 'branch_id', 'id');
+    }
 
     public function getThumbAttribute(): string
     {

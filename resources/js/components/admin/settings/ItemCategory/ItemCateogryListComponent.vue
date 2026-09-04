@@ -32,6 +32,7 @@
                     <tr class="db-table-head-tr">
                         <th class="db-table-head-th"><i class="lab lab-list"></i></th>
                         <th class="db-table-head-th">{{ $t('label.name') }}</th>
+                        <th class="db-table-head-th">{{ $t('label.branch') }}</th>
                         <th class="db-table-head-th">{{ $t('label.status') }}</th>
                         <th class="db-table-head-th">{{ $t('label.action') }}</th>
                     </tr>
@@ -41,6 +42,7 @@
                     <tr class="db-table-body-tr" v-for="itemCategory in categories" :key="itemCategory">
                         <td class="db-table-body-td"><i class="lab lab-move cursor-move drag-handle"></i></td>
                         <td class="db-table-body-td">{{ itemCategory.name }}</td>
+                        <td class="db-table-body-td">{{ itemCategory.branch_name }}</td>
                         <td class="db-table-body-td">
                             <span :class="statusClass(itemCategory.status)">
                                 {{ enums.statusEnumArray[itemCategory.status] }}
@@ -48,7 +50,7 @@
                         </td>
                         <td class="db-table-body-td">
                             <div class="flex justify-start items-center sm:items-start sm:justify-start gap-1.5">
-                                <SmViewComponent :link="'admin.settings.itemCategory.show'" :id="itemCategory.id" />
+                                <SmViewComponent :link="'admin.itemCategory.show'" :id="itemCategory.id" />
                                 <SmModalEditComponent @click="edit(itemCategory)" />
                                 <SmDeleteComponent @click="destroy(itemCategory.id)" />
                             </div>
@@ -123,6 +125,7 @@ export default {
             props: {
                 form: {
                     name: "",
+                    branch_id: 0,
                     status: statusEnum.ACTIVE,
                     description: ""
                 },
@@ -174,6 +177,7 @@ export default {
             this.$store.dispatch('itemCategory/edit', itemCategory.id);
             this.props.form = {
                 name: itemCategory.name,
+                branch_id: itemCategory.branch_id || 0,
                 status: itemCategory.status,
                 description: itemCategory.description
             };

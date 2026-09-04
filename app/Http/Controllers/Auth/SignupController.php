@@ -80,7 +80,7 @@ class SignupController extends Controller
                 $user->is_guest = Ask::NO;
                 $user->save();
             } else {
-                $user = User::create([
+                $user = User::restoreOrCreate([
                     'name'              => $name,
                     'username'          => Str::slug($name),
                     'email'             => $request->post('email'),

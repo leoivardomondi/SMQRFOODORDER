@@ -84,7 +84,11 @@ export const employee = {
         },
         destroy: function (context, payload) {
             return new Promise((resolve, reject) => {
-                axios.delete(`admin/employee/${payload.id}`).then((res) => {
+                let url = `admin/employee/${payload.id}`;
+                if (payload.action) {
+                    url += `?action=${payload.action}`;
+                }
+                axios.delete(url).then((res) => {
                     context.dispatch("lists", payload.search).then().catch();
                     resolve(res);
                 }).catch((err) => {

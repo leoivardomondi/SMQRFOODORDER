@@ -32,9 +32,9 @@ class ProfileRequest extends FormRequest
                 'required',
                 'email',
                 'max:190',
-                Rule::unique("users", "email")->ignore(auth()->user()->id)
+                Rule::unique("users", "email")->whereNull('deleted_at')->ignore(auth()->user()->id)
             ],
-            'phone'        => ['required', 'string', 'max:20', new ValidPhone(), Rule::unique("users", "phone")->ignore(auth()->user()->id)],
+            'phone'        => ['required', 'string', 'max:20', new ValidPhone(), Rule::unique("users", "phone")->whereNull('deleted_at')->ignore(auth()->user()->id)],
             'country_code' => ['required', 'string', 'max:20'],
         ];
     }

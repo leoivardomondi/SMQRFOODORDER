@@ -60,7 +60,10 @@ class WaiterService
         try {
             DB::transaction(function () use ($request) {
                 if ($request->existing_user_id) {
-                    $this->waiter = User::findOrFail($request->existing_user_id);
+                    $this->waiter = User::withTrashed()->findOrFail($request->existing_user_id);
+                    if ($this->waiter->trashed()) {
+                        $this->waiter->restore();
+                    }
                     if ($request->branch_id !== null && $request->branch_id !== '') {
                         $this->waiter->branch_id = $request->branch_id;
                     }
@@ -69,7 +72,7 @@ class WaiterService
                     }
                     $this->waiter->save();
                 } else {
-                    $this->waiter = User::create([
+                    $this->waiter = User::restoreOrCreate([
                         'name'              => $request->name,
                         'email'             => $request->email,
                         'phone'             => $request->phone,

@@ -125,6 +125,10 @@
                                         v-if="permissionChecker('employees_show')" />
                                     <SmIconSidebarModalEditComponent @click="edit(employee)"
                                         v-if="permissionChecker('employees_edit')" />
+                                    <button type="button" @click="removeRole(employee)" title="Remove Role" class="db-table-action remove group" v-if="permissionChecker('employees_delete')">
+                                        <i class="fa-solid fa-user-minus text-amber-600 group-hover:text-amber-700"></i>
+                                        <span class="db-tooltip font-normal group-hover:visible whitespace-nowrap">Remove Role</span>
+                                    </button>
                                     <SmIconDeleteComponent @click="destroy(employee.id)"
                                         v-if="permissionChecker('employees_delete')" />
                                 </div>
@@ -353,6 +357,35 @@ export default {
                 status: employee.status,
                 country_code: this.country_code,
             };
+        },
+        removeRole: function (employee) {
+            appService
+                .destroyConfirmation()
+                .then((res) => {
+                    try {
+                        this.loading.isActive = true;
+                        this.$store
+                            .dispatch("employee/destroy", {
+                                id: employee.id,
+                                action: "remove",
+                                search: this.props.search,
+                            })
+                            .then((res) => {
+                                this.loading.isActive = false;
+                                alertService.successFlip(null, this.$t("menu.employees"));
+                            })
+                            .catch((err) => {
+                                this.loading.isActive = false;
+                                alertService.error(err.response.data.message);
+                            });
+                    } catch (err) {
+                        this.loading.isActive = false;
+                        alertService.error(err.response.data.message);
+                    }
+                })
+                .catch((err) => {
+                    this.loading.isActive = false;
+                });
         },
         destroy: function (id) {
             appService

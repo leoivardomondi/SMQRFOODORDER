@@ -122,4 +122,34 @@ class OnlineOrderController extends AdminController
             return response(['status' => false, 'message' => $exception->getMessage()], 422);
         }
     }
+
+    public function futureOrdersCount(): \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
+    {
+        try {
+            $today = \Carbon\Carbon::today();
+            $now   = \Carbon\Carbon::now();
+
+            $count = Order::whereIn('status', [\App\Enums\OrderStatus::PENDING, \App\Enums\OrderStatus::ACCEPT, \App\Enums\OrderStatus::PREPARING])
+                ->where(function ($query) use ($today, $now) {
+                    $query->where('is_advance_order', \App\Enums\Ask::YES)
+                        ->orWhereDate('order_datetime', $today)
+                        ->orWhere('order_datetime', '>=', $now);
+                })
+                ->count();
+
+            return response()->json(['status' => true, 'data' => ['count' => $count]]);
+        } catch (Exception $exception) {
+            return response(['status' => false, 'message' => $exception->getMessage()], 422);
+        }
+    }
+
+    public function pendingOrdersCount(): \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
+    {
+        try {
+            $count = Order::whereIn('status', [\App\Enums\OrderStatus::PENDING, \App\Enums\OrderStatus::ACCEPT, \App\Enums\OrderStatus::PREPARING])->count();
+            return response()->json(['status' => true, 'data' => ['count' => $count]]);
+        } catch (Exception $exception) {
+            return response(['status' => false, 'message' => $exception->getMessage()], 422);
+        }
+    }
 }

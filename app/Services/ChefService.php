@@ -59,7 +59,10 @@ class ChefService
         try {
             DB::transaction(function () use ($request) {
                 if ($request->existing_user_id) {
-                    $this->chef = User::findOrFail($request->existing_user_id);
+                    $this->chef = User::withTrashed()->findOrFail($request->existing_user_id);
+                    if ($this->chef->trashed()) {
+                        $this->chef->restore();
+                    }
                     if ($request->branch_id !== null && $request->branch_id !== '') {
                         $this->chef->branch_id = $request->branch_id;
                     }

@@ -15,7 +15,12 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        // Remind admins and branch managers every 15 minutes of pending advance/future orders
+        $schedule->command('app:send-future-order-reminders')->everyFifteenMinutes();
+
+        // Send promotional emails for items on offer at 12:00 PM and 7:00 PM
+        $schedule->command('app:send-daily-offer-promotions --slot=12PM')->dailyAt('12:00');
+        $schedule->command('app:send-daily-offer-promotions --slot=7PM')->dailyAt('19:00');
     }
 
     /**

@@ -140,4 +140,38 @@ class User extends Authenticatable implements HasMedia
     {
         return $this->hasMany(MessageHistory::class, 'user_id', 'id')->where('is_read', Ask::NO);
     }
+
+    public static function restoreOrCreate(array $attributes): User
+    {
+        $email    = $attributes['email'] ?? null;
+        $phone    = $attributes['phone'] ?? null;
+        $username = $attributes['username'] ?? null;
+
+        $user = null;
+        if ($email || $phone || $username) {
+            $user = static::withTrashed()
+                ->where(function ($query) use ($email, $phone, $username) {
+                    if ($email) {
+                        $query->orWhere('email', $email);
+                    }
+                    if ($phone) {
+                        $query->orWhere('phone', $phone);
+                    }
+                    if ($username) {
+                        $query->orWhere('username', $username);
+                    }
+                })
+                ->whereNotNull('deleted_at')
+                ->first();
+        }
+
+        if ($user) {
+            $user->restore();
+            $user->fill($attributes);
+            $user->save();
+            return $user;
+        }
+
+        return static::create($attributes);
+    }
 }

@@ -39,6 +39,16 @@ class MenuTableSeeder extends Seeder
 
             ],
             [
+                'name'       => 'Item Categories',
+                'language'   => 'item_categories',
+                'url'        => 'item-categories',
+                'icon'       => 'lab lab-item-categories',
+                'priority'   => 100,
+                'status'     => 1,
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
                 'name'       => 'Pos & Orders',
                 'language'   => 'pos_and_orders',
                 'url'        => '#',

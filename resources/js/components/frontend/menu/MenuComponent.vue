@@ -91,6 +91,9 @@ export default {
     computed: {
         categories: function () {
             return this.$store.getters['frontendItemCategory/lists'] || [];
+        },
+        branchId: function () {
+            return this.$store.getters['globalState/lists'].branch_id;
         }
     },
     mounted() {
@@ -203,6 +206,11 @@ export default {
         '$route.query.s'(newSlug) {
             if (newSlug && newSlug !== this.activeCategorySlug) {
                 this.scrollToCategory(newSlug, true);
+            }
+        },
+        branchId(newBranchId) {
+            if (newBranchId) {
+                this.loadMenuData();
             }
         }
     }

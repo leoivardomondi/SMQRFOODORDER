@@ -21,6 +21,15 @@
 
 
                         <div class="form-col-12 sm:form-col-6">
+                            <label for="branch_id" class="db-field-title">{{ $t('label.branch') }}</label>
+                            <vue-select class="db-field-control f-b-custom-select" id="branch_id"
+                                v-bind:class="errors.branch_id ? 'invalid' : ''"
+                                v-model="props.form.branch_id" :options="branchOptions" label-by="name"
+                                value-by="id" :closeOnSelect="true" :searchable="true" :clearOnClose="false" placeholder="All Branches" />
+                            <small class="db-field-alert" v-if="errors.branch_id">{{ errors.branch_id[0] }}</small>
+                        </div>
+
+                        <div class="form-col-12 sm:form-col-6">
                             <label for="image" class="db-field-title">{{ $t('label.image') }} (74px,48px)</label>
                             <input @change="changeImage" v-bind:class="errors.image ? 'invalid' : ''" id="image" type="file"
                                 class="db-field-control" ref="imageProperty" accept="image/png, image/jpeg, image/jpg">
@@ -108,6 +117,15 @@ export default {
         addButton: function () {
             return { title: this.$t("button.add_item_category") }
         },
+        branches: function () {
+            return this.$store.getters['branch/lists'];
+        },
+        branchOptions: function () {
+            return [{ id: 0, name: 'All Branches' }, ...this.branches];
+        }
+    },
+    mounted() {
+        this.$store.dispatch('branch/lists', { paginate: 0, status: statusEnum.ACTIVE });
     },
     methods: {
         changeImage: function (e) {
@@ -119,6 +137,7 @@ export default {
             this.errors = {};
             this.$props.props.form = {
                 name: "",
+                branch_id: 0,
                 description: "",
                 status: statusEnum.ACTIVE
             }
@@ -132,6 +151,7 @@ export default {
             try {
                 const fd = new FormData();
                 fd.append('name', this.props.form.name);
+                fd.append('branch_id', this.props.form.branch_id == null ? 0 : this.props.form.branch_id);
                 fd.append('status', this.props.form.status);
                 fd.append('description', this.props.form.description);
                 if (this.image) {
@@ -149,6 +169,7 @@ export default {
                     alertService.successFlip((tempId === null ? 0 : 1), this.$t('menu.item_categories'));
                     this.props.form = {
                         name: "",
+                        branch_id: 0,
                         description: "",
                         status: statusEnum.ACTIVE,
                     }

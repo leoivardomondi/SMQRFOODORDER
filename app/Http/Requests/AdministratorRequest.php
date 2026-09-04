@@ -34,7 +34,7 @@ class AdministratorRequest extends FormRequest
                 $isExistingUser ? 'nullable' : 'required',
                 'email',
                 'max:190',
-                Rule::unique("users", "email")->ignore($this->existing_user_id ?: $this->route('administrator.id'))
+                Rule::unique("users", "email")->whereNull('deleted_at')->ignore($this->existing_user_id ?: $this->route('administrator.id'))
             ],
             'password'              => $isExistingUser ? ['nullable'] : [
                 $this->route('administrator.id') ? 'nullable' : 'required',
@@ -52,7 +52,7 @@ class AdministratorRequest extends FormRequest
                 'string',
                 'max:20',
                 new ValidPhone(),
-                Rule::unique("users", "phone")->ignore($this->existing_user_id ?: $this->route('administrator.id'))
+                Rule::unique("users", "phone")->whereNull('deleted_at')->ignore($this->existing_user_id ?: $this->route('administrator.id'))
             ],
             'branch_id'             => ['nullable', 'numeric'],
             'status'                => ['required', 'numeric', 'max:24'],

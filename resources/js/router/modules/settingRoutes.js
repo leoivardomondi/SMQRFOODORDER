@@ -1,9 +1,6 @@
 import SettingsComponent from "../../components/admin/settings/SettingsComponent";
 import CompanyComponent from "../../components/admin/settings/Company/CompanyComponent";
 import SiteComponent from "../../components/admin/settings/Site/SiteComponent";
-import ItemCategoryListComponent from "../../components/admin/settings/ItemCategory/ItemCateogryListComponent";
-import ItemCategoryComponent from "../../components/admin/settings/ItemCategory/ItemCategoryComponent";
-import ItemCategoryShowComponent from "../../components/admin/settings/ItemCategory/ItemCategoryShowComponent";
 import ItemAttributeComponent from "../../components/admin/settings/ItemAttribute/ItemAttributeComponent";
 import ItemAttributeListComponent from "../../components/admin/settings/ItemAttribute/ItemAttributeListComponent";
 import SliderComponent from "../../components/admin/settings/Slider/SliderComponent";
@@ -299,42 +296,6 @@ export default [
                             auth: true,
                             permissionUrl: "settings",
                             breadcrumb: "",
-                        },
-                    },
-                ],
-            },
-            {
-                path: "item-categories",
-                component: ItemCategoryComponent,
-                name: "admin.settings.itemCategory",
-                redirect: { name: "admin.settings.itemCategory.list" },
-                meta: {
-                    isFrontend: false,
-                    auth: true,
-                    permissionUrl: "settings",
-                    breadcrumb: "item_categories",
-                },
-                children: [
-                    {
-                        path: "list",
-                        component: ItemCategoryListComponent,
-                        name: "admin.settings.itemCategory.list",
-                        meta: {
-                            isFrontend: false,
-                            auth: true,
-                            permissionUrl: "settings",
-                            breadcrumb: "",
-                        },
-                    },
-                    {
-                        path: "show/:id",
-                        component: ItemCategoryShowComponent,
-                        name: "admin.settings.itemCategory.show",
-                        meta: {
-                            isFrontend: false,
-                            auth: true,
-                            permissionUrl: "settings",
-                            breadcrumb: "view",
                         },
                     },
                 ],

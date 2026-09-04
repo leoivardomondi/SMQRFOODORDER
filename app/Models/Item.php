@@ -21,6 +21,7 @@ class Item extends Model implements HasMedia
     protected $fillable = [
         'name',
         'item_category_id',
+        'branch_id',
         'slug',
         'tax_id',
         'item_type',
@@ -38,6 +39,7 @@ class Item extends Model implements HasMedia
         'id'               => 'integer',
         'name'             => 'string',
         'item_category_id' => 'integer',
+        'branch_id'        => 'integer',
         'slug'             => 'string',
         'tax_id'           => 'integer',
         'item_type'        => 'integer',
@@ -50,6 +52,11 @@ class Item extends Model implements HasMedia
         'status'           => 'integer',
         'order'            => 'integer',
     ];
+
+    public function branch(): \Illuminate\Database\Eloquent\Relations\BelongsTo
+    {
+        return $this->belongsTo(Branch::class, 'branch_id', 'id');
+    }
 
     public function getThumbAttribute(): string
     {

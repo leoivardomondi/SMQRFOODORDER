@@ -47,6 +47,15 @@
                     </div>
 
                     <div class="form-col-12 sm:form-col-6">
+                        <label for="branch_id" class="db-field-title">{{ $t("label.branch") }}</label>
+                        <vue-select class="db-field-control f-b-custom-select" id="branch_id"
+                            v-bind:class="errors.branch_id ? 'invalid' : ''"
+                            v-model="props.form.branch_id" :options="branchOptions" label-by="name"
+                            value-by="id" :closeOnSelect="true" :searchable="true" :clearOnClose="false" placeholder="All Branches" />
+                        <small class="db-field-alert" v-if="errors.branch_id">{{ errors.branch_id[0] }}</small>
+                    </div>
+
+                    <div class="form-col-12 sm:form-col-6">
                         <label for="tax_id" class="db-field-title">{{ $t("label.tax") }} ({{ $t("label.including")
                             }})</label>
                         <vue-select class="db-field-control f-b-custom-select" id="tax_id"
@@ -230,6 +239,12 @@ export default {
         taxes: function () {
             return this.$store.getters['tax/lists'];
         },
+        branches: function () {
+            return this.$store.getters['branch/lists'];
+        },
+        branchOptions: function () {
+            return [{ id: 0, name: 'All Branches' }, ...this.branches];
+        },
         isDailyOfferCategory: function () {
             const category = this.itemCategories.find((item) => item.id === this.props.form.item_category_id);
             return !!category && category.name.toUpperCase().includes('DAILY OFFER');
@@ -245,6 +260,11 @@ export default {
         this.$store.dispatch('tax/lists', {
             order_column: 'id',
             order_type: 'asc'
+        });
+        this.$store.dispatch('branch/lists', {
+            order_column: 'id',
+            order_type: 'asc',
+            status: statusEnum.ACTIVE
         });
         this.loading.isActive = false;
     },
@@ -268,6 +288,7 @@ export default {
                 is_featured: askEnum.YES,
                 item_type: itemTypeEnum.VEG,
                 item_category_id: null,
+                branch_id: 0,
                 tax_id: null,
                 status: statusEnum.ACTIVE,
                 visible_days: [],
@@ -289,6 +310,7 @@ export default {
                 is_featured: askEnum.YES,
                 item_type: itemTypeEnum.VEG,
                 item_category_id: null,
+                branch_id: 0,
                 tax_id: null,
                 status: statusEnum.ACTIVE,
                 visible_days: [],
@@ -305,6 +327,7 @@ export default {
                 fd.append('price', this.props.form.price);
                 fd.append('compare_at_price', this.props.form.compare_at_price || '');
                 fd.append('item_category_id', this.props.form.item_category_id == null ? '' : this.props.form.item_category_id);
+                fd.append('branch_id', this.props.form.branch_id == null ? 0 : this.props.form.branch_id);
                 fd.append('tax_id', this.props.form.tax_id == null ? '' : this.props.form.tax_id);
                 fd.append('item_type', this.props.form.item_type);
                 fd.append('is_featured', this.props.form.is_featured);
@@ -337,6 +360,7 @@ export default {
                         is_featured: askEnum.YES,
                         item_type: itemTypeEnum.VEG,
                         item_category_id: null,
+                        branch_id: 0,
                         tax_id: null,
                         status: statusEnum.ACTIVE,
                         visible_days: [],

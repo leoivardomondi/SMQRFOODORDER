@@ -1,14 +1,21 @@
+import axios from 'axios';
+
 const BADGE_KEY = 'bwibo-new-order-count';
 let initialised = false;
 
 const readCount = () => Math.max(0, Number.parseInt(localStorage.getItem(BADGE_KEY) || '0', 10) || 0);
 
 const applyBadge = async (count) => {
-    if (!('setAppBadge' in navigator)) return;
-
     try {
-        if (count > 0) await navigator.setAppBadge(count);
-        else if ('clearAppBadge' in navigator) await navigator.clearAppBadge();
+        if ('setAppBadge' in navigator) {
+            if (count > 0) await navigator.setAppBadge(count);
+            else if ('clearAppBadge' in navigator) await navigator.clearAppBadge();
+        } else if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+            navigator.serviceWorker.controller.postMessage({
+                type: 'SET_APP_BADGE',
+                count: count
+            });
+        }
     } catch (_) {
         // Badging is best-effort and is not available on every PWA platform.
     }
@@ -34,6 +41,9 @@ export default {
         applyBadge(readCount());
         if (initialised) return;
         initialised = true;
+
+        this.syncPendingCount();
+
         navigator.serviceWorker?.addEventListener('message', (event) => {
             if (event.data?.type === 'NEW_ORDER_NOTIFICATION') {
                 saveCount(Math.max(readCount() + 1, Number(event.data.count) || 0));
@@ -42,11 +52,23 @@ export default {
             }
         });
     },
+    syncPendingCount() {
+        if (localStorage.getItem('vuex')) {
+            axios.get('/admin/online-order/pending-orders-count').then((res) => {
+                if (res.data && res.data.data && typeof res.data.data.count !== 'undefined') {
+                    saveCount(res.data.data.count);
+                }
+            }).catch(() => {});
+        }
+    },
     newOrder(audioUrl) {
         const count = saveCount(readCount() + 1);
         navigator.vibrate?.([500, 180, 500, 180, 800]);
         playAlert(audioUrl);
         return count;
+    },
+    setCount(count) {
+        return saveCount(count);
     },
     clear() {
         return saveCount(0);

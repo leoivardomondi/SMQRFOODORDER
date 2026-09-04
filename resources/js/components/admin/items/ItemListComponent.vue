@@ -129,6 +129,9 @@
                                 {{ $t('label.category') }}
                             </th>
                             <th class="db-table-head-th">
+                                {{ $t('label.branch') }}
+                            </th>
+                            <th class="db-table-head-th">
                                 {{ $t('label.price') }}
                             </th>
                             <th class="db-table-head-th">
@@ -146,6 +149,7 @@
                                 {{ textShortener(item.name, 40) }}
                             </td>
                             <td class="db-table-body-td">{{ item.category_name }}</td>
+                            <td class="db-table-body-td">{{ item.branch_name }}</td>
                             <td class="db-table-body-td">{{ item.flat_price }}</td>
                             <td class="db-table-body-td">
                                 <span :class="statusClass(item.status)">
@@ -268,6 +272,7 @@ export default {
                     is_featured: askEnum.YES,
                     item_type: itemTypeEnum.VEG,
                     item_category_id: null,
+                    branch_id: 0,
                     tax_id: null,
                     status: statusEnum.ACTIVE,
                     visible_days: [],
@@ -381,6 +386,7 @@ export default {
                 item_type: item.item_type,
                 tax_id: item.tax_id,
                 item_category_id: item.item_category_id,
+                branch_id: item.branch_id || 0,
                 status: item.status,
                 visible_days: item.visible_days || [],
             };

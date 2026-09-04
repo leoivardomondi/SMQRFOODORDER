@@ -566,6 +566,8 @@ Route::prefix('admin')->name('admin.')->middleware(['installed', 'apiKey', 'auth
 
     Route::prefix('online-order')->name('onlineOrder.')->group(function () {
         Route::get('/', [OnlineOrderController::class, 'index']);
+        Route::get('/future-orders-count', [OnlineOrderController::class, 'futureOrdersCount']);
+        Route::get('/pending-orders-count', [OnlineOrderController::class, 'pendingOrdersCount']);
         Route::get('/show/{order}', [OnlineOrderController::class, 'show']);
         Route::delete('/{order}', [OnlineOrderController::class, 'destroy']);
         Route::get('/export', [OnlineOrderController::class, 'export']);

@@ -25,6 +25,8 @@ class NormalItemResource extends JsonResource
             "id"             => $this->id,
             "name"           => $this->name,
             "slug"           => $this->slug,
+            "branch_id"      => (int) ($this->branch_id ?? 0),
+            "branch_name"    => $this->branch ? $this->branch->name : 'All Branches',
             "flat_price"     => AppLibrary::flatAmountFormat($this->price),
             "convert_price"  => AppLibrary::convertAmountFormat($this->price),
             "currency_price" => AppLibrary::currencyAmountFormat($this->price),

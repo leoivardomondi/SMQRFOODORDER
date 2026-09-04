@@ -58,7 +58,7 @@ class CustomerService
     {
         try {
             DB::transaction(function () use ($request) {
-                $this->user = User::create([
+                $this->user = User::restoreOrCreate([
                     'name'              => $request->name,
                     'email'             => $request->email,
                     'phone'             => $request->phone,

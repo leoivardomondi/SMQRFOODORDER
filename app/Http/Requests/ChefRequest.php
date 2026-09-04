@@ -34,7 +34,7 @@ class ChefRequest extends FormRequest
                 $isExistingUser ? 'nullable' : 'required',
                 'email',
                 'max:190',
-                Rule::unique("users", "email")->ignore($this->existing_user_id ?: $this->route('chef.id'))
+                Rule::unique("users", "email")->whereNull('deleted_at')->ignore($this->existing_user_id ?: $this->route('chef.id'))
             ],
             'password'              => $isExistingUser ? ['nullable'] : [
                 $this->route('chef.id') ? 'nullable' : 'required',
@@ -45,7 +45,7 @@ class ChefRequest extends FormRequest
             'username'              => [
                 'nullable',
                 'max:190',
-                Rule::unique("users", "username")->ignore($this->existing_user_id ?: $this->route('chef.id'))
+                Rule::unique("users", "username")->whereNull('deleted_at')->ignore($this->existing_user_id ?: $this->route('chef.id'))
             ],
             'device_token'          => ['nullable', 'string'],
             'web_token'             => ['nullable', 'string'],
@@ -59,7 +59,7 @@ class ChefRequest extends FormRequest
                 'string',
                 'max:20',
                 new ValidPhone(),
-                Rule::unique("users", "phone")->ignore($this->existing_user_id ?: $this->route('chef.id'))
+                Rule::unique("users", "phone")->whereNull('deleted_at')->ignore($this->existing_user_id ?: $this->route('chef.id'))
             ],
             'branch_id'             => ['nullable', 'numeric'],
             'status'                => ['required', 'numeric', 'max:24'],

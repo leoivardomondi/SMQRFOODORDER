@@ -34,7 +34,7 @@ class WaiterRequest extends FormRequest
                 $isExistingUser ? 'nullable' : 'required',
                 'email',
                 'max:190',
-                Rule::unique("users", "email")->ignore($this->existing_user_id ?: $this->route('waiter.id'))
+                Rule::unique("users", "email")->whereNull('deleted_at')->ignore($this->existing_user_id ?: $this->route('waiter.id'))
             ],
             'password'              => $isExistingUser ? ['nullable'] : [
                 $this->route('waiter.id') ? 'nullable' : 'required',
@@ -45,7 +45,7 @@ class WaiterRequest extends FormRequest
             'username'              => [
                 'nullable',
                 'max:190',
-                Rule::unique("users", "username")->ignore($this->existing_user_id ?: $this->route('waiter.id'))
+                Rule::unique("users", "username")->whereNull('deleted_at')->ignore($this->existing_user_id ?: $this->route('waiter.id'))
             ],
             'device_token'          => ['nullable', 'string'],
             'web_token'             => ['nullable', 'string'],
@@ -59,7 +59,7 @@ class WaiterRequest extends FormRequest
                 'string',
                 'max:20',
                 new ValidPhone(),
-                Rule::unique("users", "phone")->ignore($this->existing_user_id ?: $this->route('waiter.id'))
+                Rule::unique("users", "phone")->whereNull('deleted_at')->ignore($this->existing_user_id ?: $this->route('waiter.id'))
             ],
             'branch_id'             => ['nullable', 'numeric'],
             'status'                => ['required', 'numeric', 'max:24'],

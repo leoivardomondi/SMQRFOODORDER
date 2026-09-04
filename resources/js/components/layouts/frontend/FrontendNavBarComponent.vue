@@ -2,12 +2,37 @@
     <!-- Removed preloader per user request -->
     <header class="shadow-xs bg-white ff-header" ref="ffHeader">
         <div class="container flex flex-col lg:flex-row items-center justify-between">
-            <div class="w-full flex items-center justify-between gap-5 xl:gap-8 lg:justify-start lg:w-fit">
+            <div class="w-full flex items-center justify-between gap-3 xl:gap-8 lg:justify-start lg:w-fit">
                 <router-link :to="{ name: 'frontend.home' }">
                     <img class="w-16 sm:w-20 max-h-9 object-contain" :src="setting.theme_logo" alt="logo">
                 </router-link>
-                <!-- Mobile Top Right Search Icon (Direct link to empty Search page) -->
-                <div class="flex items-center gap-3 lg:hidden">
+                
+                <!-- Mobile Branch Selector & Search Group in Navbar Header -->
+                <div class="flex items-center gap-2 lg:hidden">
+                    <div v-if="branches && branches.length > 0" class="relative dropdown-group">
+                        <button type="button"
+                            class="flex items-center gap-1.5 px-2.5 py-1 h-8 rounded-3xl border border-gray-200 bg-white text-xs font-semibold text-heading shadow-2xs hover:bg-gray-50 transition-all dropdown-btn">
+                            <i class="fa-solid fa-location-dot text-primary text-xs"></i>
+                            <span class="max-w-[100px] sm:max-w-[150px] truncate">{{ branch && branch.name ? branch.name : $t('label.select_branch') }}</span>
+                            <i class="fa-solid fa-chevron-down text-[10px] text-gray-400"></i>
+                        </button>
+                        <div class="p-2 min-w-[210px] rounded-xl shadow-xl absolute top-10 ltr:right-0 rtl:left-0 z-50 border border-gray-200 bg-white transition-all duration-300 origin-top scale-y-0 dropdown-list">
+                            <div class="px-2 py-1 mb-1 border-b border-gray-100 text-[10px] font-bold uppercase tracking-wider text-paragraph">
+                                {{ $t('label.select_branch') }}
+                            </div>
+                            <div v-for="b in branches" :key="b.id" @click="changeBranch(b.id)"
+                                class="flex items-center justify-between gap-2 p-2 rounded-lg cursor-pointer hover:bg-teal-50/60 transition-colors"
+                                :class="branch && branch.id === b.id ? 'bg-teal-50 text-primary font-bold' : 'text-heading'">
+                                <div class="flex flex-col min-w-0">
+                                    <span class="text-xs font-medium truncate">{{ b.name }}</span>
+                                    <span class="text-[10px] text-paragraph truncate" v-if="b.address">{{ b.address }}</span>
+                                </div>
+                                <i v-if="branch && branch.id === b.id" class="fa-solid fa-circle-check text-primary text-xs"></i>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mobile Top Right Search Icon -->
                     <router-link :to="{ name: 'frontend.search' }" class="p-1.5 focus:outline-none" title="Search">
                         <i class="lab lab-search-normal text-2xl font-bold mobile-search-btn-icon" style="color: #000000 !important;"></i>
                     </router-link>
@@ -76,6 +101,30 @@
                       <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
                       <span class="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
                     </span>
+                </div>
+
+                <!-- Branch Selector Dropdown for Desktop -->
+                <div v-if="branches && branches.length > 0" class="hidden lg:block relative dropdown-group w-full sm:w-fit">
+                    <button type="button"
+                        class="flex items-center justify-center gap-1.5 w-fit rounded-3xl capitalize text-sm font-medium h-8 px-3 border transition text-heading bg-white border-gray-200 hover:bg-gray-50 dropdown-btn">
+                        <i class="fa-solid fa-location-dot text-primary text-xs"></i>
+                        <span class="whitespace-nowrap max-w-[150px] xl:max-w-[180px] truncate">{{ branch && branch.name ? branch.name : $t('label.select_branch') }}</span>
+                        <i class="fa-solid fa-chevron-down text-xs text-gray-400"></i>
+                    </button>
+                    <div class="p-2 min-w-[230px] rounded-xl shadow-xl absolute top-10 ltr:right-0 rtl:left-0 z-50 border border-gray-200 bg-white transition-all duration-300 origin-top scale-y-0 dropdown-list">
+                        <div class="px-2 py-1 mb-1 border-b border-gray-100 text-[11px] font-bold uppercase tracking-wider text-paragraph">
+                            {{ $t('label.select_branch') }}
+                        </div>
+                        <div v-for="b in branches" :key="b.id" @click="changeBranch(b.id)"
+                            class="flex items-center justify-between gap-2 p-2 rounded-lg cursor-pointer hover:bg-teal-50/60 transition-colors"
+                            :class="branch && branch.id === b.id ? 'bg-teal-50 text-primary font-bold' : 'text-heading'">
+                            <div class="flex flex-col min-w-0">
+                                <span class="text-xs font-medium truncate">{{ b.name }}</span>
+                                <span class="text-[10px] text-paragraph truncate" v-if="b.address">{{ b.address }}</span>
+                            </div>
+                            <i v-if="branch && branch.id === b.id" class="fa-solid fa-circle-check text-primary text-xs"></i>
+                        </div>
+                    </div>
                 </div>
 
                 <div v-if="setting.site_language_switch === enums.activityEnum.ENABLE"
@@ -402,9 +451,14 @@ export default {
             this.defaultLanguage = res.data.data.site_default_language;
             this.defaultCountryCode = res.data.data.company_country_code;
 
-            const globalState = this.$store.getters['globalState/lists'];
-            if (globalState.branch_id > 0) {
-                this.defaultBranch = globalState.branch_id;
+            const savedBranchId = localStorage.getItem('selected_branch_id');
+            if (savedBranchId && parseInt(savedBranchId) > 0) {
+                this.defaultBranch = parseInt(savedBranchId);
+            } else {
+                const globalState = this.$store.getters['globalState/lists'];
+                if (globalState.branch_id > 0) {
+                    this.defaultBranch = globalState.branch_id;
+                }
             }
 
             if (globalState.language_id > 0) {
@@ -413,6 +467,8 @@ export default {
 
             this.$store.dispatch('frontendBranch/lists', this.branchProps).then().catch();
             this.$store.dispatch('frontendBranch/show', this.defaultBranch).then().catch();
+            this.$store.dispatch("globalState/set", { branch_id: this.defaultBranch });
+            this.$store.dispatch('frontendWeather/show', this.defaultBranch);
             this.$store.dispatch('frontendLanguage/lists', this.languageProps).then().catch();
             this.$store.dispatch('frontendLanguage/show', this.defaultLanguage).then(res => {
                 this.$i18n.locale = res.data.data.code;
@@ -462,13 +518,21 @@ export default {
                             body: payload.notification.body,
                             icon: '/images/default/firebase-logo.png'
                         };
-                        new Notification(notificationTitle, notificationOptions);
+                        const notification = new Notification(notificationTitle, notificationOptions);
 
-                        if (payload.data.topicName === 'new-order-found' && this.orderNotification.permission) {
+                        if (payload.data?.topicName === 'daily-offer-promotion') {
+                            notification.onclick = () => {
+                                window.focus();
+                                notification.close();
+                                this.$router.push({ name: 'frontend.offers' });
+                            };
+                            pwaNotificationService.newOrder(res.data.data.notification_audio);
+                        }
+
+                        if (payload.data?.topicName === 'new-order-found' && this.orderNotification.permission) {
                             this.orderNotificationStatus = true;
                             this.orderNotificationMessage = payload.notification.body;
-                            const audio = new Audio(res.data.data.notification_audio);
-                            audio.play();
+                            pwaNotificationService.newOrder(res.data.data.notification_audio);
                         }
                     });
                 }
@@ -508,6 +572,11 @@ export default {
             this.$store.dispatch('frontendBranch/show', id);
             this.$store.dispatch("globalState/set", { branch_id: id });
             this.$store.dispatch('frontendBranch/whatsappSetup', id);
+            this.$store.dispatch('frontendWeather/show', id);
+            localStorage.setItem('selected_branch_id', id);
+            this.$store.dispatch('frontendItemCategory/lists', { force: true, paginate: 0, order_column: 'sort', order_type: 'asc', status: statusEnum.ACTIVE, branch_id: id }).then().catch();
+            this.$store.dispatch('frontendItem/featured', { order_column: 'id', order_type: 'desc', branch_id: id }).then().catch();
+            this.$store.dispatch('frontendItem/popular', { order_column: 'id', order_type: 'desc', branch_id: id }).then().catch();
         },
         changeLanguage: function (id, code) {
             appService.modalHide('#language');

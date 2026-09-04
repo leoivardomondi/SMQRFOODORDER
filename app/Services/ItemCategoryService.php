@@ -18,6 +18,7 @@ class ItemCategoryService
     protected $itemCateFilter = [
         'name',
         'slug',
+        'branch_id',
         'description',
         'status'
     ];
@@ -41,7 +42,15 @@ class ItemCategoryService
             return ItemCategory::with('media')->where(function ($query) use ($requests) {
                 foreach ($requests as $key => $request) {
                     if (in_array($key, $this->itemCateFilter)) {
-                        $query->where($key, 'like', '%' . $request . '%');
+                        if ($key == "branch_id") {
+                            if ((int)$request > 0) {
+                                $query->where(function ($q) use ($request) {
+                                    $q->where('branch_id', 0)->orWhereNull('branch_id')->orWhere('branch_id', $request);
+                                });
+                            }
+                        } else {
+                            $query->where($key, 'like', '%' . $request . '%');
+                        }
                     }
 
                     if (in_array($key, $this->exceptFilter)) {
@@ -123,7 +132,15 @@ class ItemCategoryService
     public function show(ItemCategory $itemCategory)
     {
         try {
-            return $itemCategory->load('items');
+            $branchId = request('branch_id', 0);
+            return $itemCategory->load(['items' => function ($query) use ($branchId) {
+                $query->where('status', \App\Enums\Status::ACTIVE);
+                if ((int)$branchId > 0) {
+                    $query->where(function ($q) use ($branchId) {
+                        $q->where('branch_id', 0)->orWhereNull('branch_id')->orWhere('branch_id', $branchId);
+                    });
+                }
+            }]);
         } catch (Exception $exception) {
             Log::info($exception->getMessage());
             throw new Exception($exception->getMessage(), 422);

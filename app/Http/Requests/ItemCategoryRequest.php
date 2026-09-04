@@ -31,6 +31,7 @@ class ItemCategoryRequest extends FormRequest
                 'max:190',
                 Rule::unique("item_categories", "name")->ignore($this->route('itemCategory'))
             ],
+            'branch_id'   => ['nullable', 'numeric'],
             'description' => ['nullable', 'string', 'max:900'],
             'status'      => ['required', 'numeric', 'max:24'],
             'image'       => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp,gif,heic,heif', 'max:51200']

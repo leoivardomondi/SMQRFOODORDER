@@ -67,6 +67,14 @@
                         </div>
 
                         <router-link
+                            v-if="futureOrderCount > 0 && !$route.path.includes('kitchen-display-system') && !$route.path.includes('order-status-screen')"
+                            class="h-9 px-3 rounded-lg flex items-center justify-center bg-amber-100 text-amber-800 gap-1.5 font-semibold text-xs animate-pulse"
+                            :to="{ path: '/admin/online-orders' }">
+                            <i class="fa-solid fa-clock-rotate-left text-amber-600"></i>
+                            <span>{{ futureOrderCount }} Future Order(s) Need Action</span>
+                        </router-link>
+
+                        <router-link
                             v-if="pos.permission && !$route.path.includes('kitchen-display-system') && !$route.path.includes('order-status-screen')"
                             class="w-9 h-9 rounded-lg flex items-center justify-center bg-[#FFEBD8]"
                             :to="{ path: '/admin/' + pos.url }">
@@ -195,6 +203,7 @@ export default {
                 url: "",
                 orderType: null
             },
+            futureOrderCount: 0,
         }
     },
     computed: {
@@ -244,6 +253,12 @@ export default {
 
         this.orderPermissionCheck();
         this.posPermissionCheck();
+        this.fetchFutureOrdersCount();
+
+        setInterval(() => {
+            this.fetchFutureOrdersCount();
+            pwaNotificationService.syncPendingCount();
+        }, 30000);
 
         window.setTimeout(() => {
             if (this.$store.getters.authStatus && this.setting.notification_fcm_api_key && this.setting.notification_fcm_auth_domain && this.setting.notification_fcm_project_id && this.setting.notification_fcm_storage_bucket && this.setting.notification_fcm_messaging_sender_id && this.setting.notification_fcm_app_id && this.setting.notification_fcm_measurement_id) {
@@ -308,6 +323,13 @@ export default {
         }, 5000);
     },
     methods: {
+        fetchFutureOrdersCount: function () {
+            axios.get('/admin/online-order/future-orders-count').then((res) => {
+                if (res.data && res.data.data && typeof res.data.data.count !== 'undefined') {
+                    this.futureOrderCount = res.data.data.count;
+                }
+            }).catch(() => {});
+        },
         textShortener: function (text, number = 30) {
             return appService.textShortener(text, number);
         },

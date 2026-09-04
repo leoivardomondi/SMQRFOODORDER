@@ -22,6 +22,7 @@ class ItemService
         'name',
         'slug',
         'item_category_id',
+        'branch_id',
         'price',
         'is_featured',
         'item_type',
@@ -53,6 +54,12 @@ class ItemService
                                 foreach ($explodes as $explode) {
                                     $query->where('id', '!=', $explode);
                                 }
+                            }
+                        } else if ($key == "branch_id") {
+                            if ((int)$request > 0) {
+                                $query->where(function ($q) use ($request) {
+                                    $q->where('branch_id', 0)->orWhereNull('branch_id')->orWhere('branch_id', $request);
+                                });
                             }
                         } else {
                             if ($key == "item_category_id") {
@@ -90,6 +97,12 @@ class ItemService
                                 foreach ($explodes as $explode) {
                                     $query->where('id', '!=', $explode);
                                 }
+                            }
+                        } else if ($key == "branch_id") {
+                            if ((int)$request > 0) {
+                                $query->where(function ($q) use ($request) {
+                                    $q->where('branch_id', 0)->orWhereNull('branch_id')->orWhere('branch_id', $request);
+                                });
                             }
                         } else {
                             if ($key == "item_category_id") {
@@ -150,24 +163,18 @@ class ItemService
                     foreach (json_decode($request->variations, true) as $variation) {
                         if (isset($variation['id'])) {
                             $variationIdsArray[] = $variation['id'];
-                            ItemVariation::where('id', $variation['id'])->update([
-                                'name'             => $variation['name'],
-                                'price' => $variation['price'],
-                            ]);
+                            $itemVariation       = ItemVariation::find($variation['id']);
+                            $itemVariation->update($variation);
                         } else {
                             $item->variations()->create($variation);
                         }
                     }
-
-                    if ($variationIdsArray) {
-                        foreach ($oldVariations as $oldVariation) {
-                            if (!in_array($oldVariation, $variationIdsArray)) {
-                                $variationDeleteArray[] = $oldVariation;
-                            }
+                    foreach ($oldVariations as $oldVariation) {
+                        if (!in_array($oldVariation, $variationIdsArray)) {
+                            $variationDeleteArray[] = $oldVariation;
                         }
                     }
-
-                    if ($variationDeleteArray) {
+                    if (count($variationDeleteArray)) {
                         ItemVariation::whereIn('id', $variationDeleteArray)->delete();
                     }
                 }
@@ -204,12 +211,7 @@ class ItemService
      */
     public function show(Item $item): Item
     {
-        try {
-            return $item->load('media', 'category', 'tax', 'offer', 'addons.addonItem.category', 'variations', 'extras');
-        } catch (Exception $exception) {
-            Log::info($exception->getMessage());
-            throw new Exception($exception->getMessage(), 422);
-        }
+        return $item;
     }
 
     /**
@@ -232,7 +234,14 @@ class ItemService
     public function featuredItems()
     {
         try {
-            return Item::with('media','category','offer')->where(['is_featured' => Ask::YES, 'status' => Status::ACTIVE])->visibleToday()->inRandomOrder()->limit(8)->get();
+            $branchId = request('branch_id', 0);
+            $query = Item::with('media','category','offer')->where(['is_featured' => Ask::YES, 'status' => Status::ACTIVE]);
+            if ((int)$branchId > 0) {
+                $query->where(function ($q) use ($branchId) {
+                    $q->where('branch_id', 0)->orWhereNull('branch_id')->orWhere('branch_id', $branchId);
+                });
+            }
+            return $query->visibleToday()->inRandomOrder()->limit(8)->get();
         } catch (Exception $exception) {
             Log::info($exception->getMessage());
             throw new Exception($exception->getMessage(), 422);
@@ -242,7 +251,14 @@ class ItemService
     public function mostPopularItems()
     {
         try {
-            return Item::with('media', 'category','offer')->withCount('orders')->where(['status' => Status::ACTIVE])->visibleToday()->orderBy('orders_count', 'desc')->limit(6)->get();
+            $branchId = request('branch_id', 0);
+            $query = Item::with('media', 'category','offer')->withCount('orders')->where(['status' => Status::ACTIVE]);
+            if ((int)$branchId > 0) {
+                $query->where(function ($q) use ($branchId) {
+                    $q->where('branch_id', 0)->orWhereNull('branch_id')->orWhere('branch_id', $branchId);
+                });
+            }
+            return $query->visibleToday()->orderBy('orders_count', 'desc')->limit(6)->get();
         } catch (Exception $exception) {
             Log::info($exception->getMessage());
             throw new Exception($exception->getMessage(), 422);

@@ -58,7 +58,10 @@ class DeliveryBoyService
         try {
             DB::transaction(function () use ($request) {
                 if ($request->existing_user_id) {
-                    $this->user = User::findOrFail($request->existing_user_id);
+                    $this->user = User::withTrashed()->findOrFail($request->existing_user_id);
+                    if ($this->user->trashed()) {
+                        $this->user->restore();
+                    }
                     if ($request->branch_id !== null && $request->branch_id !== '') {
                         $this->user->branch_id = $request->branch_id;
                     }
@@ -67,7 +70,7 @@ class DeliveryBoyService
                     }
                     $this->user->save();
                 } else {
-                    $this->user = User::create([
+                    $this->user = User::restoreOrCreate([
                         'name'              => $request->name,
                         'email'             => $request->email,
                         'phone'             => $request->phone,

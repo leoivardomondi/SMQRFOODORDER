@@ -50,3 +50,19 @@ self.addEventListener("fetch", event => {
             .catch(() => caches.match('/offline.html'))
     );
 });
+
+self.addEventListener("message", event => {
+    if (event.data && event.data.type === 'SET_APP_BADGE') {
+        const count = Number(event.data.count) || 0;
+        if ('setAppBadge' in navigator) {
+            if (count > 0) navigator.setAppBadge(count).catch(() => {});
+            else if ('clearAppBadge' in navigator) navigator.clearAppBadge().catch(() => {});
+        }
+    }
+});
+
+self.addEventListener("push", event => {
+    if ('setAppBadge' in navigator) {
+        navigator.setAppBadge().catch(() => {});
+    }
+});
