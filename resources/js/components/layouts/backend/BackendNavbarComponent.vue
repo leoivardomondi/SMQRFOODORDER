@@ -12,7 +12,7 @@
                     <i class="lab lab-maximize-2 lab-font-size-24 text-[#1AB759]"></i>
                 </button>
 
-                <div v-if="authBranch === 0" class="relative dropdown-group">
+                <div v-if="showBranchDropdown" class="relative dropdown-group">
                     <button class="flex items-center text-left gap-2 dropdown-btn">
                         <i class="lab lab-shop lab-font-size-24 font-fill-primary"></i>
                         <h3 class="capitalize text-xs font-medium text-heading">
@@ -215,6 +215,10 @@ export default {
         },
         authBranch: function () {
             return this.$store.getters.authBranchId;
+        },
+        showBranchDropdown: function () {
+            const b = this.authBranch;
+            return b == 0 || b === "0" || b === null || b === undefined || b === "" || parseInt(b) === 0;
         },
         branches: function () {
             return this.$store.getters['backendGlobalState/branches'];
