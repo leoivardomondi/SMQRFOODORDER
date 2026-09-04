@@ -9,9 +9,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('transactions', function (Blueprint $table) {
-            $table->string('provider_name')->nullable()->after('provider_receipt');
-            $table->string('payer_phone')->nullable()->after('provider_name');
-            $table->string('payer_phone_last4')->nullable()->after('payer_phone');
+            if (!Schema::hasColumn('transactions', 'provider_name')) {
+                $table->string('provider_name')->nullable()->after('provider_receipt');
+            }
+            if (!Schema::hasColumn('transactions', 'payer_phone')) {
+                $table->string('payer_phone')->nullable()->after('provider_name');
+            }
+            if (!Schema::hasColumn('transactions', 'payer_phone_last4')) {
+                $table->string('payer_phone_last4')->nullable()->after('payer_phone');
+            }
         });
     }
 
