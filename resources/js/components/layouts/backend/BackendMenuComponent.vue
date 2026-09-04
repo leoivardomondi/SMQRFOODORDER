@@ -73,7 +73,76 @@ export default {
             return this.$store.getters['frontendSetting/lists'];
         },
         menus: function () {
-            return this.$store.getters.authMenu;
+            const rawMenus = JSON.parse(JSON.stringify(this.$store.getters.authMenu || []));
+            if (!rawMenus.length) return [];
+
+            let dashboard = null;
+            let items = null;
+            let categories = null;
+            let attributes = null;
+
+            const extractItem = (url) => {
+                let found = null;
+                const topIndex = rawMenus.findIndex(m => m.url === url);
+                if (topIndex !== -1) {
+                    found = rawMenus.splice(topIndex, 1)[0];
+                } else {
+                    for (let m of rawMenus) {
+                        if (m.children && m.children.length) {
+                            const childIndex = m.children.findIndex(c => c.url === url);
+                            if (childIndex !== -1) {
+                                found = m.children.splice(childIndex, 1)[0];
+                                break;
+                            }
+                        }
+                    }
+                }
+                return found;
+            };
+
+            dashboard = extractItem('dashboard');
+            items = extractItem('items');
+            categories = extractItem('item-categories');
+            attributes = extractItem('settings/item-attributes');
+
+            const result = [];
+            if (dashboard) result.push(dashboard);
+            if (items) result.push(items);
+
+            if (categories) {
+                if (!categories.icon) categories.icon = 'lab lab-item-categories';
+                if (!categories.language) categories.language = 'item_categories';
+                result.push(categories);
+            } else {
+                result.push({
+                    name: 'Item Categories',
+                    language: 'item_categories',
+                    url: 'item-categories',
+                    icon: 'lab lab-item-categories'
+                });
+            }
+
+            if (attributes) {
+                if (!attributes.icon) attributes.icon = 'lab lab-item-attributes';
+                if (!attributes.language) attributes.language = 'attributes';
+                result.push(attributes);
+            } else {
+                result.push({
+                    name: 'Attributes',
+                    language: 'attributes',
+                    url: 'settings/item-attributes',
+                    icon: 'lab lab-item-attributes'
+                });
+            }
+
+            for (let m of rawMenus) {
+                if (m.url === '#' && m.children && m.children.length === 0) {
+                    continue;
+                }
+                result.push(m);
+            }
+
+            return result;
         },
         sidebar() {
             return this.$store.getters['globalState/lists'].topSidebar;
