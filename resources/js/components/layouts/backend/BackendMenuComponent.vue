@@ -103,7 +103,7 @@ export default {
             dashboard = extractItem('dashboard');
             items = extractItem('items');
             categories = extractItem('item-categories');
-            attributes = extractItem('settings/item-attributes');
+            attributes = extractItem('item-attributes') || extractItem('settings/item-attributes');
 
             const result = [];
             if (dashboard) result.push(dashboard);
@@ -123,6 +123,7 @@ export default {
             }
 
             if (attributes) {
+                attributes.url = 'item-attributes';
                 if (!attributes.icon) attributes.icon = 'lab lab-item-attributes';
                 if (!attributes.language) attributes.language = 'attributes';
                 result.push(attributes);
@@ -130,7 +131,7 @@ export default {
                 result.push({
                     name: 'Attributes',
                     language: 'attributes',
-                    url: 'settings/item-attributes',
+                    url: 'item-attributes',
                     icon: 'lab lab-item-attributes'
                 });
             }

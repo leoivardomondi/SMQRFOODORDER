@@ -65,12 +65,13 @@ return new class extends Migration
         }
 
         // 5. Ensure Attributes exists and is priority 4, parent 0
-        $attrExists = DB::table('menus')->where('url', 'settings/item-attributes')->exists();
+        DB::table('menus')->where('url', 'settings/item-attributes')->update(['url' => 'item-attributes']);
+        $attrExists = DB::table('menus')->where('url', 'item-attributes')->exists();
         if (!$attrExists) {
             DB::table('menus')->insert([
                 'name'       => 'Attributes',
                 'language'   => 'attributes',
-                'url'        => 'settings/item-attributes',
+                'url'        => 'item-attributes',
                 'icon'       => 'lab lab-item-attributes',
                 'priority'   => 4,
                 'status'     => 1,
@@ -80,7 +81,7 @@ return new class extends Migration
                 'updated_at' => now()
             ]);
         } else {
-            DB::table('menus')->where('url', 'settings/item-attributes')->update(['parent' => 0, 'priority' => 4]);
+            DB::table('menus')->where('url', 'item-attributes')->update(['parent' => 0, 'priority' => 4]);
         }
 
         // 6. Ensure Settings is under Setup section

@@ -301,31 +301,6 @@ export default [
                 ],
             },
             {
-                path: "item-attributes",
-                component: ItemAttributeComponent,
-                name: "admin.settings.itemAttribute",
-                redirect: { name: "admin.settings.itemAttribute.list" },
-                meta: {
-                    isFrontend: false,
-                    auth: true,
-                    permissionUrl: "settings",
-                    breadcrumb: "item_attributes",
-                },
-                children: [
-                    {
-                        path: "list",
-                        component: ItemAttributeListComponent,
-                        name: "admin.settings.itemAttribute.list",
-                        meta: {
-                            isFrontend: false,
-                            auth: true,
-                            permissionUrl: "settings",
-                            breadcrumb: "",
-                        },
-                    },
-                ],
-            },
-            {
                 path: "taxes",
                 component: TaxComponent,
                 name: "admin.settings.tax",
@@ -551,10 +526,39 @@ export default [
             },
         ],
     },
-,
     {
         path: '/admin/item-attributes',
-        redirect: { name: 'admin.settings.itemAttribute.list' },
-        name: 'admin.itemAttribute'
+        component: ItemAttributeComponent,
+        name: 'admin.itemAttribute',
+        redirect: { name: 'admin.itemAttribute.list' },
+        meta: {
+            isFrontend: false,
+            auth: true,
+            permissionUrl: 'items',
+            breadcrumb: 'attributes'
+        },
+        children: [
+            {
+                path: '',
+                component: ItemAttributeListComponent,
+                name: 'admin.itemAttribute.list',
+                meta: {
+                    isFrontend: false,
+                    auth: true,
+                    permissionUrl: 'items',
+                    breadcrumb: ''
+                },
+            }
+        ]
     },
+    {
+        path: '/admin/settings/item-attributes',
+        redirect: { name: 'admin.itemAttribute.list' },
+        name: 'admin.settings.itemAttribute'
+    },
+    {
+        path: '/admin/settings/item-attributes/list',
+        redirect: { name: 'admin.itemAttribute.list' },
+        name: 'admin.settings.itemAttribute.list'
+    }
 ];

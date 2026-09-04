@@ -66,10 +66,6 @@
                 <i class="lab lab-currencies text-sm"></i>
                 {{ $t("menu.currencies") }}
             </router-link>
-            <router-link :to="{ name: 'admin.settings.itemAttribute' }" class="db-tab-btn">
-                <i class="lab lab-item-attributes text-sm"></i>
-                {{ $t("menu.item_attributes") }}
-            </router-link>
             <router-link :to="{ name: 'admin.settings.tax' }" class="db-tab-btn">
                 <i class="lab lab-taxes text-sm"></i>
                 {{ $t("menu.taxes") }}
