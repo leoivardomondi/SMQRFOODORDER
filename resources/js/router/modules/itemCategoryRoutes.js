@@ -42,11 +42,23 @@ export default [
     {
         path: '/admin/settings/item-categories',
         redirect: { name: 'admin.itemCategory.list' },
-        name: 'admin.settings.itemCategory'
+        name: 'admin.settings.itemCategory',
+        meta: {
+            isFrontend: false,
+            auth: true,
+            permissionUrl: 'items',
+            breadcrumb: 'item_categories'
+        }
     },
     {
         path: '/admin/settings/item-categories/show/:id',
         redirect: to => ({ name: 'admin.itemCategory.show', params: { id: to.params.id } }),
-        name: 'admin.settings.itemCategory.show'
+        name: 'admin.settings.itemCategory.show',
+        meta: {
+            isFrontend: false,
+            auth: true,
+            permissionUrl: 'items',
+            breadcrumb: 'item_categories'
+        }
     }
 ];

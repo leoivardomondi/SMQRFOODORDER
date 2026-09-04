@@ -9,27 +9,13 @@
                 
                 <!-- Mobile Branch Selector & Search Group in Navbar Header -->
                 <div class="flex items-center gap-2 lg:hidden">
-                    <div v-if="branches && branches.length > 0" class="relative dropdown-group">
-                        <button type="button"
-                            class="flex items-center gap-1.5 px-2.5 py-1 h-8 rounded-3xl border border-gray-200 bg-white text-xs font-semibold text-heading shadow-2xs hover:bg-gray-50 transition-all dropdown-btn">
+                    <div v-if="branches && branches.length > 0">
+                        <button type="button" @click="openBranchModal"
+                            class="flex items-center gap-1.5 px-2.5 py-1 h-8 rounded-3xl border border-gray-200 bg-white text-xs font-semibold text-heading shadow-2xs hover:bg-gray-50 transition-all">
                             <i class="fa-solid fa-location-dot text-primary text-xs"></i>
                             <span class="max-w-[100px] sm:max-w-[150px] truncate">{{ branch && branch.name ? branch.name : $t('label.select_branch') }}</span>
                             <i class="fa-solid fa-chevron-down text-[10px] text-gray-400"></i>
                         </button>
-                        <div class="p-2 min-w-[210px] rounded-xl shadow-xl absolute top-10 ltr:right-0 rtl:left-0 z-50 border border-gray-200 bg-white transition-all duration-300 origin-top scale-y-0 dropdown-list">
-                            <div class="px-2 py-1 mb-1 border-b border-gray-100 text-[10px] font-bold uppercase tracking-wider text-paragraph">
-                                {{ $t('label.select_branch') }}
-                            </div>
-                            <div v-for="b in branches" :key="b.id" @click="changeBranch(b.id)"
-                                class="flex items-center justify-between gap-2 p-2 rounded-lg cursor-pointer hover:bg-teal-50/60 transition-colors"
-                                :class="branch && branch.id === b.id ? 'bg-teal-50 text-primary font-bold' : 'text-heading'">
-                                <div class="flex flex-col min-w-0">
-                                    <span class="text-xs font-medium truncate">{{ b.name }}</span>
-                                    <span class="text-[10px] text-paragraph truncate" v-if="b.address">{{ b.address }}</span>
-                                </div>
-                                <i v-if="branch && branch.id === b.id" class="fa-solid fa-circle-check text-primary text-xs"></i>
-                            </div>
-                        </div>
                     </div>
 
                     <!-- Mobile Top Right Search Icon -->
@@ -103,28 +89,14 @@
                     </span>
                 </div>
 
-                <!-- Branch Selector Dropdown for Desktop -->
-                <div v-if="branches && branches.length > 0" class="hidden lg:block relative dropdown-group w-full sm:w-fit">
-                    <button type="button"
-                        class="flex items-center justify-center gap-1.5 w-fit rounded-3xl capitalize text-sm font-medium h-8 px-3 border transition text-heading bg-white border-gray-200 hover:bg-gray-50 dropdown-btn">
+                <!-- Branch Selector Button for Desktop -->
+                <div v-if="branches && branches.length > 0" class="hidden lg:block w-full sm:w-fit">
+                    <button type="button" @click="openBranchModal"
+                        class="flex items-center justify-center gap-1.5 w-fit rounded-3xl capitalize text-sm font-medium h-8 px-3 border transition text-heading bg-white border-gray-200 hover:bg-gray-50">
                         <i class="fa-solid fa-location-dot text-primary text-xs"></i>
                         <span class="whitespace-nowrap max-w-[150px] xl:max-w-[180px] truncate">{{ branch && branch.name ? branch.name : $t('label.select_branch') }}</span>
                         <i class="fa-solid fa-chevron-down text-xs text-gray-400"></i>
                     </button>
-                    <div class="p-2 min-w-[230px] rounded-xl shadow-xl absolute top-10 ltr:right-0 rtl:left-0 z-50 border border-gray-200 bg-white transition-all duration-300 origin-top scale-y-0 dropdown-list">
-                        <div class="px-2 py-1 mb-1 border-b border-gray-100 text-[11px] font-bold uppercase tracking-wider text-paragraph">
-                            {{ $t('label.select_branch') }}
-                        </div>
-                        <div v-for="b in branches" :key="b.id" @click="changeBranch(b.id)"
-                            class="flex items-center justify-between gap-2 p-2 rounded-lg cursor-pointer hover:bg-teal-50/60 transition-colors"
-                            :class="branch && branch.id === b.id ? 'bg-teal-50 text-primary font-bold' : 'text-heading'">
-                            <div class="flex flex-col min-w-0">
-                                <span class="text-xs font-medium truncate">{{ b.name }}</span>
-                                <span class="text-[10px] text-paragraph truncate" v-if="b.address">{{ b.address }}</span>
-                            </div>
-                            <i v-if="branch && branch.id === b.id" class="fa-solid fa-circle-check text-primary text-xs"></i>
-                        </div>
-                    </div>
                 </div>
 
                 <div v-if="setting.site_language_switch === enums.activityEnum.ENABLE"
@@ -292,6 +264,54 @@
             </router-link>
         </div>
     </div>
+
+    <!-- Branch Selection Popup Modal for Unselected Users/Guests & Manual Switching -->
+    <div v-if="isBranchModalOpen" class="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs transition-all duration-300">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 relative border border-gray-100 animate-in fade-in zoom-in-95 duration-200">
+            <button type="button" @click="closeBranchModal" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors p-1" title="Close">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+
+            <div class="text-center mb-5">
+                <div class="w-12 h-12 rounded-full bg-teal-50 text-primary flex items-center justify-center mx-auto mb-3 shadow-xs">
+                    <i class="fa-solid fa-location-dot text-xl"></i>
+                </div>
+                <h3 class="text-xl font-bold text-heading">Select Your Branch</h3>
+                <p class="text-xs text-paragraph mt-1 max-w-xs mx-auto">
+                    Please choose your preferred branch to view menu items, pricing, and available delivery options near you.
+                </p>
+            </div>
+
+            <div class="space-y-2.5 max-h-[320px] overflow-y-auto pr-1">
+                <div v-for="b in branches" :key="b.id" @click="changeBranch(b.id)"
+                    class="flex items-center justify-between p-3.5 rounded-xl border transition-all cursor-pointer group"
+                    :class="branch && branch.id === b.id ? 'border-primary bg-teal-50/60 shadow-2xs' : 'border-gray-200 hover:border-primary/50 hover:bg-gray-50/80'">
+                    <div class="flex items-start gap-3 min-w-0">
+                        <div class="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5"
+                             :class="branch && branch.id === b.id ? 'bg-primary text-white shadow-xs' : 'bg-gray-100 text-gray-500 group-hover:text-primary group-hover:bg-teal-50'">
+                            <i class="fa-solid fa-store text-sm"></i>
+                        </div>
+                        <div class="flex flex-col min-w-0">
+                            <span class="text-sm font-semibold text-heading truncate">{{ b.name }}</span>
+                            <span class="text-xs text-paragraph truncate mt-0.5" v-if="b.address">
+                                <i class="fa-solid fa-map-pin text-[10px] text-gray-400 mr-1"></i>{{ b.address }}
+                            </span>
+                        </div>
+                    </div>
+                    <button type="button" 
+                        class="px-3.5 py-1.5 rounded-lg text-xs font-semibold flex-shrink-0 transition-all ml-2"
+                        :class="branch && branch.id === b.id ? 'bg-primary text-white shadow-2xs' : 'bg-gray-100 text-gray-700 group-hover:bg-primary group-hover:text-white'">
+                        <i v-if="branch && branch.id === b.id" class="fa-solid fa-check mr-1 text-[10px]"></i>
+                        {{ branch && branch.id === b.id ? 'Selected' : 'Select' }}
+                    </button>
+                </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-gray-100 text-center">
+                <span class="text-[11px] text-paragraph">You can change your location anytime from the header menu.</span>
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -360,6 +380,7 @@ export default {
             },
             searchItem: "",
             isMobileSearchOpen: false,
+            isBranchModalOpen: false,
         }
     },
     computed: {
@@ -471,7 +492,12 @@ export default {
                 this.defaultLanguage = globalState.language_id;
             }
 
-            this.$store.dispatch('frontendBranch/lists', this.branchProps).then().catch();
+            this.$store.dispatch('frontendBranch/lists', this.branchProps).then(() => {
+                const userSelectedBranch = localStorage.getItem('branch_selected_by_user');
+                if (!userSelectedBranch) {
+                    this.isBranchModalOpen = true;
+                }
+            }).catch();
             this.$store.dispatch('frontendBranch/show', this.defaultBranch).then().catch();
             this.$store.dispatch("globalState/set", { branch_id: this.defaultBranch });
             this.$store.dispatch('frontendWeather/show', this.defaultBranch);
@@ -575,17 +601,26 @@ export default {
             }
         },
         changeBranch: function (id) {
+            this.defaultBranch = id;
             this.$store.dispatch('frontendBranch/show', id);
             this.$store.dispatch("globalState/set", { branch_id: id });
             this.$store.dispatch('frontendBranch/whatsappSetup', id);
             this.$store.dispatch('frontendWeather/show', id);
             localStorage.setItem('selected_branch_id', id);
+            localStorage.setItem('branch_selected_by_user', 'true');
+            this.isBranchModalOpen = false;
             if (this.$store.getters.authStatus) {
                 this.$store.dispatch('frontendEditProfile/changeBranch', { branch_id: id }).then().catch();
             }
             this.$store.dispatch('frontendItemCategory/lists', { force: true, paginate: 0, order_column: 'sort', order_type: 'asc', status: statusEnum.ACTIVE, branch_id: id }).then().catch();
             this.$store.dispatch('frontendItem/featured', { order_column: 'id', order_type: 'desc', branch_id: id }).then().catch();
             this.$store.dispatch('frontendItem/popular', { order_column: 'id', order_type: 'desc', branch_id: id }).then().catch();
+        },
+        openBranchModal: function () {
+            this.isBranchModalOpen = true;
+        },
+        closeBranchModal: function () {
+            this.isBranchModalOpen = false;
         },
         changeLanguage: function (id, code) {
             appService.modalHide('#language');

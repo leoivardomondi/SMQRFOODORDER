@@ -155,21 +155,20 @@ export default {
     },
 
     recursiveRouter: function (routes, permission) {
+        if (!routes || !permission || !Array.isArray(permission) || permission.length === 0) {
+            return;
+        }
         let i, j;
         for (i = 0; i < routes.length; i++) {
+            if (!routes[i] || !routes[i].meta) continue;
             for (j = 0; j < permission.length; j++) {
-                if (typeof routes[i].meta !== "undefined" && routes[i].meta) {
-                    if (typeof routes[i].meta.permissionUrl !== "undefined" && routes[i].meta.permissionUrl) {
-                        if (routes[i].meta.permissionUrl === permission[j].url) {
-                            routes[i].meta.access = permission[j].access;
-                            routes[i].meta.title = permission[j].title;
-                        }
-
-                        if (typeof routes[i].children !== "undefined" && routes[i].children) {
-                            this.recursiveRouter(routes[i].children, permission);
-                        }
-                    }
+                if (routes[i].meta.permissionUrl && routes[i].meta.permissionUrl === permission[j].url) {
+                    routes[i].meta.access = permission[j].access;
+                    routes[i].meta.title = permission[j].title;
                 }
+            }
+            if (routes[i].children && Array.isArray(routes[i].children)) {
+                this.recursiveRouter(routes[i].children, permission);
             }
         }
     },
