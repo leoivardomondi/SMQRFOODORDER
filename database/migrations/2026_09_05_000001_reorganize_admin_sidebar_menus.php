@@ -12,7 +12,21 @@ return new class extends Migration
      */
     public function up()
     {
-        // 1. Ensure Items exists at top-level
+        // 1. Ensure section headers have clean priorities
+        DB::table('menus')->where('url', '#')->where('language', 'pos_and_orders')->update(['priority' => 10]);
+        DB::table('menus')->where('url', '#')->where('language', 'promo')->update(['priority' => 20]);
+        DB::table('menus')->where('url', '#')->where('language', 'communications')->update(['priority' => 30]);
+        DB::table('menus')->where('url', '#')->where('language', 'users')->update(['priority' => 40]);
+        DB::table('menus')->where('url', '#')->where('language', 'accounts')->update(['priority' => 50]);
+        DB::table('menus')->where('url', '#')->where('language', 'reports')->update(['priority' => 60]);
+        DB::table('menus')->where('url', '#')->where('language', 'setup')->update(['priority' => 70]);
+
+        $setupHeader = DB::table('menus')->where('url', '#')->where('language', 'setup')->first();
+
+        // 2. Ensure Dashboard is priority 1, parent 0
+        DB::table('menus')->where('url', 'dashboard')->update(['priority' => 1, 'parent' => 0]);
+
+        // 3. Ensure Items exists and is priority 2, parent 0
         $itemsExists = DB::table('menus')->where('url', 'items')->exists();
         if (!$itemsExists) {
             DB::table('menus')->insert([
@@ -20,7 +34,7 @@ return new class extends Migration
                 'language'   => 'items',
                 'url'        => 'items',
                 'icon'       => 'lab lab-items',
-                'priority'   => 100,
+                'priority'   => 2,
                 'status'     => 1,
                 'parent'     => 0,
                 'type'       => 1,
@@ -28,10 +42,10 @@ return new class extends Migration
                 'updated_at' => now()
             ]);
         } else {
-            DB::table('menus')->where('url', 'items')->update(['parent' => 0]);
+            DB::table('menus')->where('url', 'items')->update(['parent' => 0, 'priority' => 2]);
         }
 
-        // 2. Ensure Item Categories exists at top-level
+        // 4. Ensure Item Categories exists and is priority 3, parent 0
         $catExists = DB::table('menus')->where('url', 'item-categories')->exists();
         if (!$catExists) {
             DB::table('menus')->insert([
@@ -39,7 +53,7 @@ return new class extends Migration
                 'language'   => 'item_categories',
                 'url'        => 'item-categories',
                 'icon'       => 'lab lab-item-categories',
-                'priority'   => 100,
+                'priority'   => 3,
                 'status'     => 1,
                 'parent'     => 0,
                 'type'       => 1,
@@ -47,10 +61,10 @@ return new class extends Migration
                 'updated_at' => now()
             ]);
         } else {
-            DB::table('menus')->where('url', 'item-categories')->update(['parent' => 0]);
+            DB::table('menus')->where('url', 'item-categories')->update(['parent' => 0, 'priority' => 3]);
         }
 
-        // 3. Ensure Attributes exists at top-level
+        // 5. Ensure Attributes exists and is priority 4, parent 0
         $attrExists = DB::table('menus')->where('url', 'settings/item-attributes')->exists();
         if (!$attrExists) {
             DB::table('menus')->insert([
@@ -58,7 +72,7 @@ return new class extends Migration
                 'language'   => 'attributes',
                 'url'        => 'settings/item-attributes',
                 'icon'       => 'lab lab-item-attributes',
-                'priority'   => 100,
+                'priority'   => 4,
                 'status'     => 1,
                 'parent'     => 0,
                 'type'       => 1,
@@ -66,7 +80,12 @@ return new class extends Migration
                 'updated_at' => now()
             ]);
         } else {
-            DB::table('menus')->where('url', 'settings/item-attributes')->update(['parent' => 0]);
+            DB::table('menus')->where('url', 'settings/item-attributes')->update(['parent' => 0, 'priority' => 4]);
+        }
+
+        // 6. Ensure Settings is under Setup section
+        if ($setupHeader) {
+            DB::table('menus')->where('url', 'settings')->update(['parent' => $setupHeader->id, 'priority' => 1]);
         }
     }
 

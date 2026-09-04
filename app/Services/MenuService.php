@@ -17,7 +17,7 @@ class MenuService
     public function menu(Role $role) : array
     {
         try {
-            $menus           = Menu::get()->toArray();
+            $menus           = Menu::orderBy('priority', 'asc')->orderBy('id', 'asc')->get()->toArray();
             $permissions     = Permission::get();
             $rolePermissions = Permission::join(
                 "role_has_permissions",
