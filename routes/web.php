@@ -48,4 +48,14 @@ Route::prefix('payment')->name('payment.')->middleware(['installed'])->group(fun
     Route::get('/receipt/{order}', [PaymentController::class, 'receiptPreview'])->middleware('signed')->name('receipt.preview');
     Route::get('/receipt/{order}/image', [PaymentController::class, 'receiptImage'])->middleware('signed')->name('receipt.image');
 });
+Route::get('/admin/migrate-db', function () {
+    \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+    \Illuminate\Support\Facades\Artisan::call('cache:clear');
+    \Illuminate\Support\Facades\Artisan::call('config:clear');
+    \Illuminate\Support\Facades\Artisan::call('view:clear');
+    return response()->json([
+        'status' => true,
+        'message' => 'Database migrations and caches updated successfully!'
+    ]);
+});
 Route::any('/{any}', [RootController::class, 'index'])->where(['any' => '.*']);
