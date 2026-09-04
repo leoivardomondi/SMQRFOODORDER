@@ -9,7 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('items', function (Blueprint $table): void {
-            $table->json('visible_days')->nullable()->after('description');
+            if (!Schema::hasColumn('items', 'visible_days')) {
+                $table->json('visible_days')->nullable()->after('description');
+            }
         });
     }
 

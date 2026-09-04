@@ -9,8 +9,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('offers', function (Blueprint $table): void {
-            $table->text('description')->nullable()->after('name');
-            $table->json('visible_days')->nullable()->after('end_date');
+            if (!Schema::hasColumn('offers', 'description')) {
+                $table->text('description')->nullable()->after('name');
+            }
+            if (!Schema::hasColumn('offers', 'visible_days')) {
+                $table->json('visible_days')->nullable()->after('end_date');
+            }
         });
     }
 

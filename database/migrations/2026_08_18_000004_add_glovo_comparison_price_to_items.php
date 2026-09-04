@@ -9,7 +9,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('items', function (Blueprint $table): void {
-            $table->decimal('compare_at_price', 19, 6)->nullable()->after('price');
+            if (!Schema::hasColumn('items', 'compare_at_price')) {
+                $table->decimal('compare_at_price', 19, 6)->nullable()->after('price');
+            }
         });
     }
 
