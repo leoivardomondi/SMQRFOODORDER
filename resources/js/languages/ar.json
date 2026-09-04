@@ -110,6 +110,7 @@
         "active": "نشط",
         "inactive": "غير نشط",
         "branch": "الفرع",
+        "select_branch": "اختر الفرع",
         "role": "الدور",
         "members": "الأعضاء",
         "permissions": "الصلاحيات",

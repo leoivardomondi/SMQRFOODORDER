@@ -114,6 +114,7 @@
         "active": "Active",
         "inactive": "Inactive",
         "branch": "Branch",
+        "select_branch": "Select Branch",
         "role": "Role",
         "members": "Members",
         "permissions": "Permissions",

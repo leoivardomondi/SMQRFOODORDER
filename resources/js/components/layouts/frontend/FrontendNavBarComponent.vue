@@ -9,11 +9,11 @@
                 
                 <!-- Mobile Branch Selector & Search Group in Navbar Header -->
                 <div class="flex items-center gap-2 lg:hidden">
-                    <div v-if="branches && branches.length > 0">
+                    <div>
                         <button type="button" @click="openBranchModal"
                             class="flex items-center gap-1.5 px-2.5 py-1 h-8 rounded-3xl border border-gray-200 bg-white text-xs font-semibold text-heading shadow-2xs hover:bg-gray-50 transition-all">
                             <i class="fa-solid fa-location-dot text-primary text-xs"></i>
-                            <span class="max-w-[100px] sm:max-w-[150px] truncate">{{ branch && branch.name ? branch.name : $t('label.select_branch') }}</span>
+                            <span class="max-w-[100px] sm:max-w-[150px] truncate">{{ selectedBranchName }}</span>
                             <i class="fa-solid fa-chevron-down text-[10px] text-gray-400"></i>
                         </button>
                     </div>
@@ -90,11 +90,11 @@
                 </div>
 
                 <!-- Branch Selector Button for Desktop -->
-                <div v-if="branches && branches.length > 0" class="hidden lg:block w-full sm:w-fit">
+                <div class="hidden lg:block w-full sm:w-fit">
                     <button type="button" @click="openBranchModal"
                         class="flex items-center justify-center gap-1.5 w-fit rounded-3xl capitalize text-sm font-medium h-8 px-3 border transition text-heading bg-white border-gray-200 hover:bg-gray-50">
                         <i class="fa-solid fa-location-dot text-primary text-xs"></i>
-                        <span class="whitespace-nowrap max-w-[150px] xl:max-w-[180px] truncate">{{ branch && branch.name ? branch.name : $t('label.select_branch') }}</span>
+                        <span class="whitespace-nowrap max-w-[150px] xl:max-w-[180px] truncate">{{ selectedBranchName }}</span>
                         <i class="fa-solid fa-chevron-down text-xs text-gray-400"></i>
                     </button>
                 </div>
@@ -425,6 +425,22 @@ export default {
         },
         authDefaultMenu: function () {
             return this.$store.getters.authDefaultMenu;
+        },
+        selectedBranchName: function () {
+            if (this.branch && this.branch.name) {
+                return this.branch.name;
+            }
+            const savedBranchId = localStorage.getItem('selected_branch_id') || this.defaultBranch || this.setting?.site_default_branch;
+            if (savedBranchId && this.branches && this.branches.length > 0) {
+                const found = this.branches.find(b => b.id == savedBranchId);
+                if (found && found.name) {
+                    return found.name;
+                }
+            }
+            if (this.branches && this.branches.length > 0 && this.branches[0].name) {
+                return this.branches[0].name;
+            }
+            return this.$t('label.select_branch') || 'Select Branch';
         }
     },
     mounted() {
@@ -465,8 +481,26 @@ export default {
         });
 
         this.currentRoute = this.$route.path;
-        this.currentRoute = this.$route.path;
-        this.orderPermissionCheck();
+        this.$store.dispatch('frontendBranch/lists', this.branchProps).then((res) => {
+            const userSelectedBranch = localStorage.getItem('branch_selected_by_user');
+            const savedBranchId = localStorage.getItem('selected_branch_id');
+            const branchList = res.data?.data || this.branches || [];
+
+            if (!userSelectedBranch) {
+                this.isBranchModalOpen = true;
+            }
+
+            let targetBranchId = savedBranchId || this.setting?.site_default_branch;
+            if (!targetBranchId && branchList.length > 0) {
+                targetBranchId = branchList[0].id;
+            }
+            if (targetBranchId) {
+                this.defaultBranch = parseInt(targetBranchId);
+                localStorage.setItem('selected_branch_id', this.defaultBranch);
+                this.$store.dispatch('frontendBranch/show', this.defaultBranch).then().catch();
+            }
+        }).catch();
+
         this.$store.dispatch('frontendSetting/lists').then(res => {
             this.defaultBranch = res.data.data.site_default_branch;
             this.defaultLanguage = res.data.data.site_default_language;
@@ -475,29 +509,25 @@ export default {
             const savedBranchId = localStorage.getItem('selected_branch_id');
             const userProfile = this.$store.getters['frontendEditProfile/profile'];
             const userBranchId = userProfile?.branch_id || this.$store.getters.authInfo?.branch_id;
+            const globalState = this.$store.getters['globalState/lists'] || {};
 
             if (this.$store.getters.authStatus && userBranchId && parseInt(userBranchId) > 0) {
                 this.defaultBranch = parseInt(userBranchId);
                 localStorage.setItem('selected_branch_id', this.defaultBranch);
             } else if (savedBranchId && parseInt(savedBranchId) > 0) {
                 this.defaultBranch = parseInt(savedBranchId);
-            } else {
-                const globalState = this.$store.getters['globalState/lists'];
-                if (globalState.branch_id > 0) {
-                    this.defaultBranch = globalState.branch_id;
-                }
+            } else if (globalState.branch_id > 0) {
+                this.defaultBranch = globalState.branch_id;
+            }
+
+            if (!localStorage.getItem('selected_branch_id') && this.defaultBranch) {
+                localStorage.setItem('selected_branch_id', this.defaultBranch);
             }
 
             if (globalState.language_id > 0) {
                 this.defaultLanguage = globalState.language_id;
             }
 
-            this.$store.dispatch('frontendBranch/lists', this.branchProps).then(() => {
-                const userSelectedBranch = localStorage.getItem('branch_selected_by_user');
-                if (!userSelectedBranch) {
-                    this.isBranchModalOpen = true;
-                }
-            }).catch();
             this.$store.dispatch('frontendBranch/show', this.defaultBranch).then().catch();
             this.$store.dispatch("globalState/set", { branch_id: this.defaultBranch });
             this.$store.dispatch('frontendWeather/show', this.defaultBranch);
@@ -621,6 +651,7 @@ export default {
         },
         closeBranchModal: function () {
             this.isBranchModalOpen = false;
+            localStorage.setItem('branch_selected_by_user', 'true');
         },
         changeLanguage: function (id, code) {
             appService.modalHide('#language');

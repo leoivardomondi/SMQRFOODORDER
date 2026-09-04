@@ -110,6 +110,7 @@
         "active": "Aktiv",
         "inactive": "Inaktiv",
         "branch": "Zweig",
+        "select_branch": "Filiale auswählen",
         "role": "Rolle",
         "members": "Mitglieder",
         "permissions": "Berechtigungen",

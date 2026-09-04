@@ -110,6 +110,7 @@
         "active": "সক্রিয়",
         "inactive": "নিষ্ক্রিয়",
         "branch": "শাখা",
+        "select_branch": "শাখা নির্বাচন করুন",
         "role": "ভূমিকা",
         "members": "সদস্য",
         "permissions": "অনুমতি",
