@@ -69,4 +69,19 @@ class ProfileService
             throw new Exception($exception->getMessage(), 422);
         }
     }
+
+    public function changeBranch($branchId)
+    {
+        try {
+            $user = User::find(auth()->user()->id);
+            if (!blank($user) && (int)$branchId > 0) {
+                $user->branch_id = (int)$branchId;
+                $user->save();
+            }
+            return $user;
+        } catch (Exception $exception) {
+            Log::info($exception->getMessage());
+            throw new Exception($exception->getMessage(), 422);
+        }
+    }
 }

@@ -1147,6 +1147,9 @@ export default {
             this.checkoutProps.form.branch_id = branch.id;
             this.$store.dispatch('globalState/set', { branch_id: branch.id });
             localStorage.setItem('selected_branch_id', branch.id);
+            if (this.$store.getters.authStatus) {
+                this.$store.dispatch('frontendEditProfile/changeBranch', { branch_id: branch.id }).then().catch();
+            }
             this.saveCheckoutDraft();
             this.saveSuccessfulOrderPreferences();
             this.$store.dispatch('frontendWeather/show', branch.id);

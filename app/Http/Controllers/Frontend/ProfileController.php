@@ -57,4 +57,14 @@ class ProfileController extends Controller
             return response(['status' => false, 'message' => $exception->getMessage()], 422);
         }
     }
+
+    public function changeBranch(Request $request) : UserResource | \Illuminate\Http\Response | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
+    {
+        try {
+            $branchId = $request->input('branch_id');
+            return new UserResource($this->profileService->changeBranch($branchId));
+        } catch (\Exception $exception) {
+            return response(['status' => false, 'message' => $exception->getMessage()], 422);
+        }
+    }
 }

@@ -161,6 +161,7 @@ Route::prefix('profile')->name('profile.')->middleware(['installed', 'apiKey', '
     Route::match(['put', 'patch'], '/', [ProfileController::class, 'update']);
     Route::match(['put', 'patch'], '/change-password', [ProfileController::class, 'changePassword']);
     Route::post('/change-image', [ProfileController::class, 'changeImage']);
+    Route::post('/change-branch', [ProfileController::class, 'changeBranch']);
 });
 
 Route::prefix('admin')->name('admin.')->middleware(['installed', 'apiKey', 'auth:sanctum', 'localization'])->group(function () {

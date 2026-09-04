@@ -49,6 +49,16 @@ class MenuTableSeeder extends Seeder
                 'updated_at' => now()
             ],
             [
+                'name'       => 'Attributes',
+                'language'   => 'attributes',
+                'url'        => 'settings/item-attributes',
+                'icon'       => 'lab lab-item-attributes',
+                'priority'   => 100,
+                'status'     => 1,
+                'created_at' => now(),
+                'updated_at' => now()
+            ],
+            [
                 'name'       => 'Pos & Orders',
                 'language'   => 'pos_and_orders',
                 'url'        => '#',

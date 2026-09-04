@@ -551,4 +551,10 @@ export default [
             },
         ],
     },
+,
+    {
+        path: '/admin/item-attributes',
+        redirect: { name: 'admin.settings.itemAttribute.list' },
+        name: 'admin.itemAttribute'
+    },
 ];

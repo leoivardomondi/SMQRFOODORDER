@@ -37,6 +37,16 @@ export const frontendEditProfile = {
                 });
             });
         },
+        changeBranch: function (context, payload) {
+            return new Promise((resolve, reject) => {
+                axios.post('/profile/change-branch', payload).then((res) => {
+                    context.commit('profile', res.data.data);
+                    resolve(res);
+                }).catch((err) => {
+                    reject(err);
+                });
+            });
+        },
         changePassword: function (context, payload) {
             return new Promise((resolve, reject) => {
                 axios.put(`/profile/change-password`,payload).then((res) => {

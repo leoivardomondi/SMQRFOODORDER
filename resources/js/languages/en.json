@@ -88,7 +88,8 @@
         "k_d_s": "K.D.S",
         "o_s_s": "O.S.S",
         "chefs": "Chefs",
-        "waiters": "Waiters"
+        "waiters": "Waiters",
+        "attributes": "Attributes"
     },
     "label": {
         "whatsapp": "WhatsApp",

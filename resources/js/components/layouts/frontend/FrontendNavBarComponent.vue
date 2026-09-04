@@ -452,7 +452,13 @@ export default {
             this.defaultCountryCode = res.data.data.company_country_code;
 
             const savedBranchId = localStorage.getItem('selected_branch_id');
-            if (savedBranchId && parseInt(savedBranchId) > 0) {
+            const userProfile = this.$store.getters['frontendEditProfile/profile'];
+            const userBranchId = userProfile?.branch_id || this.$store.getters.authInfo?.branch_id;
+
+            if (this.$store.getters.authStatus && userBranchId && parseInt(userBranchId) > 0) {
+                this.defaultBranch = parseInt(userBranchId);
+                localStorage.setItem('selected_branch_id', this.defaultBranch);
+            } else if (savedBranchId && parseInt(savedBranchId) > 0) {
                 this.defaultBranch = parseInt(savedBranchId);
             } else {
                 const globalState = this.$store.getters['globalState/lists'];
@@ -574,6 +580,9 @@ export default {
             this.$store.dispatch('frontendBranch/whatsappSetup', id);
             this.$store.dispatch('frontendWeather/show', id);
             localStorage.setItem('selected_branch_id', id);
+            if (this.$store.getters.authStatus) {
+                this.$store.dispatch('frontendEditProfile/changeBranch', { branch_id: id }).then().catch();
+            }
             this.$store.dispatch('frontendItemCategory/lists', { force: true, paginate: 0, order_column: 'sort', order_type: 'asc', status: statusEnum.ACTIVE, branch_id: id }).then().catch();
             this.$store.dispatch('frontendItem/featured', { order_column: 'id', order_type: 'desc', branch_id: id }).then().catch();
             this.$store.dispatch('frontendItem/popular', { order_column: 'id', order_type: 'desc', branch_id: id }).then().catch();
