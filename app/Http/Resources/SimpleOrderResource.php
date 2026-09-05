@@ -33,6 +33,7 @@ class SimpleOrderResource extends JsonResource
             'status'                       => $this->status,
             'status_name'                  => trans('orderStatus.' . $this->status),
             'customer_name'                => $this->user?->name,
+            'order_items'                  => OrderItemResource::collection($this->whenLoaded('orderItems')),
         ];
     }
 }
