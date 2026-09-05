@@ -311,7 +311,7 @@ export default {
     },
     data() {
         return {
-            isDemoCollapsed: false,
+            isDemoCollapsed: true,
             loading: {
                 isActive: false
             },
