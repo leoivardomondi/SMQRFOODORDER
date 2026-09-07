@@ -189,6 +189,8 @@ Route::prefix('admin')->name('admin.')->middleware(['installed', 'apiKey', 'auth
         Route::prefix('mail')->name('mail.')->group(function () {
             Route::get('/', [MailController::class, 'index']);
             Route::match(['put', 'patch'], '/', [MailController::class, 'update']);
+            Route::get('/sample-data', [MailController::class, 'sampleData']);
+            Route::post('/test', [MailController::class, 'testMail']);
         });
 
         Route::prefix('currency')->name('currency.')->group(function () {

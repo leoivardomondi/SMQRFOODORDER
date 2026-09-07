@@ -19,12 +19,12 @@ class OrderGotMail extends Mailable
      */
 
     public mixed $order;
-    public mixed $message;
+    public mixed $alertMessage;
 
-    public function __construct($order, $message)
+    public function __construct($order, $alertMessage = null)
     {
         $this->order = $order;
-        $this->message = $message;
+        $this->alertMessage = $alertMessage;
     }
 
     public function build()
@@ -36,7 +36,10 @@ class OrderGotMail extends Mailable
 
         return $this
             ->subject("{$label} #{$this->order->order_serial_no}")
-            ->view('emails.orderGotHtml', ['logoUrl' => $logo?->logo])
+            ->view('emails.orderGotHtml', [
+                'logoUrl' => $logo?->logo,
+                'alertMessage' => $this->alertMessage,
+            ])
             ->text('emails.orderGotText');
     }
 }

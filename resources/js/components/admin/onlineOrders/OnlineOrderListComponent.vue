@@ -88,7 +88,7 @@
 
             <div id="print" :dir="direction" class="p-4 sm:p-5 space-y-8">
                 <!-- ORDERS SECTION -->
-                <div class="db-table-responsive border border-emerald-100 rounded-lg overflow-hidden shadow-sm">
+                <div class="border border-emerald-100 rounded-lg overflow-hidden shadow-sm bg-white">
                     <div class="flex items-center justify-between px-4 py-3 bg-emerald-50/80 border-b border-emerald-100">
                         <div class="flex items-center gap-2">
                             <i class="lab lab-check-circle-line text-emerald-600 text-lg"></i>
@@ -99,66 +99,77 @@
                         </span>
                     </div>
 
-                    <table class="db-table stripe">
-                        <thead class="db-table-head">
-                            <tr class="db-table-head-tr">
-                                <th class="db-table-head-th">{{ $t('label.order_id') }}</th>
-                                <th class="db-table-head-th">{{ $t('label.order_type') }}</th>
-                                <th class="db-table-head-th">{{ $t('label.customer') }}</th>
-                                <th class="db-table-head-th">{{ $t('label.amount') }}</th>
-                                <th class="db-table-head-th">{{ $t('label.date') }}</th>
-                                <th class="db-table-head-th">{{ $t('label.status') }}</th>
-                                <th class="db-table-head-th hidden-print" v-if="permissionChecker('online-orders')">
-                                    {{ $t('label.action') }}
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody class="db-table-body" v-if="realOrders.length > 0">
-                            <tr class="db-table-body-tr" v-for="order in realOrders" :key="'real-' + order.id">
-                                <td class="db-table-body-td">
-                                    {{ order.order_serial_no }}
-                                </td>
-                                <td class="db-table-body-td">
-                                    <span :class="orderTypeClass(order.order_type)">
-                                        {{ enums.orderTypeEnumArray[order.order_type] }}
-                                    </span>
-                                </td>
-                                <td class="db-table-body-td">
-                                    {{ textShortener(order.customer_name, 20) }}
-                                </td>
-                                <td class="db-table-body-td">{{ order.total_amount_price }}</td>
-                                <td class="db-table-body-td">
-                                    {{ order.order_datetime }}
-                                </td>
-                                <td class="db-table-body-td">
-                                    <span :class="orderStatusClass(order.status)">
-                                        {{ enums.orderStatusEnumArray[order.status] }}
-                                    </span>
-                                    <span :class="orderStatusClass(order.is_advance_order)"
-                                        v-if="order.is_advance_order === enums.isAdvanceOrderEnum.YES">
-                                        {{ $t('label.advance') }}
-                                    </span>
-                                </td>
-                                <td class="db-table-body-td hidden-print" v-if="permissionChecker('online-orders')">
-                                    <div class="flex justify-start items-center sm:items-start sm:justify-start gap-1.5">
-                                        <SmIconViewComponent :link="'admin.order.show'" :id="order.id"
-                                            v-if="permissionChecker('online-orders')" />
-                                    </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                        <tbody class="db-table-body" v-else>
-                            <tr class="db-table-body-tr">
-                                <td colspan="7" class="text-center py-6 text-gray-500 font-medium">
-                                    No orders found.
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div class="db-table-responsive">
+                        <table class="db-table stripe">
+                            <thead class="db-table-head">
+                                <tr class="db-table-head-tr">
+                                    <th class="db-table-head-th">{{ $t('label.order_id') }}</th>
+                                    <th class="db-table-head-th">{{ $t('label.order_type') }}</th>
+                                    <th class="db-table-head-th">{{ $t('label.customer') }}</th>
+                                    <th class="db-table-head-th">{{ $t('label.amount') }}</th>
+                                    <th class="db-table-head-th">{{ $t('label.date') }}</th>
+                                    <th class="db-table-head-th">{{ $t('label.status') }}</th>
+                                    <th class="db-table-head-th hidden-print" v-if="permissionChecker('online-orders')">
+                                        {{ $t('label.action') }}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody class="db-table-body" v-if="realOrders.length > 0">
+                                <tr class="db-table-body-tr" v-for="order in realOrders" :key="'real-' + order.id">
+                                    <td class="db-table-body-td font-medium">
+                                        <router-link
+                                            v-if="permissionChecker('online-orders')"
+                                            :to="{ name: 'admin.order.show', params: { id: order.id } }"
+                                            class="text-primary font-semibold hover:underline cursor-pointer"
+                                        >
+                                            {{ order.order_serial_no }}
+                                        </router-link>
+                                        <span v-else>
+                                            {{ order.order_serial_no }}
+                                        </span>
+                                    </td>
+                                    <td class="db-table-body-td">
+                                        <span :class="orderTypeClass(order.order_type)">
+                                            {{ enums.orderTypeEnumArray[order.order_type] }}
+                                        </span>
+                                    </td>
+                                    <td class="db-table-body-td">
+                                        {{ textShortener(order.customer_name, 20) }}
+                                    </td>
+                                    <td class="db-table-body-td">{{ order.total_amount_price }}</td>
+                                    <td class="db-table-body-td">
+                                        {{ order.order_datetime }}
+                                    </td>
+                                    <td class="db-table-body-td">
+                                        <span :class="orderStatusClass(order.status)">
+                                            {{ enums.orderStatusEnumArray[order.status] }}
+                                        </span>
+                                        <span :class="orderStatusClass(order.is_advance_order)"
+                                            v-if="order.is_advance_order === enums.isAdvanceOrderEnum.YES">
+                                            {{ $t('label.advance') }}
+                                        </span>
+                                    </td>
+                                    <td class="db-table-body-td hidden-print" v-if="permissionChecker('online-orders')">
+                                        <div class="flex justify-start items-center sm:items-start sm:justify-start gap-1.5">
+                                            <SmIconViewComponent :link="'admin.order.show'" :id="order.id"
+                                                v-if="permissionChecker('online-orders')" />
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tbody class="db-table-body" v-else>
+                                <tr class="db-table-body-tr">
+                                    <td colspan="7" class="text-center py-6 text-gray-500 font-medium">
+                                        No orders found.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <!-- DEMO ORDERS SECTION -->
-                <div class="db-table-responsive border border-amber-200 rounded-lg overflow-hidden shadow-sm">
+                <div class="border border-amber-200 rounded-lg overflow-hidden shadow-sm bg-white">
                     <div class="flex items-center justify-between px-4 py-3 bg-amber-50/80 border-b border-amber-200 cursor-pointer select-none" @click="isDemoCollapsed = !isDemoCollapsed">
                         <div class="flex items-center gap-2">
                             <i class="lab lab-warning-line text-amber-600 text-lg"></i>
@@ -172,7 +183,7 @@
                         </div>
                     </div>
 
-                    <div v-show="!isDemoCollapsed">
+                    <div v-show="!isDemoCollapsed" class="db-table-responsive">
                         <table class="db-table stripe">
                             <thead class="db-table-head">
                                 <tr class="db-table-head-tr">
@@ -189,8 +200,17 @@
                             </thead>
                             <tbody class="db-table-body" v-if="demoOrders.length > 0">
                                 <tr class="db-table-body-tr bg-amber-50/10" v-for="order in demoOrders" :key="'demo-' + order.id">
-                                    <td class="db-table-body-td">
-                                        {{ order.order_serial_no }}
+                                    <td class="db-table-body-td font-medium">
+                                        <router-link
+                                            v-if="permissionChecker('online-orders')"
+                                            :to="{ name: 'admin.order.show', params: { id: order.id } }"
+                                            class="text-primary font-semibold hover:underline cursor-pointer"
+                                        >
+                                            {{ order.order_serial_no }}
+                                        </router-link>
+                                        <span v-else>
+                                            {{ order.order_serial_no }}
+                                        </span>
                                     </td>
                                     <td class="db-table-body-td">
                                         <span :class="orderTypeClass(order.order_type)">

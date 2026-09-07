@@ -66,9 +66,9 @@
                                         : 'A new order requires your attention. Open it to review and continue processing.' }}
                                 </td>
                             </tr>
-                            @if(!blank($message))
+                            @if(!empty($alertMessage) && is_string($alertMessage))
                                 <tr>
-                                    <td style="padding-top:12px; font-size:14px; line-height:22px; color:#777777;">{{ $message }}</td>
+                                    <td style="padding-top:12px; font-size:14px; line-height:22px; color:#777777;">{{ $alertMessage }}</td>
                                 </tr>
                             @endif
                         </table>

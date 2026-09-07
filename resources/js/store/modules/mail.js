@@ -36,6 +36,30 @@ export const mail = {
                 });
             });
         },
+        sampleData: function () {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get("admin/setting/mail/sample-data")
+                    .then((res) => {
+                        resolve(res);
+                    })
+                    .catch((err) => {
+                        reject(err);
+                    });
+            });
+        },
+        testMail: function (context, payload) {
+            return new Promise((resolve, reject) => {
+                axios
+                    .post("admin/setting/mail/test", payload)
+                    .then((res) => {
+                        resolve(res);
+                    })
+                    .catch((err) => {
+                        reject(err);
+                    });
+            });
+        },
     },
 
     mutations: {
