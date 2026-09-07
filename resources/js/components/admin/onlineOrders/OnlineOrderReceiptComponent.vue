@@ -153,17 +153,17 @@
                         <tbody>
                             <tr>
                                 <td class="pt-1 pb-1 pr-1">{{ $t('label.customer') }}:</td>
-                                <td class="pt-1 pb-1">{{ orderUser.name }}</td>
+                                <td class="pt-1 pb-1">{{ (orderUser && orderUser.name) ? orderUser.name : 'Guest' }}</td>
                             </tr>
                             <tr>
                                 <td class="pt-1 pb-1 pr-1">{{ $t('label.phone') }}:</td>
-                                <td class="pt-1 pb-1">{{ orderUser.country_code + '' + orderUser.phone }}</td>
+                                <td class="pt-1 pb-1">{{ (orderUser && orderUser.phone) ? ((orderUser.country_code || '') + '' + orderUser.phone) : '-' }}</td>
                             </tr>
                             <tr v-if="order.order_type === enums.orderTypeEnum.DELIVERY">
                                 <td class="pt-1 pb-1 pr-1">{{ $t('label.address') }}:</td>
                                 <td class="pt-1 pb-1">
-                                    {{ orderAddress.apartment ? orderAddress.apartment + ', ' : '' }}
-                                    {{ orderAddress.address }}
+                                    {{ orderAddress && orderAddress.apartment ? orderAddress.apartment + ', ' : '' }}
+                                    {{ (orderAddress && orderAddress.address) ? orderAddress.address : '-' }}
                                 </td>
                             </tr>
                         </tbody>

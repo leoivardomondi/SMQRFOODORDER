@@ -14,7 +14,7 @@
             <div class="modal-body">
                 <div class="form-row">
                     <div class="form-col-12">
-                        <MapComponent :key="mapKey" v-if="mapShow"
+                        <MapComponent :key="mapKey" v-if="mapShow && orderAddress && orderAddress.latitude && orderAddress.longitude"
                             :location="{ lat: orderAddress.latitude, lng: orderAddress.longitude }"
                             :position="mapPosition"
                             :setting="{ autocomplete: false, mouseEvent: false, currentLocation: false }" />

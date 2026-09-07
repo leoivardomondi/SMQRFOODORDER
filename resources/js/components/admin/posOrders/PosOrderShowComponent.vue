@@ -190,29 +190,29 @@
                     </div>
                     <div class="db-card-body">
                         <div class="flex items-center gap-3 mb-4">
-                            <img class="w-8 rounded-full" :src="orderUser.image" alt="avatar">
+                            <img class="w-8 h-8 rounded-full object-cover" :src="(orderUser && orderUser.image) ? orderUser.image : '/images/default/avatar.png'" alt="avatar">
                             <h4 class="font-semibold text-sm capitalize text-[#374151]">
-                                {{ textShortener(orderUser.name, 20) }}
+                                {{ textShortener((orderUser && orderUser.name) ? orderUser.name : 'Guest Customer', 20) }}
                             </h4>
                         </div>
                         <ul class="flex flex-col gap-3 py-4 border-[#EFF0F6]"
                             :class="order.order_type === enums.orderTypeEnum.DELIVERY ? 'mb-4 border-y' : 'border-t'">
-                            <li class="flex items-center gap-2.5">
+                            <li class="flex items-center gap-2.5" v-if="orderUser && orderUser.email">
                                 <i class="lab lab-mail lab-font-size-14"></i>
                                 <span class="text-xs">{{ orderUser.email }}</span>
                             </li>
-                            <li class="flex items-center gap-2.5" v-if="orderUser.phone">
+                            <li class="flex items-center gap-2.5" v-if="orderUser && orderUser.phone">
                                 <i class="lab lab-call-calling-linear lab-font-size-14"></i>
                                 <span dir="ltr" class="text-xs">{{ internationalPhone(orderUser.country_code, orderUser.phone) }}</span>
                             </li>
                         </ul>
-                        <div v-if="order.order_type === enums.orderTypeEnum.DELIVERY" class="flex items-start gap-3">
+                        <div v-if="order.order_type === enums.orderTypeEnum.DELIVERY && orderAddress && orderAddress.address" class="flex items-start gap-3">
                             <i class="lab lab-location lab-font-size-20 leading-6 font-fill-black"></i>
                             <span class="text-sm w-full max-w-[200px] leading-6 text-[#374151]">
                                 {{ orderAddress.apartment ? orderAddress.apartment + ', ' : '' }} {{
                                     orderAddress.address }}
                             </span>
-                            <PosOrderMapComponent :orderAddress="orderAddress" />
+                            <PosOrderMapComponent v-if="orderAddress.latitude && orderAddress.longitude" :orderAddress="orderAddress" />
                         </div>
                     </div>
                 </div>
@@ -323,19 +323,25 @@ export default {
     },
     computed: {
         order: function () {
-            return this.$store.getters['posOrder/show'];
+            return this.$store.getters['posOrder/show'] || {};
         },
         orderItems: function () {
-            return this.$store.getters['posOrder/orderItems'];
+            return this.$store.getters['posOrder/orderItems'] || [];
         },
         orderUser: function () {
-            return this.$store.getters['posOrder/orderUser'];
+            return this.$store.getters['posOrder/orderUser'] || {
+                name: 'Guest Customer',
+                image: '/images/default/avatar.png',
+                email: '',
+                phone: '',
+                country_code: ''
+            };
         },
         orderAddress: function () {
-            return this.$store.getters['posOrder/orderAddress'];
+            return this.$store.getters['posOrder/orderAddress'] || {};
         },
         deliveryBoys: function () {
-            return this.$store.getters["deliveryBoy/lists"];
+            return this.$store.getters["deliveryBoy/lists"] || [];
         },
         filteredOrderStatusObject: function () {
             let statuses = [

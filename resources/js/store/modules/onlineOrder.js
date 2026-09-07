@@ -182,10 +182,16 @@ export const onlineOrder = {
             state.orderBranch = payload;
         },
         orderUser: function (state, payload) {
-            state.orderUser = payload;
+            state.orderUser = payload || {
+                name: 'Guest Customer',
+                image: '/images/default/avatar.png',
+                email: '',
+                phone: '',
+                country_code: ''
+            };
         },
         orderAddress: function (state, payload) {
-            state.orderAddress = payload;
+            state.orderAddress = payload || {};
         },
         orderDeliveryBoy: function (state, payload) {
             state.orderDeliveryBoy = payload;
