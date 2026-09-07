@@ -110,16 +110,20 @@ class EmployeeService
         }
     }
 
+    public function hasEmployeeRole(User $employee): bool
+    {
+        return $employee->roles->contains(function ($role) {
+            return !in_array($role->id, $this->blockRoles);
+        });
+    }
+
     /**
      * @throws Exception
      */
     public function update(EmployeeRequest $request, User $employee)
     {
         try {
-            if (!in_array($request->role_id, $this->blockRoles) && !in_array(
-                optional($employee->roles[0])->id,
-                $this->blockRoles
-            )) {
+            if (!in_array($request->role_id, $this->blockRoles) && $this->hasEmployeeRole($employee)) {
                 DB::transaction(function () use ($employee, $request) {
                     $this->user               = $employee;
                     $this->user->name         = $request->name;
@@ -133,7 +137,8 @@ class EmployeeService
                     }
                     $this->user->save();
                 });
-                $this->user->syncRoles($request->role_id);
+                $existingBlockRoles = $employee->roles->whereIn('id', $this->blockRoles)->pluck('id')->toArray();
+                $this->user->syncRoles(array_merge($existingBlockRoles, [$request->role_id]));
                 return $this->user;
             } else {
                 throw new Exception(trans('all.message.permission_denied'), 422);
@@ -151,7 +156,7 @@ class EmployeeService
     public function show(User $employee): User
     {
         try {
-            if (!in_array(optional($employee->roles[0])->id, $this->blockRoles)) {
+            if ($this->hasEmployeeRole($employee)) {
                 return $employee;
             } else {
                 throw new Exception(trans('all.message.permission_denied'), 422);
@@ -165,22 +170,39 @@ class EmployeeService
     /**
      * @throws Exception
      */
-
-    public function destroy(User $employee)
+    public function destroy(User $employee, ?string $action = null)
     {
         try {
-            if (!in_array(optional($employee->roles[0])->id, $this->blockRoles)) {
-                if ($employee->hasRole(optional($employee->roles[0])->id)) {
-                    DB::transaction(function () use ($employee) {
-                        $employee->addresses()->delete();
-                        $employee->delete();
-                    });
-                } else {
-                    throw new Exception(trans('all.message.permission_denied'), 422);
-                }
-            } else {
+            if ($employee->id === 1) {
                 throw new Exception(trans('all.message.permission_denied'), 422);
             }
+
+            if (auth()->check() && $employee->id === auth()->id() && $action !== 'remove') {
+                throw new Exception('You cannot delete your own account.', 422);
+            }
+
+            if (!$this->hasEmployeeRole($employee)) {
+                throw new Exception(trans('all.message.permission_denied'), 422);
+            }
+
+            DB::transaction(function () use ($employee, $action) {
+                if ($action === 'remove' || $employee->hasRole(EnumRole::ADMIN)) {
+                    $employeeRoles = $employee->roles->whereNotIn('id', $this->blockRoles);
+                    foreach ($employeeRoles as $role) {
+                        $employee->removeRole($role);
+                    }
+                    if ($employee->roles()->count() === 0) {
+                        $employee->assignRole(EnumRole::CUSTOMER);
+                    }
+                } else {
+                    $employeeRoles = $employee->roles->whereNotIn('id', $this->blockRoles);
+                    foreach ($employeeRoles as $role) {
+                        $employee->removeRole($role);
+                    }
+                    $employee->addresses()->delete();
+                    $employee->delete();
+                }
+            });
         } catch (Exception $exception) {
             Log::info($exception->getMessage());
             DB::rollBack();
@@ -200,7 +222,7 @@ class EmployeeService
     public function changePassword(UserChangePasswordRequest $request, User $employee): User
     {
         try {
-            if (!in_array(optional($employee->roles[0])->id, $this->blockRoles)) {
+            if ($this->hasEmployeeRole($employee)) {
                 $employee->password = Hash::make($request->password);
                 $employee->save();
                 return $employee;
@@ -219,7 +241,7 @@ class EmployeeService
     public function changeImage(ChangeImageRequest $request, User $employee): User
     {
         try {
-            if (!in_array(optional($employee->roles[0])->id, $this->blockRoles)) {
+            if ($this->hasEmployeeRole($employee)) {
                 if ($request->image) {
                     $employee->clearMediaCollection('profile');
                     $employee->addMediaFromRequest('image')->toMediaCollection('profile');

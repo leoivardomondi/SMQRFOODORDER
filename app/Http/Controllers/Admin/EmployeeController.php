@@ -62,7 +62,7 @@ class EmployeeController extends AdminController
     public function destroy(User $employee): \Illuminate\Http\Response | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
     {
         try {
-            $this->employeeService->destroy($employee);
+            $this->employeeService->destroy($employee, request('action'));
             return response('', 202);
         } catch (Exception $exception) {
             return response(['status' => false, 'message' => $exception->getMessage()], 422);
