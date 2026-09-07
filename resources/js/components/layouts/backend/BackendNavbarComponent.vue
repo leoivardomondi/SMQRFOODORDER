@@ -83,6 +83,19 @@
                     </div>
                 </div>
             </div>
+
+            <!-- REFRESH BUTTON (PWA & Desktop/Mobile) -->
+            <button
+                type="button"
+                @click="refreshPage"
+                class="w-9 h-9 rounded-lg flex items-center justify-center text-primary bg-primary/5 hover:bg-primary/10 transition shadow-2xs group relative select-none"
+                :title="isPwa ? 'Refresh App (PWA Mode)' : 'Refresh Page'"
+                aria-label="Refresh Page"
+            >
+                <i :class="['fa-solid fa-rotate-right text-sm transition-transform duration-500', isRefreshing ? 'animate-spin text-primary' : 'group-hover:rotate-180']"></i>
+                <span v-if="isPwa" class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-emerald-500 rounded-full ring-2 ring-white"></span>
+            </button>
+
             <button @click.prevent="handleSidebar"
                 v-if="!$route.path.includes('kitchen-display-system') && !$route.path.includes('order-status-screen')"
                 class="fa-solid db-header-nav w-9 h-9 rounded-lg text-primary bg-primary/5"
@@ -204,6 +217,8 @@ export default {
                 orderType: null
             },
             futureOrderCount: 0,
+            isRefreshing: false,
+            isPwa: false,
         }
     },
     computed: {
@@ -247,6 +262,14 @@ export default {
         },
     },
     mounted() {
+        this.detectPwaMode();
+        if (typeof window !== "undefined" && window.matchMedia) {
+            try {
+                window.matchMedia('(display-mode: standalone)').addEventListener('change', (e) => {
+                    this.isPwa = e.matches;
+                });
+            } catch (err) {}
+        }
         pwaNotificationService.initialise();
         appService.responsiveLoad();
         this.$store.dispatch("globalState/set", { topSidebar: this.sidebarOpen });
@@ -515,6 +538,26 @@ export default {
                 }
                 document.removeEventListener('mousemove', handleMouseMove);
             }
+        },
+        detectPwaMode: function () {
+            if (typeof window === "undefined") return;
+            this.isPwa = (
+                (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+                window.navigator.standalone === true ||
+                document.referrer.includes('android-app://') ||
+                window.location.search.includes('pwa=true')
+            );
+        },
+        refreshPage: function () {
+            this.isRefreshing = true;
+            if (typeof navigator !== "undefined" && 'serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                try {
+                    navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
+                } catch (e) {}
+            }
+            setTimeout(() => {
+                window.location.reload();
+            }, 200);
         }
     }
 }

@@ -18,6 +18,13 @@
                         </button>
                     </div>
 
+                    <!-- Mobile Refresh Button (PWA & Mobile) -->
+                    <button type="button" @click="refreshPage"
+                        class="p-1.5 focus:outline-none text-gray-700 hover:text-primary transition"
+                        :title="isPwa ? 'Refresh App (PWA Mode)' : 'Refresh Page'" aria-label="Refresh">
+                        <i :class="['fa-solid fa-rotate-right text-lg transition-transform duration-500', isRefreshing ? 'animate-spin text-primary' : '']"></i>
+                    </button>
+
                     <!-- Mobile Top Right Search Icon -->
                     <router-link :to="{ name: 'frontend.search' }" class="p-1.5 focus:outline-none" title="Search">
                         <i class="lab lab-search-normal text-2xl font-bold mobile-search-btn-icon" style="color: #000000 !important;"></i>
@@ -229,6 +236,13 @@
                         </nav>
                     </div>
                 </div>
+                <!-- Desktop Refresh Button (PWA & Web) -->
+                <button type="button" @click="refreshPage"
+                    class="hidden lg:flex items-center justify-center w-8 h-8 rounded-full border border-gray-200 bg-white text-heading hover:text-primary hover:border-primary transition shadow-2xs group relative"
+                    :title="isPwa ? 'Refresh App (PWA Mode)' : 'Refresh Page'" aria-label="Refresh">
+                    <i :class="['fa-solid fa-rotate-right text-xs transition-transform duration-500', isRefreshing ? 'animate-spin text-primary' : 'group-hover:rotate-180']"></i>
+                    <span v-if="isPwa" class="absolute -top-0.5 -right-0.5 w-2 h-2 bg-emerald-500 rounded-full ring-2 ring-white"></span>
+                </button>
             </div>
         </div>
     </header>
@@ -381,6 +395,8 @@ export default {
             searchItem: "",
             isMobileSearchOpen: false,
             isBranchModalOpen: false,
+            isRefreshing: false,
+            isPwa: false,
         }
     },
     computed: {
@@ -444,6 +460,15 @@ export default {
         }
     },
     mounted() {
+        this.detectPwaMode();
+        if (typeof window !== "undefined" && window.matchMedia) {
+            try {
+                window.matchMedia('(display-mode: standalone)').addEventListener('change', () => {
+                    this.detectPwaMode();
+                });
+            } catch (e) {}
+        }
+
         if (!this.isPwaViewed) {
             this.pwaPromptTimer = window.setTimeout(() => {
                 this.showPwaPrompt = true;
@@ -733,6 +758,26 @@ export default {
             modalTarget?.classList?.remove("active");
             document.body.style.overflowY = "auto";
             localStorage.setItem('pwa_viewed', true);
+        },
+        detectPwaMode: function () {
+            if (typeof window === "undefined") return;
+            this.isPwa = (
+                (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) ||
+                window.navigator.standalone === true ||
+                document.referrer.includes('android-app://') ||
+                window.location.search.includes('pwa=true')
+            );
+        },
+        refreshPage: function () {
+            this.isRefreshing = true;
+            if (typeof navigator !== "undefined" && 'serviceWorker' in navigator && navigator.serviceWorker.controller) {
+                try {
+                    navigator.serviceWorker.controller.postMessage({ type: 'SKIP_WAITING' });
+                } catch (e) {}
+            }
+            setTimeout(() => {
+                window.location.reload();
+            }, 200);
         }
     },
     watch: {
