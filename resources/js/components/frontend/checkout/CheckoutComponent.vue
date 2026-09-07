@@ -1150,6 +1150,16 @@ export default {
             if (this.$store.getters.authStatus) {
                 this.$store.dispatch('frontendEditProfile/changeBranch', { branch_id: branch.id }).then().catch();
             }
+
+            const currentCart = this.$store.getters['frontendCart/lists'] || [];
+            const invalidItems = currentCart.filter(item => item.branch_id && item.branch_id > 0 && parseInt(item.branch_id) !== parseInt(branch.id));
+            if (invalidItems.length > 0) {
+                const validItems = currentCart.filter(item => !item.branch_id || parseInt(item.branch_id) === 0 || parseInt(item.branch_id) === parseInt(branch.id));
+                this.$store.commit('frontendCart/lists', validItems);
+                this.$store.commit('frontendCart/subtotal');
+                alertService.warning('Items not available for the selected branch were removed from your cart.');
+            }
+
             this.saveCheckoutDraft();
             this.saveSuccessfulOrderPreferences();
             this.$store.dispatch('frontendWeather/show', branch.id);

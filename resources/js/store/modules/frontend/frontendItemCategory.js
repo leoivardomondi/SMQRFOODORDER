@@ -53,7 +53,15 @@ export const frontendItemCategory = {
         show: function (context, payload) {
             if(payload) {
                 return new Promise((resolve, reject) => {
-                    axios.get(`frontend/item-category/show/${payload.slug}`).then((res) => {
+                    let url = `frontend/item-category/show/${payload.slug}`;
+                    const params = [];
+                    if (payload.branch_id) {
+                        params.push(`branch_id=${payload.branch_id}`);
+                    }
+                    if (params.length > 0) {
+                        url += `?${params.join('&')}`;
+                    }
+                    axios.get(url).then((res) => {
                         if (typeof payload.vuex === "undefined" || payload.vuex === true) {
                             context.commit("show", res.data.data);
                         }

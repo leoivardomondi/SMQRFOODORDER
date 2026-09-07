@@ -56,9 +56,14 @@ class ItemService
                                 }
                             }
                         } else if ($key == "branch_id") {
-                            if ((int)$request > 0) {
-                                $query->where(function ($q) use ($request) {
-                                    $q->where('branch_id', 0)->orWhereNull('branch_id')->orWhere('branch_id', $request);
+                            $branchId = (int)$request;
+                            if ($branchId > 0) {
+                                $query->where(function ($q) use ($branchId) {
+                                    $q->where('branch_id', 0)->orWhereNull('branch_id')->orWhere('branch_id', $branchId);
+                                });
+                            } else {
+                                $query->where(function ($q) {
+                                    $q->where('branch_id', 0)->orWhereNull('branch_id');
                                 });
                             }
                         } else {
@@ -99,9 +104,14 @@ class ItemService
                                 }
                             }
                         } else if ($key == "branch_id") {
-                            if ((int)$request > 0) {
-                                $query->where(function ($q) use ($request) {
-                                    $q->where('branch_id', 0)->orWhereNull('branch_id')->orWhere('branch_id', $request);
+                            $branchId = (int)$request;
+                            if ($branchId > 0) {
+                                $query->where(function ($q) use ($branchId) {
+                                    $q->where('branch_id', 0)->orWhereNull('branch_id')->orWhere('branch_id', $branchId);
+                                });
+                            } else {
+                                $query->where(function ($q) {
+                                    $q->where('branch_id', 0)->orWhereNull('branch_id');
                                 });
                             }
                         } else {
@@ -234,11 +244,15 @@ class ItemService
     public function featuredItems()
     {
         try {
-            $branchId = request('branch_id', 0);
+            $branchId = (int) (request('branch_id') ?: request()->header('x-branch-id') ?: 0);
             $query = Item::with('media','category','offer')->where(['is_featured' => Ask::YES, 'status' => Status::ACTIVE]);
-            if ((int)$branchId > 0) {
+            if ($branchId > 0) {
                 $query->where(function ($q) use ($branchId) {
                     $q->where('branch_id', 0)->orWhereNull('branch_id')->orWhere('branch_id', $branchId);
+                });
+            } else {
+                $query->where(function ($q) {
+                    $q->where('branch_id', 0)->orWhereNull('branch_id');
                 });
             }
             return $query->visibleToday()->inRandomOrder()->limit(8)->get();
@@ -251,11 +265,15 @@ class ItemService
     public function mostPopularItems()
     {
         try {
-            $branchId = request('branch_id', 0);
+            $branchId = (int) (request('branch_id') ?: request()->header('x-branch-id') ?: 0);
             $query = Item::with('media', 'category','offer')->withCount('orders')->where(['status' => Status::ACTIVE]);
-            if ((int)$branchId > 0) {
+            if ($branchId > 0) {
                 $query->where(function ($q) use ($branchId) {
                     $q->where('branch_id', 0)->orWhereNull('branch_id')->orWhere('branch_id', $branchId);
+                });
+            } else {
+                $query->where(function ($q) {
+                    $q->where('branch_id', 0)->orWhereNull('branch_id');
                 });
             }
             return $query->visibleToday()->orderBy('orders_count', 'desc')->limit(6)->get();

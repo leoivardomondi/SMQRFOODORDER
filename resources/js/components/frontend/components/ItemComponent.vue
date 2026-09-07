@@ -1,7 +1,7 @@
 <template>
     <!--========ITEM PART START=========-->
     <div v-if="design === itemDesignEnum.LIST" class="flex flex-col gap-6">
-        <div v-for="item in items" :key="item.id" v-show="type === null || type === item.item_type" class="product-card-list-item flex gap-3 sm:gap-4 relative">
+        <div v-for="item in filteredItems" :key="item.id" class="product-card-list-item flex gap-3 sm:gap-4 relative">
             <img class="product-card-list-image w-20 h-20 sm:w-24 sm:h-24 rounded-xl object-cover" :src="item.thumb" alt="thumbnail">
             <div class="product-card-list-content flex-1 min-w-0 flex flex-col justify-start">
                 <div class="flex justify-between items-start mb-1">
@@ -39,7 +39,7 @@
     </div>
     <div v-else-if="design === itemDesignEnum.GRID"
         class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 lg:gap-6">
-        <div v-for="item in items" :key="item" v-show="type === null || type === item.item_type"
+        <div v-for="item in filteredItems" :key="item.id || item"
             class="product-card-grid">
             <img class="product-card-grid-image" :class="item.is_daily_offer ? 'object-contain bg-slate-950' : ''" :src="item.cover" alt="product">
             <div class="product-card-grid-content-group">
@@ -311,6 +311,29 @@ export default {
         this.restoreLastOpenModal();
     },
     computed: {
+        currentBranchId: function () {
+            const globalState = this.$store.getters['globalState/lists'];
+            if (globalState && globalState.branch_id > 0) {
+                return parseInt(globalState.branch_id);
+            }
+            return parseInt(localStorage.getItem('selected_branch_id')) || 0;
+        },
+        filteredItems: function () {
+            if (!this.items || !Array.isArray(this.items)) {
+                return [];
+            }
+            const currentBranchId = this.currentBranchId;
+            return this.items.filter((item) => {
+                if (this.type !== null && this.type !== item.item_type) {
+                    return false;
+                }
+                const itemBranchId = parseInt(item.branch_id || 0);
+                if (itemBranchId > 0) {
+                    return currentBranchId > 0 && itemBranchId === currentBranchId;
+                }
+                return true;
+            });
+        },
         setting: function () {
             return this.$store.getters['frontendSetting/lists'];
         },
@@ -435,6 +458,7 @@ export default {
                 name: item.name,
                 image: item.thumb,
                 item_id: item.id,
+                branch_id: item.branch_id || 0,
                 quantity: 1,
                 discount: 0,
                 currency_price: price.currency_price,
@@ -800,6 +824,7 @@ export default {
                     name: this.temp.name,
                     image: this.temp.image,
                     item_id: this.temp.item_id,
+                    branch_id: this.item ? (this.item.branch_id || 0) : 0,
                     quantity: this.temp.quantity,
                     discount: this.temp.discount,
                     currency_price: this.temp.currency_price,

@@ -67,6 +67,11 @@ export default {
             },
         };
     },
+    computed: {
+        branchId: function () {
+            return this.$store.getters['globalState/lists']?.branch_id || parseInt(localStorage.getItem('selected_branch_id')) || 0;
+        }
+    },
     mounted() {
         this.props.search.name = this.$route.query.s || "";
         this.searItems();
@@ -87,7 +92,11 @@ export default {
         }, 300),
         searItems: function () {
             this.loading.isActive = true;
-            this.$store.dispatch("frontendItem/lists", this.props.search).then((res) => {
+            const searchParams = {
+                ...this.props.search,
+                branch_id: this.branchId
+            };
+            this.$store.dispatch("frontendItem/lists", searchParams).then((res) => {
                 this.items = res.data.data;
                 this.loading.isActive = false;
             }).catch((err) => {
@@ -98,6 +107,9 @@ export default {
     watch: {
         $route() {
             this.props.search.name = this.$route.query.s || "";
+            this.searItems();
+        },
+        branchId() {
             this.searItems();
         }
     }

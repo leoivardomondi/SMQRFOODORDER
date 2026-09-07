@@ -31,6 +31,8 @@ class ItemCategoryController extends Controller
     public function index(PaginateRequest $request) : \Illuminate\Http\Response | \Illuminate\Http\Resources\Json\AnonymousResourceCollection | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory
     {
         try {
+            $branchId = (int) ($request->get('branch_id') ?: $request->header('x-branch-id') ?: 0);
+            $request->merge(['branch_id' => $branchId]);
             return ItemCategoryResource::collection($this->itemCategoryService->list($request));
         } catch (Exception $exception) {
             return response(['status' => false, 'message' => $exception->getMessage()], 422);

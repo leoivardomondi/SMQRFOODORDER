@@ -24,6 +24,8 @@ class ItemController extends Controller
         PaginateRequest $request
     ): \Illuminate\Http\Response | \Illuminate\Http\Resources\Json\AnonymousResourceCollection | \Illuminate\Contracts\Foundation\Application | \Illuminate\Contracts\Routing\ResponseFactory {
         try {
+            $branchId = (int) ($request->get('branch_id') ?: $request->header('x-branch-id') ?: 0);
+            $request->merge(['branch_id' => $branchId]);
             return NormalItemResource::collection($this->itemService->list($request));
         } catch (Exception $exception) {
             return response(['status' => false, 'message' => $exception->getMessage()], 422);
@@ -51,6 +53,10 @@ class ItemController extends Controller
     public function itemDetails(Item $item)
     {
         try {
+            $branchId = (int) (request('branch_id') ?: request()->header('x-branch-id') ?: 0);
+            if ((int)$item->branch_id > 0 && $branchId > 0 && (int)$item->branch_id !== $branchId) {
+                return response(['status' => false, 'message' => 'This item is not available at the selected branch.'], 404);
+            }
             return new NormalItemResource($this->itemService->itemDetails($item));
         } catch (Exception $exception) {
             return response(['status' => false, 'message' => $exception->getMessage()], 422);

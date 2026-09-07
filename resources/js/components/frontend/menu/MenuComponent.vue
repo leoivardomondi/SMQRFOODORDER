@@ -93,7 +93,12 @@ export default {
             return this.$store.getters['frontendItemCategory/lists'] || [];
         },
         branchId: function () {
-            return this.$store.getters['globalState/lists'].branch_id;
+            return this.$store.getters['globalState/lists']?.branch_id || parseInt(localStorage.getItem('selected_branch_id')) || 0;
+        }
+    },
+    watch: {
+        branchId(newBranchId) {
+            this.loadMenuData();
         }
     },
     mounted() {
@@ -111,10 +116,17 @@ export default {
         async loadMenuData() {
             this.loading.isActive = true;
             try {
-                const res = await this.$store.dispatch("frontendItemCategory/lists", this.categoryProps.search);
+                const currentBranchId = this.branchId;
+                const searchParams = {
+                    ...this.categoryProps.search,
+                    branch_id: currentBranchId,
+                    force: true
+                };
+                const res = await this.$store.dispatch("frontendItemCategory/lists", searchParams);
                 const categoriesList = res.data.data || [];
                 
                 if (categoriesList.length === 0) {
+                    this.categorySections = [];
                     this.loading.isActive = false;
                     return;
                 }
@@ -129,6 +141,7 @@ export default {
                 const sectionPromises = categoriesList.map(cat => {
                     return this.$store.dispatch("frontendItemCategory/show", {
                         slug: cat.slug,
+                        branch_id: currentBranchId,
                         vuex: false
                     }).then(response => response.data.data).catch(() => cat);
                 });

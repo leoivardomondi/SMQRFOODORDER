@@ -42,6 +42,7 @@ export default {
             this.$store.dispatch("frontendItem/popular", {
                 order_column: "id",
                 order_type: "desc",
+                branch_id: this.branchId
             }).then(res => {
                 this.loading.isActive = false;
             }).catch((err) => {
@@ -56,22 +57,20 @@ export default {
             return this.$store.getters["frontendItem/popular"];
         },
         branchId: function () {
-            return this.$store.getters['globalState/lists'].branch_id;
+            return this.$store.getters['globalState/lists']?.branch_id || parseInt(localStorage.getItem('selected_branch_id')) || 0;
         }
     },
     watch: {
         branchId(newBranchId) {
-            if (newBranchId) {
-                this.loading.isActive = true;
-                this.$store.dispatch("frontendItem/popular", {
-                    order_column: "id",
-                    order_type: "desc",
-                    branch_id: newBranchId
-                }).finally(() => {
-                    this.loading.isActive = false;
-                });
-            }
+            this.loading.isActive = true;
+            this.$store.dispatch("frontendItem/popular", {
+                order_column: "id",
+                order_type: "desc",
+                branch_id: newBranchId
+            }).finally(() => {
+                this.loading.isActive = false;
+            });
         }
-    }
+    },
 };
 </script>

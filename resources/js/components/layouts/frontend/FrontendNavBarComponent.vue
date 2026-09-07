@@ -670,6 +670,15 @@ export default {
             this.$store.dispatch('frontendItemCategory/lists', { force: true, paginate: 0, order_column: 'sort', order_type: 'asc', status: statusEnum.ACTIVE, branch_id: id }).then().catch();
             this.$store.dispatch('frontendItem/featured', { order_column: 'id', order_type: 'desc', branch_id: id }).then().catch();
             this.$store.dispatch('frontendItem/popular', { order_column: 'id', order_type: 'desc', branch_id: id }).then().catch();
+
+            const currentCart = this.$store.getters['frontendCart/lists'] || [];
+            const invalidItems = currentCart.filter(item => item.branch_id && item.branch_id > 0 && parseInt(item.branch_id) !== parseInt(id));
+            if (invalidItems.length > 0) {
+                const validItems = currentCart.filter(item => !item.branch_id || parseInt(item.branch_id) === 0 || parseInt(item.branch_id) === parseInt(id));
+                this.$store.commit('frontendCart/lists', validItems);
+                this.$store.commit('frontendCart/subtotal');
+                alertService.warning('Items not available for the selected branch were removed from your cart.');
+            }
         },
         openBranchModal: function () {
             this.isBranchModalOpen = true;

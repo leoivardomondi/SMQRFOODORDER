@@ -78,16 +78,29 @@ export default {
         categories: function () {
             return this.$store.getters["frontendItemCategory/lists"];
         },
+        branchId: function () {
+            return this.$store.getters['globalState/lists']?.branch_id || parseInt(localStorage.getItem('selected_branch_id')) || 0;
+        }
     },
     mounted() {
-        this.$store.dispatch("frontendItemCategory/lists", {
-            paginate: 0,
-            order_column: "id",
-            order_type: "asc",
-            status: statusEnum.ACTIVE,
-        });
+        this.loadCategories();
+    },
+    methods: {
+        loadCategories() {
+            this.$store.dispatch("frontendItemCategory/lists", {
+                paginate: 0,
+                order_column: "id",
+                order_type: "asc",
+                status: statusEnum.ACTIVE,
+                branch_id: this.branchId,
+                force: true
+            });
+        }
     },
     watch: {
+        branchId(newBranchId) {
+            this.loadCategories();
+        },
         categories: {
             deep: true,
             handler(category) {

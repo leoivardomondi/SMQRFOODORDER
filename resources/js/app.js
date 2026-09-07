@@ -49,6 +49,10 @@ axios.interceptors.request.use(
             config.headers['Authorization'] = token ? `Bearer ${token}` : '';
             config.headers['x-localization'] = language;
         }
+        const branchId = localStorage.getItem('selected_branch_id');
+        if (branchId) {
+            config.headers['x-branch-id'] = branchId;
+        }
         return config;
     },
     error => Promise.reject(error),

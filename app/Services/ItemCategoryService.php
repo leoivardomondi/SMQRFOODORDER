@@ -43,9 +43,14 @@ class ItemCategoryService
                 foreach ($requests as $key => $request) {
                     if (in_array($key, $this->itemCateFilter)) {
                         if ($key == "branch_id") {
-                            if ((int)$request > 0) {
-                                $query->where(function ($q) use ($request) {
-                                    $q->where('branch_id', 0)->orWhereNull('branch_id')->orWhere('branch_id', $request);
+                            $branchId = (int)$request;
+                            if ($branchId > 0) {
+                                $query->where(function ($q) use ($branchId) {
+                                    $q->where('branch_id', 0)->orWhereNull('branch_id')->orWhere('branch_id', $branchId);
+                                });
+                            } else {
+                                $query->where(function ($q) {
+                                    $q->where('branch_id', 0)->orWhereNull('branch_id');
                                 });
                             }
                         } else {
@@ -132,12 +137,16 @@ class ItemCategoryService
     public function show(ItemCategory $itemCategory)
     {
         try {
-            $branchId = request('branch_id', 0);
+            $branchId = (int) (request('branch_id') ?: request()->header('x-branch-id') ?: 0);
             return $itemCategory->load(['items' => function ($query) use ($branchId) {
                 $query->where('status', \App\Enums\Status::ACTIVE);
-                if ((int)$branchId > 0) {
+                if ($branchId > 0) {
                     $query->where(function ($q) use ($branchId) {
                         $q->where('branch_id', 0)->orWhereNull('branch_id')->orWhere('branch_id', $branchId);
+                    });
+                } else {
+                    $query->where(function ($q) {
+                        $q->where('branch_id', 0)->orWhereNull('branch_id');
                     });
                 }
             }]);

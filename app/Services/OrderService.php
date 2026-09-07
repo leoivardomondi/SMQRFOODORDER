@@ -258,8 +258,16 @@ class OrderService
                 $items        = Item::get()->pluck('tax_id', 'id');
                 $taxes        = AppLibrary::pluck(Tax::get(), 'obj', 'id');
 
+                $dbItems      = Item::whereIn('id', collect($requestItems)->pluck('item_id'))->get()->keyBy('id');
+
                 if (!blank($requestItems)) {
                     foreach ($requestItems as $item) {
+                        if (isset($dbItems[$item->item_id])) {
+                            $dbItem = $dbItems[$item->item_id];
+                            if ((int)$dbItem->branch_id > 0 && (int)$dbItem->branch_id !== (int)$this->order->branch_id) {
+                                throw new Exception("The item '{$dbItem->name}' is not available at the selected branch.", 422);
+                            }
+                        }
                         $taxId          = isset($items[$item->item_id]) ? $items[$item->item_id] : 0;
                         $taxName        = isset($taxes[$taxId]) ? $taxes[$taxId]->name : null;
                         $taxRate        = isset($taxes[$taxId]) ? $taxes[$taxId]->tax_rate : 0;
@@ -357,8 +365,16 @@ class OrderService
                 $items        = Item::get()->pluck('tax_id', 'id');
                 $taxes        = AppLibrary::pluck(Tax::get(), 'obj', 'id');
 
+                $dbItems      = Item::whereIn('id', collect($requestItems)->pluck('item_id'))->get()->keyBy('id');
+
                 if (!blank($requestItems)) {
                     foreach ($requestItems as $item) {
+                        if (isset($dbItems[$item->item_id])) {
+                            $dbItem = $dbItems[$item->item_id];
+                            if ((int)$dbItem->branch_id > 0 && (int)$dbItem->branch_id !== (int)$this->order->branch_id) {
+                                throw new Exception("The item '{$dbItem->name}' is not available at the selected branch.", 422);
+                            }
+                        }
                         $taxId          = isset($items[$item->item_id]) ? $items[$item->item_id] : 0;
                         $taxName        = isset($taxes[$taxId]) ? $taxes[$taxId]->name : null;
                         $taxRate        = isset($taxes[$taxId]) ? $taxes[$taxId]->tax_rate : 0;
